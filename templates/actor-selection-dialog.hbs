@@ -1,0 +1,56 @@
+{{!-- Actor Selection Dialog Template (Foundry v13 ApplicationV2) --}}
+<div class="actor-selection-content">
+    <p class="notes">{{localize "MORTAL_NEEDS.Settings.ConfigureActorsHint"}}</p>
+
+    {{#if isFirstTime}}
+    <p class="notification info">
+        <i class="fas fa-info-circle"></i>
+        {{localize "MORTAL_NEEDS.Settings.FirstTimeActorSelection"}}
+    </p>
+    {{/if}}
+
+    <div class="actor-selection-controls">
+        <button type="button" data-action="selectAll">
+            <i class="fas fa-check-double"></i>
+            {{localize "MORTAL_NEEDS.UI.SelectAll"}}
+        </button>
+        <button type="button" data-action="deselectAll">
+            <i class="fas fa-times"></i>
+            {{localize "MORTAL_NEEDS.UI.DeselectAll"}}
+        </button>
+    </div>
+
+    <div class="actors-list">
+        {{#each actors as |actor|}}
+        <div class="actor-row {{#if actor.tracked}}tracked{{/if}}">
+            <input
+                type="checkbox"
+                id="actor-{{actor.id}}"
+                name="actor-{{actor.id}}"
+                {{#if actor.tracked}}checked{{/if}}
+            >
+            <img
+                src="{{actor.img}}"
+                alt="{{actor.name}}"
+                class="actor-portrait"
+            >
+            <div class="actor-info">
+                <label for="actor-{{actor.id}}" class="actor-name">{{actor.name}}</label>
+                <span class="actor-details">
+                    <span class="actor-type">{{actor.type}}</span>
+                    {{#if actor.owners}}
+                    <span class="actor-owners">
+                        <i class="fas fa-user"></i> {{actor.owners}}
+                    </span>
+                    {{/if}}
+                </span>
+            </div>
+        </div>
+        {{else}}
+        <div class="no-actors">
+            <i class="fas fa-users-slash"></i>
+            <p>{{localize "MORTAL_NEEDS.Settings.NoActorsAvailable"}}</p>
+        </div>
+        {{/each}}
+    </div>
+</div>

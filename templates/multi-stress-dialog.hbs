@@ -1,0 +1,29 @@
+{{!-- Multi-Stress Dialog Template --}}
+<form class="multi-stress-dialog">
+    <p class="notes">{{localize "MORTAL_NEEDS.UI.MultiStressHint"}}</p>
+
+    <div class="needs-list">
+        {{#each needs as |need|}}
+        <div class="need-option">
+            <input
+                type="checkbox"
+                id="need-{{need.id}}"
+                data-need-id="{{need.id}}"
+                checked
+            >
+            <span class="need-icon">
+                <i class="fas {{need.icon}}"></i>
+            </span>
+            <label for="need-{{need.id}}" class="need-name">{{need.name}}</label>
+            <input
+                type="number"
+                data-amount-for="{{need.id}}"
+                value="20"
+                min="1"
+                max="100"
+                title="{{localize 'MORTAL_NEEDS.UI.StressAmount'}}"
+            >
+        </div>
+        {{/each}}
+    </div>
+</form>

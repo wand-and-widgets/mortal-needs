@@ -1,0 +1,313 @@
+{
+  "MORTAL_NEEDS": {
+    "Controls": {
+      "Toggle": "Toggle Mortal Needs Panel"
+    },
+
+    "UI": {
+      "Title": "Mortal Needs",
+      "SelectAll": "Select All",
+      "DeselectAll": "Deselect All",
+      "SelectAllForStress": "Select all actors for stress operations",
+      "DeselectAllForStress": "Deselect all actors",
+      "SelectionHint": "Ctrl+click portraits to multi-select",
+      "SelectActors": "Actors",
+      "MultiStress": "Multi-Stress",
+      "MultiStressHint": "Select needs and amounts to apply stress to all selected (or all) actors.",
+      "Settings": "Configure Needs",
+      "Stress": "Increase",
+      "Relieve": "Decrease",
+      "StressAll": "Increase for all:",
+      "RelieveAll": "Decrease for all:",
+      "StressAmount": "Amount",
+      "NoActors": "No tracked actors. Click 'Actors' to select which characters to track.",
+      "ClickToSelect": "Click to select",
+      "OpenSheet": "Open character sheet",
+      "ResistanceShort": "Resistance",
+      "AutoExhaustionBadge": "Auto-Exhaustion",
+      "ExhaustionTicksTooltip": "Punishment progress"
+    },
+
+    "Needs": {
+      "hunger": "Hunger",
+      "thirst": "Thirst",
+      "exhaustion": "Exhaustion",
+      "cold": "Cold",
+      "heat": "Heat",
+      "comfort": "Comfort",
+      "sanity": "Sanity",
+      "morale": "Morale",
+      "pain": "Pain",
+      "radiation": "Radiation",
+      "corruption": "Corruption",
+      "fatigue": "Fatigue",
+      "environmental": "Environmental Stress"
+    },
+
+    "Severity": {
+      "minimal": "Minimal",
+      "low": "Low",
+      "medium": "Moderate",
+      "high": "High",
+      "critical": "Critical"
+    },
+
+    "Settings": {
+      "DefaultStressAmount": "Default Stress Amount",
+      "DefaultStressAmountHint": "The default amount of stress to apply when using the quick buttons (1-50).",
+
+      "ApplyConModifier": "Apply Constitution Modifier",
+      "ApplyConModifierHint": "When enabled, stress amounts are modified by the character's Constitution score. Higher Con = less stress gained.",
+
+      "ShowNeedValues": "Show Need Values",
+      "ShowNeedValuesHint": "Display the numerical values on the need bars.",
+
+      "PlayerVisibility": "Player Visibility",
+      "PlayerVisibilityHint": "Control what players can see in the needs panel.",
+      "PlayerVisibilityNone": "Hidden (GM only)",
+      "PlayerVisibilityOwn": "Own character only",
+      "PlayerVisibilityAll": "All characters",
+
+      "AnimateBars": "Animate Bars",
+      "AnimateBarsHint": "Enable smooth animations when bar values change.",
+
+      "CompactMode": "Compact Mode",
+      "CompactModeHint": "Use a more compact display with smaller portraits and bars.",
+
+      "BarOrientation": "Bar Orientation",
+      "BarOrientationHint": "Choose between vertical bars (compact) or horizontal bars (detailed view).",
+      "BarOrientationVertical": "Vertical Bars",
+      "BarOrientationHorizontal": "Horizontal Bars",
+
+      "NotifyOnCritical": "Notify on Critical",
+      "NotifyOnCriticalHint": "Display a notification when a need reaches critical level.",
+
+      "CriticalThreshold": "Critical Threshold",
+      "CriticalThresholdHint": "The percentage at which a need is considered critical (50-100).",
+
+      "PunishmentRemovalMode": "Punishment Removal Mode",
+      "PunishmentRemovalModeHint": "How punishments are removed when needs drop below critical.",
+      "RemovalModeAskGM": "Ask GM (show dialog)",
+      "RemovalModeImmediate": "Remove immediately",
+      "RemovalModeOnRest": "Only on rest (manual)",
+
+      "ShowPunishmentChat": "Show Punishment Chat Messages",
+      "ShowPunishmentChatHint": "Display styled chat messages when punishments are applied or removed.",
+
+      "ConfigureNeeds": "Configure Needs",
+      "ConfigureNeedsLabel": "Open Configuration",
+      "ConfigureNeedsHint": "Enable, disable, and customize which needs are tracked.",
+
+      "NeedId": "Need ID",
+      "NeedIdHint": "A unique identifier for this need (lowercase, no spaces).",
+      "NeedIcon": "Icon",
+      "NeedIconHint": "Font Awesome icon class (e.g., fa-fire, fa-heart).",
+
+      "AddCustomNeed": "Add Custom Need",
+      "RemoveNeed": "Remove Need",
+      "RemoveNeedConfirm": "Are you sure you want to remove the custom need '{name}'? This will delete all stored data for this need.",
+      "Custom": "Custom",
+
+      "ConfigureNeedOptions": "Configure need options",
+      "StressAmountPerNeed": "Stress Amount",
+      "StressAmountPerNeedHint": "How much stress is applied when using the quick buttons for this need.",
+      "ResistanceAttribute": "Resistance Attribute",
+      "ResistanceAttributeHint": "Characters with higher values in this attribute will gain less stress for this need.",
+      "NoResistance": "None (no resistance)",
+      "AutoExhaustion": "Auto-Exhaustion at 100%",
+      "AutoExhaustionHint": "When this need reaches 100%, automatically apply exhaustion.",
+      "ExhaustionTicks": "Exhaustion Ticks",
+      "ExhaustionTicksHint": "How many times stress must be applied at 100% before gaining another exhaustion point.",
+      "TicksSuffix": "ticks",
+      "Abilities": "Abilities",
+      "Skills": "Skills",
+      "Other": "Other",
+
+      "UIScale": "UI Scale",
+      "UIScaleHint": "Adjust the size of the needs panel. Changes preview instantly.",
+
+      "ConfigureActors": "Select Tracked Actors",
+      "ConfigureActorsLabel": "Choose Actors",
+      "ConfigureActorsHint": "Select which actors should have their needs tracked by the module.",
+      "FirstTimeActorSelection": "This is your first time configuring actors. All player-owned characters are selected by default.",
+      "NoOwners": "No player owners",
+      "NoActorsAvailable": "No player-owned actors available to track."
+    },
+
+    "Notifications": {
+      "NeedAdded": "Custom need '{name}' has been added.",
+      "NeedRemoved": "Custom need '{name}' has been removed.",
+      "CriticalLevel": "{actor}'s {need} has reached critical level!",
+      "ActorsUpdated": "{count} actor(s) are now being tracked.",
+      "ExhaustionGained": "{actor} gained exhaustion from {need}!",
+      "PunishmentApplied": "{actor} suffered {punishment} from {need}!",
+      "PunishmentRemoved": "{actor}'s {punishment} from {need} has been lifted."
+    },
+
+    "Punishment": {
+      "None": "None",
+      "Exhaustion": "Exhaustion",
+      "Damage": "Damage",
+      "Condition": "Condition",
+      "MaxHpReduction": "Max HP Reduction",
+      "MaxHP": "Max HP",
+      "Type": "Punishment Type",
+      "TypeHint": "What happens when this need reaches 100%.",
+      "DamageAmount": "Damage Amount",
+      "DamageAmountHint": "How much damage to apply.",
+      "DamageType": "Damage Type",
+      "DamageTypeHint": "Type of damage (affects resistance).",
+      "ConditionType": "Condition",
+      "ConditionTypeHint": "Which condition to apply.",
+      "MaxHpAmount": "HP Reduction",
+      "MaxHpAmountHint": "How much to reduce max HP.",
+      "Ticks": "Punishment Ticks",
+      "TicksHint": "How many times stress must be applied at 100% before punishment triggers again."
+    },
+
+    "Tooltips": {
+      "PunishmentExhaustion": "At 100%: Gains exhaustion level",
+      "PunishmentDamage": "At 100%: Takes {amount} {type} damage",
+      "PunishmentCondition": "At 100%: Becomes {condition}",
+      "PunishmentMaxHP": "At 100%: Max HP reduced by {amount}",
+      "NeedProgress": "{value}/{max} ({percent}%)",
+      "TickProgress": "Punishment in {remaining} ticks"
+    },
+
+    "Conditions": {
+      "PoisonedDesc": "Disadvantage on attack rolls and ability checks",
+      "FrightenedDesc": "Disadvantage while source in sight, cannot willingly approach",
+      "StunnedDesc": "Incapacitated, cannot move, auto-fail Str/Dex saves",
+      "IncapacitatedDesc": "Cannot take actions or reactions"
+    },
+
+    "Chat": {
+      "Removed": "Removed"
+    },
+
+    "Dialogs": {
+      "RemovalTitle": "Punishment Recovery",
+      "RemovalMessage": "{actor}'s {need} has dropped below critical. They currently suffer from {punishment}.",
+      "RemovalQuestion": "Remove the punishment?",
+      "RemoveNow": "Remove Now",
+      "KeepPunishment": "Keep Active"
+    },
+
+    "Flavor": {
+      "hunger": {
+        "apply": [
+          "A gnawing emptiness consumes {actor}'s thoughts, each heartbeat a reminder of sustenance denied.",
+          "The hollow ache in {actor}'s belly has become unbearable, weakness seeping into every limb.",
+          "{actor}'s body begins to consume itself, desperate for any source of nourishment.",
+          "Hunger claws at {actor}'s insides like a desperate beast trying to escape.",
+          "The world blurs at the edges as {actor}'s starving body screams for food."
+        ],
+        "remove": [
+          "Strength returns to {actor}'s limbs as the gnawing hunger finally subsides.",
+          "The desperate emptiness fades, replaced by renewed vigor.",
+          "{actor} feels life flowing back as the starvation's grip loosens."
+        ]
+      },
+      "thirst": {
+        "apply": [
+          "{actor}'s throat burns like sandpaper, each swallow a reminder of water's absence.",
+          "Cracked lips and a swollen tongue mark {actor}'s desperate need for water.",
+          "Dehydration grips {actor} mercilessly, thoughts growing sluggish and confused.",
+          "Every cell in {actor}'s body cries out for water, the thirst becoming maddening.",
+          "{actor}'s mouth feels like a desert, tongue thick and useless."
+        ],
+        "remove": [
+          "Cool relief washes through {actor} as the terrible thirst finally breaks.",
+          "Life-giving hydration restores {actor}'s clarity and strength.",
+          "The desperate burning in {actor}'s throat finally subsides."
+        ]
+      },
+      "exhaustion": {
+        "apply": [
+          "Bone-deep weariness drags {actor} down, every movement a Herculean effort.",
+          "{actor}'s eyelids grow impossibly heavy, the body demanding rest it cannot have.",
+          "Fatigue settles into {actor}'s very soul, threatening to extinguish all motivation.",
+          "Each step feels like wading through thick mud as exhaustion claims {actor}.",
+          "{actor}'s muscles scream for rest, trembling with every exertion."
+        ],
+        "remove": [
+          "Renewed energy flows through {actor}'s veins as exhaustion's chains break.",
+          "Vigor returns to {actor}'s step, the oppressive weariness lifting at last.",
+          "{actor} feels restored, the crushing fatigue finally releasing its grip."
+        ]
+      },
+      "cold": {
+        "apply": [
+          "The cold seeps into {actor}'s bones, numbing fingers and clouding thoughts.",
+          "Violent shivers wrack {actor}'s frame as the bitter chill takes hold.",
+          "{actor}'s teeth chatter uncontrollably, warmth a distant memory.",
+          "Frost seems to crystallize in {actor}'s very blood, slowing everything.",
+          "The relentless cold wraps around {actor} like a frozen shroud."
+        ],
+        "remove": [
+          "Blessed warmth returns to {actor}'s extremities, the deadly cold retreating.",
+          "{actor} feels the ice in their veins begin to thaw.",
+          "The bitter chill releases its grip as warmth floods back into {actor}."
+        ]
+      },
+      "heat": {
+        "apply": [
+          "Oppressive heat smothers {actor}, each breath like inhaling fire.",
+          "Sweat pours from {actor} as the merciless heat threatens to overwhelm.",
+          "{actor}'s vision swims in the brutal heat, thoughts becoming sluggish.",
+          "The scorching temperature saps {actor}'s strength with every passing moment.",
+          "{actor} feels as if they're being slowly cooked alive by the relentless heat."
+        ],
+        "remove": [
+          "Cool relief washes over {actor} as the oppressive heat finally breaks.",
+          "{actor}'s body temperature returns to normal, the danger passing.",
+          "The suffocating heat releases its grip, allowing {actor} to breathe freely again."
+        ]
+      },
+      "sanity": {
+        "apply": [
+          "Reality fractures around {actor}, shadows whispering secrets best left unheard.",
+          "{actor}'s grip on sanity slips as eldritch visions cloud their mind.",
+          "The thin veil between reason and madness tears, exposing {actor} to horrors beyond comprehension.",
+          "Whispers from nowhere fill {actor}'s mind, drowning out rational thought.",
+          "{actor}'s sense of self begins to unravel, identity bleeding away."
+        ],
+        "remove": [
+          "Clarity returns to {actor}'s fractured mind, the whispers finally silencing.",
+          "The nightmarish visions fade as {actor} reclaims their sanity.",
+          "{actor}'s mind reassembles itself, reality solidifying once more."
+        ]
+      },
+      "pain": {
+        "apply": [
+          "Agony lances through {actor}, every nerve ending screaming in protest.",
+          "{actor} can focus on nothing but the all-consuming pain wracking their body.",
+          "Waves of torment crash over {actor}, threatening to drag them into unconsciousness.",
+          "The pain becomes {actor}'s entire world, blocking out all else.",
+          "{actor}'s body is a symphony of suffering, each movement adding new notes of agony."
+        ],
+        "remove": [
+          "The crushing pain finally subsides, allowing {actor} to think clearly again.",
+          "Relief floods through {actor} as the torment releases its grip.",
+          "{actor} gasps with relief as the agony finally, mercifully, fades."
+        ]
+      },
+      "default": {
+        "apply": [
+          "The strain becomes unbearable as {actor} reaches their limit.",
+          "{actor} struggles against the mounting pressure, body and mind pushed to the brink.",
+          "Something breaks within {actor} as they can no longer withstand the stress."
+        ],
+        "remove": [
+          "The unbearable pressure finally eases, allowing {actor} to recover.",
+          "{actor} feels the crushing weight lift as relief washes over them.",
+          "Recovery begins as the worst of the ordeal passes for {actor}."
+        ]
+      }
+    },
+
+    "API": {
+      "Description": "Mortal Needs API - Use game.modules.get('mortal-needs').api for programmatic access."
+    }
+  }
+}

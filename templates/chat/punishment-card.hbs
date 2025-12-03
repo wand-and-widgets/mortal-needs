@@ -1,0 +1,52 @@
+{{!-- Punishment Chat Card - Mortal Needs --}}
+{{!-- Styled dramatic chat message for punishment application/removal --}}
+
+<div class="mn-chat-card {{#if isApply}}mn-apply{{else}}mn-remove{{/if}}">
+    {{!-- Header with actor portrait --}}
+    <div class="mn-chat-header">
+        <div class="mn-chat-portrait">
+            <img src="{{actor.img}}" alt="{{actor.name}}">
+            <div class="mn-chat-need-icon">
+                <i class="fas {{need.icon}}"></i>
+            </div>
+        </div>
+        <div class="mn-chat-title">
+            <span class="mn-chat-actor-name">{{actor.name}}</span>
+            <span class="mn-chat-need-name">{{need.name}}</span>
+        </div>
+    </div>
+
+    {{!-- Flavor text --}}
+    <div class="mn-chat-flavor">
+        <p>"{{flavor}}"</p>
+    </div>
+
+    {{!-- Punishment details --}}
+    <div class="mn-chat-punishment">
+        {{#if isApply}}
+            <div class="mn-chat-punishment-badge apply">
+                {{#if (eq punishment.type "exhaustion")}}
+                    <i class="fas fa-bed"></i>
+                    <span>+1 {{localize "MORTAL_NEEDS.Punishment.Exhaustion"}}</span>
+                {{else if (eq punishment.type "damage")}}
+                    <i class="fas fa-heart-crack"></i>
+                    <span>{{punishment.amount}} {{localize punishment.damageTypeLabel}} {{localize "MORTAL_NEEDS.Punishment.Damage"}}</span>
+                {{else if (eq punishment.type "condition")}}
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span>{{punishment.displayName}}</span>
+                {{else if (eq punishment.type "maxhp")}}
+                    <i class="fas fa-arrow-down"></i>
+                    <span>-{{punishment.amount}} {{localize "MORTAL_NEEDS.Punishment.MaxHP"}}</span>
+                {{/if}}
+            </div>
+        {{else}}
+            <div class="mn-chat-punishment-badge remove">
+                <i class="fas fa-check-circle"></i>
+                <span>{{punishment.displayName}} {{localize "MORTAL_NEEDS.Chat.Removed"}}</span>
+            </div>
+        {{/if}}
+    </div>
+
+    {{!-- Decorative bottom border --}}
+    <div class="mn-chat-border {{#if isApply}}critical{{else}}recovery{{/if}}"></div>
+</div>

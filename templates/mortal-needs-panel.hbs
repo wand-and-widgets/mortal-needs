@@ -1,0 +1,198 @@
+{{!-- Mortal Needs Main Panel Template - BG3-Inspired Compact Layout --}}
+{{!-- Foundry v13 ApplicationV2 with vertical/horizontal bars --}}
+
+<div class="mn-panel-content {{#if isHorizontal}}mn-horizontal-mode{{/if}}">
+
+    {{!-- GM Toolbar - Compact Controls --}}
+    {{#if isGM}}
+    <div class="mn-gm-toolbar">
+        <button type="button" class="mn-toolbar-btn" data-action="openActorSelection" data-tooltip="{{localize 'MORTAL_NEEDS.UI.SelectActors'}}">
+            <i class="fas fa-users"></i>
+        </button>
+        <button type="button" class="mn-toolbar-btn" data-action="openMultiStress" data-tooltip="{{localize 'MORTAL_NEEDS.UI.MultiStress'}}">
+            <i class="fas fa-bolt"></i>
+        </button>
+        <div class="mn-toolbar-divider"></div>
+        <button type="button" class="mn-toolbar-btn" data-action="selectAllActors" data-tooltip="{{localize 'MORTAL_NEEDS.UI.SelectAll'}}">
+            <i class="fas fa-check-double"></i>
+        </button>
+        <button type="button" class="mn-toolbar-btn" data-action="deselectAllActors" data-tooltip="{{localize 'MORTAL_NEEDS.UI.DeselectAll'}}">
+            <i class="fas fa-times"></i>
+        </button>
+        {{#if selectedCount}}
+        <span class="mn-selection-badge">{{selectedCount}}</span>
+        {{/if}}
+        <div class="mn-toolbar-spacer"></div>
+        <button type="button" class="mn-toolbar-btn" data-action="openSettings" data-tooltip="{{localize 'MORTAL_NEEDS.UI.Settings'}}">
+            <i class="fas fa-cog"></i>
+        </button>
+    </div>
+    {{/if}}
+
+    {{!-- Actors Grid --}}
+    {{#if actors.length}}
+    <div class="mn-actors-grid">
+        {{#each actors as |actor|}}
+        <div class="mn-actor-unit {{#if actor.selected}}selected{{/if}} {{#if actor.expanded}}expanded{{/if}} {{#if actor.hasCritical}}has-critical{{/if}}" data-actor-id="{{actor.id}}">
+
+            {{!-- Portrait with critical indicator --}}
+            <div class="mn-portrait-container" data-action="selectActor" data-actor-id="{{actor.id}}" title="{{localize 'MORTAL_NEEDS.UI.OpenSheet'}} | Ctrl+{{localize 'MORTAL_NEEDS.UI.ClickToSelect'}}">
+                <img src="{{actor.img}}" alt="{{actor.name}}" class="mn-portrait">
+                {{#if actor.hasCritical}}
+                <div class="mn-portrait-critical-ring"></div>
+                {{/if}}
+            </div>
+
+            {{!-- Actor name --}}
+            <span class="mn-actor-name">{{actor.name}}</span>
+
+            {{!-- VERTICAL BARS MODE --}}
+            {{#unless @root.isHorizontal}}
+            <div class="mn-needs-row">
+                {{#each actor.needs as |need|}}
+                {{!-- Show ticks beside bar when at 100% --}}
+                {{#if need.showTicks}}
+                <div class="mn-ticks-container" title="{{need.name}}: {{localize 'MORTAL_NEEDS.UI.ExhaustionTicksTooltip'}} ({{need.currentTicks}}/{{need.maxTicks}})">
+                    {{#each need.ticksArray as |tick|}}
+                    <span class="mn-tick {{#if tick.filled}}filled{{/if}}"></span>
+                    {{/each}}
+                </div>
+                {{/if}}
+
+                <div class="mn-vbar-container"
+                     data-need-id="{{need.id}}"
+                     title="{{need.name}}: {{need.value}}/{{need.max}} ({{need.percentage}}%){{#if need.punishmentTooltip}} | {{need.punishmentTooltip}}{{/if}}">
+
+                    {{!-- The vertical bar --}}
+                    <div class="mn-vbar vbar" data-need-id="{{need.id}}" data-actor-id="{{actor.id}}">
+                        <div class="mn-vbar-fill {{need.severity}}" style="height: {{need.percentage}}%"></div>
+                    </div>
+
+                    {{!-- Need icon below bar --}}
+                    <i class="mn-vbar-icon fas {{need.icon}}"></i>
+
+                    {{!-- Attribute badge below icon --}}
+                    {{#if need.hasResistance}}
+                    <span class="mn-vbar-attr" title="{{localize 'MORTAL_NEEDS.UI.ResistanceShort'}}: {{need.attributeLabel}}">{{need.attributeShort}}</span>
+                    {{/if}}
+
+                    {{!-- Punishment badge below --}}
+                    {{#if need.hasPunishment}}
+                    <span class="mn-vbar-punishment mn-punishment-{{need.punishmentType}}" title="{{need.punishmentTooltip}}">
+                        {{#if (eq need.punishmentType "exhaustion")}}<i class="fas fa-bed"></i>{{/if}}
+                        {{#if (eq need.punishmentType "damage")}}<i class="fas fa-heart-crack"></i>{{/if}}
+                        {{#if (eq need.punishmentType "condition")}}<i class="fas fa-dizzy"></i>{{/if}}
+                        {{#if (eq need.punishmentType "maxhp")}}<i class="fas fa-arrow-down"></i>{{/if}}
+                    </span>
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+            {{/unless}}
+
+            {{!-- HORIZONTAL BARS MODE --}}
+            {{#if @root.isHorizontal}}
+            <div class="mn-needs-horizontal">
+                {{#each actor.needs as |need|}}
+                <div class="mn-hbar-row-full" data-need-id="{{need.id}}">
+                    <div class="mn-hbar-info">
+                        <i class="mn-hbar-icon fas {{need.icon}}" title="{{need.name}}{{#if need.punishmentTooltip}} | {{need.punishmentTooltip}}{{/if}}"></i>
+                        {{#if need.hasPunishment}}
+                        <span class="mn-hbar-punishment mn-punishment-{{need.punishmentType}}" title="{{need.punishmentTooltip}}">
+                            {{#if (eq need.punishmentType "exhaustion")}}<i class="fas fa-bed"></i>{{/if}}
+                            {{#if (eq need.punishmentType "damage")}}<i class="fas fa-heart-crack"></i>{{/if}}
+                            {{#if (eq need.punishmentType "condition")}}<i class="fas fa-dizzy"></i>{{/if}}
+                            {{#if (eq need.punishmentType "maxhp")}}<i class="fas fa-arrow-down"></i>{{/if}}
+                        </span>
+                        {{/if}}
+                    </div>
+                    <div class="mn-hbar-bar-container">
+                        <div class="mn-hbar hbar" data-need-id="{{need.id}}" data-actor-id="{{actor.id}}" title="{{need.name}}: {{need.value}}/{{need.max}} ({{need.percentage}}%)">
+                            <div class="mn-hbar-fill {{need.severity}}" style="width: {{need.percentage}}%"></div>
+                        </div>
+                        {{#if need.showTicks}}
+                        <div class="mn-hticks-container" title="{{localize 'MORTAL_NEEDS.UI.ExhaustionTicksTooltip'}} ({{need.currentTicks}}/{{need.maxTicks}})">
+                            {{#each need.ticksArray as |tick|}}
+                            <span class="mn-htick {{#if tick.filled}}filled{{/if}}"></span>
+                            {{/each}}
+                        </div>
+                        {{/if}}
+                    </div>
+                    <span class="mn-hbar-value">{{need.percentage}}%</span>
+                    {{#if @root.isGM}}
+                    <div class="mn-hbar-controls">
+                        <button type="button" class="mn-ctrl-btn stress" data-action="stressNeed" data-need-id="{{need.id}}" title="{{localize 'MORTAL_NEEDS.UI.Stress'}}">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button type="button" class="mn-ctrl-btn relieve" data-action="relieveNeed" data-need-id="{{need.id}}" title="{{localize 'MORTAL_NEEDS.UI.Relieve'}}">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+            {{/if}}
+
+            {{!-- Expanded Panel (only for vertical mode) --}}
+            {{#unless @root.isHorizontal}}
+            <div class="mn-expanded-panel">
+                {{#each actor.needs as |need|}}
+                <div class="mn-hbar-row" data-need-id="{{need.id}}">
+                    <i class="mn-hbar-icon fas {{need.icon}}" title="{{need.name}}"></i>
+                    <div class="mn-hbar hbar" data-need-id="{{need.id}}" data-actor-id="{{actor.id}}">
+                        <div class="mn-hbar-fill {{need.severity}}" style="width: {{need.percentage}}%"></div>
+                        <span class="mn-hbar-text">{{need.value}}</span>
+                    </div>
+                    <span class="mn-hbar-value">{{need.percentage}}%</span>
+                    {{#if @root.isGM}}
+                    <div class="mn-controls-row">
+                        <button type="button" class="mn-ctrl-btn stress" data-action="stressNeed" data-need-id="{{need.id}}" title="{{localize 'MORTAL_NEEDS.UI.Stress'}}">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                        <button type="button" class="mn-ctrl-btn relieve" data-action="relieveNeed" data-need-id="{{need.id}}" title="{{localize 'MORTAL_NEEDS.UI.Relieve'}}">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+            {{/unless}}
+
+        </div>
+        {{/each}}
+    </div>
+
+    {{!-- Bulk Actions Footer (GM only) --}}
+    {{#if isGM}}
+    <div class="mn-bulk-footer">
+        {{#each enabledNeeds as |need|}}
+        <div class="mn-bulk-btn-group" title="{{localizeNeed need.id}}">
+            <button type="button" class="mn-bulk-btn stress" data-action="stressAll" data-need-id="{{need.id}}">
+                <i class="fas {{need.icon}}"></i>
+                <i class="fas fa-arrow-up"></i>
+            </button>
+            <button type="button" class="mn-bulk-btn relieve" data-action="relieveAll" data-need-id="{{need.id}}">
+                <i class="fas {{need.icon}}"></i>
+                <i class="fas fa-arrow-down"></i>
+            </button>
+        </div>
+        {{/each}}
+    </div>
+    {{/if}}
+
+    {{else}}
+    {{!-- Empty State --}}
+    <div class="mn-empty-state">
+        <i class="fas fa-users-slash"></i>
+        <p>{{localize "MORTAL_NEEDS.UI.NoActors"}}</p>
+        {{#if isGM}}
+        <button type="button" class="mn-add-actors-btn" data-action="openActorSelection">
+            <i class="fas fa-plus"></i> {{localize "MORTAL_NEEDS.UI.SelectActors"}}
+        </button>
+        {{/if}}
+    </div>
+    {{/if}}
+
+</div>

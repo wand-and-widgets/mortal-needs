@@ -1,0 +1,239 @@
+{{!-- Needs Configuration Dialog Template (Foundry v13 ApplicationV2) --}}
+<div class="needs-config-content">
+
+    {{!-- UI Scale Slider --}}
+    <div class="ui-scale-group">
+        <div class="ui-scale-header">
+            <label>
+                <i class="fas fa-expand-arrows-alt"></i>
+                {{localize "MORTAL_NEEDS.Settings.UIScale"}}
+            </label>
+            <span class="ui-scale-value">{{uiScale}}%</span>
+        </div>
+        <input
+            type="range"
+            name="uiScale"
+            class="ui-scale-slider"
+            min="80"
+            max="200"
+            step="10"
+            value="{{uiScaleRaw}}"
+            data-action="previewScale"
+        >
+        <p class="ui-scale-hint">{{localize "MORTAL_NEEDS.Settings.UIScaleHint"}}</p>
+    </div>
+
+    <p class="notes">{{localize "MORTAL_NEEDS.Settings.ConfigureNeedsHint"}}</p>
+
+    <div class="needs-list">
+        {{#each needs as |need|}}
+        <div class="need-config-row" data-need-id="{{need.id}}">
+            <div class="need-main-row">
+                <span class="need-icon">
+                    <i class="fas {{need.icon}}"></i>
+                </span>
+                <span class="need-name">
+                    {{need.name}}
+                    {{#if need.custom}}
+                    <span class="custom-badge">{{localize "MORTAL_NEEDS.Settings.Custom"}}</span>
+                    {{/if}}
+                </span>
+                <input
+                    type="checkbox"
+                    name="{{need.id}}-enabled"
+                    class="need-enabled"
+                    {{#if need.enabled}}checked{{/if}}
+                >
+                <button
+                    type="button"
+                    class="toggle-details"
+                    data-action="toggleNeedDetails"
+                    data-need-id="{{need.id}}"
+                    title="{{localize 'MORTAL_NEEDS.Settings.ConfigureNeedOptions'}}"
+                >
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                {{#if need.custom}}
+                <button
+                    type="button"
+                    class="remove-need"
+                    data-action="removeNeed"
+                    data-need-id="{{need.id}}"
+                    title="{{localize 'MORTAL_NEEDS.Settings.RemoveNeed'}}"
+                >
+                    <i class="fas fa-trash"></i>
+                </button>
+                {{/if}}
+            </div>
+            <div class="need-details-row" data-need-details="{{need.id}}" style="display: none;">
+                {{!-- Stress Amount --}}
+                <div class="need-option-group">
+                    <label>
+                        <i class="fas fa-percentage"></i>
+                        {{localize "MORTAL_NEEDS.Settings.StressAmountPerNeed"}}
+                    </label>
+                    <div class="stress-amount-input">
+                        <input
+                            type="number"
+                            name="{{need.id}}-stressAmount"
+                            class="need-stress-amount"
+                            value="{{need.stressAmount}}"
+                            min="1"
+                            max="100"
+                            step="1"
+                        >
+                        <span class="input-suffix">%</span>
+                    </div>
+                    <p class="option-hint">{{localize "MORTAL_NEEDS.Settings.StressAmountPerNeedHint"}}</p>
+                </div>
+
+                {{!-- Resistance Attribute --}}
+                <div class="need-option-group">
+                    <label>
+                        <i class="fas fa-shield-alt"></i>
+                        {{localize "MORTAL_NEEDS.Settings.ResistanceAttribute"}}
+                    </label>
+                    <select name="{{need.id}}-attribute" class="need-attribute">
+                        <option value="none" {{#unless need.attribute}}selected{{/unless}}>
+                            {{localize "MORTAL_NEEDS.Settings.NoResistance"}}
+                        </option>
+                        {{#each @root.attributeGroups as |group|}}
+                        <optgroup label="{{group.label}}">
+                            {{#each group.attributes as |attr|}}
+                            <option value="{{attr.key}}" {{#if (eq attr.key ../../need.attribute)}}selected{{/if}}>
+                                {{attr.label}}
+                            </option>
+                            {{/each}}
+                        </optgroup>
+                        {{/each}}
+                    </select>
+                    <p class="option-hint">{{localize "MORTAL_NEEDS.Settings.ResistanceAttributeHint"}}</p>
+                </div>
+
+                {{!-- Punishment Type --}}
+                <div class="need-option-group punishment-type-group">
+                    <label>
+                        <i class="fas fa-skull-crossbones"></i>
+                        {{localize "MORTAL_NEEDS.Punishment.Type"}}
+                    </label>
+                    <select name="{{need.id}}-punishmentType" class="need-punishment-type" data-need-id="{{need.id}}" onchange="game.modules.get('mortal-needs')?.api?.onPunishmentTypeChange?.(this)">
+                        <option value="none" {{#if (eq need.punishment.type "none")}}selected{{/if}}>
+                            {{localize "MORTAL_NEEDS.Punishment.None"}}
+                        </option>
+                        <option value="exhaustion" {{#if (eq need.punishment.type "exhaustion")}}selected{{/if}}>
+                            {{localize "MORTAL_NEEDS.Punishment.Exhaustion"}}
+                        </option>
+                        <option value="damage" {{#if (eq need.punishment.type "damage")}}selected{{/if}}>
+                            {{localize "MORTAL_NEEDS.Punishment.Damage"}}
+                        </option>
+                        <option value="condition" {{#if (eq need.punishment.type "condition")}}selected{{/if}}>
+                            {{localize "MORTAL_NEEDS.Punishment.Condition"}}
+                        </option>
+                        <option value="maxhp" {{#if (eq need.punishment.type "maxhp")}}selected{{/if}}>
+                            {{localize "MORTAL_NEEDS.Punishment.MaxHpReduction"}}
+                        </option>
+                    </select>
+                    <p class="option-hint">{{localize "MORTAL_NEEDS.Punishment.TypeHint"}}</p>
+                </div>
+
+                {{!-- Damage Options (shown when punishment type is 'damage') --}}
+                <div class="need-option-group damage-options" data-punishment-options="damage" {{#unless (eq need.punishment.type "damage")}}style="display: none;"{{/unless}}>
+                    <label>
+                        <i class="fas fa-heart-crack"></i>
+                        {{localize "MORTAL_NEEDS.Punishment.DamageAmount"}}
+                    </label>
+                    <div class="damage-input-row">
+                        <input
+                            type="number"
+                            name="{{need.id}}-damageAmount"
+                            class="need-damage-amount"
+                            value="{{need.punishment.damageAmount}}"
+                            min="1"
+                            max="100"
+                            step="1"
+                        >
+                        <select name="{{need.id}}-damageType" class="need-damage-type">
+                            {{#each need.damageTypesWithSelected as |dmg|}}
+                            <option value="{{dmg.key}}" {{#if dmg.selected}}selected{{/if}}>
+                                {{dmg.label}}
+                            </option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <p class="option-hint">{{localize "MORTAL_NEEDS.Punishment.DamageTypeHint"}}</p>
+                </div>
+
+                {{!-- Condition Options (shown when punishment type is 'condition') --}}
+                <div class="need-option-group condition-options" data-punishment-options="condition" {{#unless (eq need.punishment.type "condition")}}style="display: none;"{{/unless}}>
+                    <label>
+                        <i class="fas fa-exclamation-triangle"></i>
+                        {{localize "MORTAL_NEEDS.Punishment.ConditionType"}}
+                    </label>
+                    <select name="{{need.id}}-condition" class="need-condition">
+                        {{#each need.conditionsWithSelected as |cond|}}
+                        <option value="{{cond.key}}" {{#if cond.selected}}selected{{/if}}>
+                            {{cond.label}}
+                        </option>
+                        {{/each}}
+                    </select>
+                    <p class="option-hint">{{localize "MORTAL_NEEDS.Punishment.ConditionTypeHint"}}</p>
+                </div>
+
+                {{!-- Max HP Options (shown when punishment type is 'maxhp') --}}
+                <div class="need-option-group maxhp-options" data-punishment-options="maxhp" {{#unless (eq need.punishment.type "maxhp")}}style="display: none;"{{/unless}}>
+                    <label>
+                        <i class="fas fa-arrow-down"></i>
+                        {{localize "MORTAL_NEEDS.Punishment.MaxHpAmount"}}
+                    </label>
+                    <div class="maxhp-input">
+                        <input
+                            type="number"
+                            name="{{need.id}}-maxHpReduction"
+                            class="need-maxhp-reduction"
+                            value="{{need.punishment.maxHpReduction}}"
+                            min="1"
+                            max="100"
+                            step="1"
+                        >
+                        <span class="input-suffix">HP</span>
+                    </div>
+                    <p class="option-hint">{{localize "MORTAL_NEEDS.Punishment.MaxHpAmountHint"}}</p>
+                </div>
+
+                {{!-- Punishment Ticks --}}
+                <div class="need-option-group ticks-group" {{#if (eq need.punishment.type "none")}}style="display: none;"{{/if}}>
+                    <label>
+                        <i class="fas fa-hourglass-half"></i>
+                        {{localize "MORTAL_NEEDS.Punishment.Ticks"}}
+                    </label>
+                    <div class="ticks-input">
+                        <input
+                            type="number"
+                            name="{{need.id}}-punishmentTicks"
+                            class="need-punishment-ticks"
+                            value="{{need.punishment.ticks}}"
+                            min="1"
+                            max="10"
+                            step="1"
+                        >
+                        <span class="input-suffix">{{localize "MORTAL_NEEDS.Settings.TicksSuffix"}}</span>
+                    </div>
+                    <p class="option-hint">{{localize "MORTAL_NEEDS.Punishment.TicksHint"}}</p>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+
+    <button type="button" class="add-custom-need" data-action="addCustomNeed">
+        <i class="fas fa-plus"></i>
+        {{localize "MORTAL_NEEDS.Settings.AddCustomNeed"}}
+    </button>
+
+    <div class="form-footer">
+        <button type="submit" class="save-btn">
+            <i class="fas fa-save"></i>
+            {{localize "Save"}}
+        </button>
+    </div>
+</div>

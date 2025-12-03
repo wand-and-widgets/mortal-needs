@@ -1,0 +1,313 @@
+{
+  "MORTAL_NEEDS": {
+    "Controls": {
+      "Toggle": "Alternar Painel de Necessidades Mortais"
+    },
+
+    "UI": {
+      "Title": "Necessidades Mortais",
+      "SelectAll": "Selecionar Todos",
+      "DeselectAll": "Desmarcar Todos",
+      "SelectAllForStress": "Selecionar todos os atores para operações de estresse",
+      "DeselectAllForStress": "Desmarcar todos os atores",
+      "SelectionHint": "Ctrl+clique nos retratos para multi-seleção",
+      "SelectActors": "Atores",
+      "MultiStress": "Multi-Estresse",
+      "MultiStressHint": "Selecione necessidades e valores para aplicar estresse a todos os atores selecionados (ou todos).",
+      "Settings": "Configurar Necessidades",
+      "Stress": "Aumentar",
+      "Relieve": "Diminuir",
+      "StressAll": "Aumentar para todos:",
+      "RelieveAll": "Diminuir para todos:",
+      "StressAmount": "Quantidade",
+      "NoActors": "Nenhum ator rastreado. Clique em 'Atores' para selecionar quais personagens rastrear.",
+      "ClickToSelect": "clique para selecionar",
+      "OpenSheet": "Abrir ficha do personagem",
+      "ResistanceShort": "Resistência",
+      "AutoExhaustionBadge": "Auto-Exaustão",
+      "ExhaustionTicksTooltip": "Progresso de punição"
+    },
+
+    "Needs": {
+      "hunger": "Fome",
+      "thirst": "Sede",
+      "exhaustion": "Exaustão",
+      "cold": "Frio",
+      "heat": "Calor",
+      "comfort": "Conforto",
+      "sanity": "Sanidade",
+      "morale": "Moral",
+      "pain": "Dor",
+      "radiation": "Radiação",
+      "corruption": "Corrupção",
+      "fatigue": "Fadiga",
+      "environmental": "Estresse Ambiental"
+    },
+
+    "Severity": {
+      "minimal": "Mínimo",
+      "low": "Baixo",
+      "medium": "Moderado",
+      "high": "Alto",
+      "critical": "Crítico"
+    },
+
+    "Settings": {
+      "DefaultStressAmount": "Quantidade de Estresse Padrão",
+      "DefaultStressAmountHint": "A quantidade padrão de estresse a aplicar ao usar os botões rápidos (1-50).",
+
+      "ApplyConModifier": "Aplicar Modificador de Constituição",
+      "ApplyConModifierHint": "Quando ativado, as quantidades de estresse são modificadas pela Constituição do personagem. Maior Con = menos estresse.",
+
+      "ShowNeedValues": "Mostrar Valores",
+      "ShowNeedValuesHint": "Exibir os valores numéricos nas barras de necessidade.",
+
+      "PlayerVisibility": "Visibilidade para Jogadores",
+      "PlayerVisibilityHint": "Controla o que os jogadores podem ver no painel de necessidades.",
+      "PlayerVisibilityNone": "Oculto (apenas GM)",
+      "PlayerVisibilityOwn": "Apenas próprio personagem",
+      "PlayerVisibilityAll": "Todos os personagens",
+
+      "AnimateBars": "Animar Barras",
+      "AnimateBarsHint": "Ativar animações suaves quando os valores das barras mudam.",
+
+      "CompactMode": "Modo Compacto",
+      "CompactModeHint": "Usar exibição mais compacta com retratos e barras menores.",
+
+      "BarOrientation": "Orientação das Barras",
+      "BarOrientationHint": "Escolha entre barras verticais (compacto) ou barras horizontais (visão detalhada).",
+      "BarOrientationVertical": "Barras Verticais",
+      "BarOrientationHorizontal": "Barras Horizontais",
+
+      "NotifyOnCritical": "Notificar em Crítico",
+      "NotifyOnCriticalHint": "Exibir uma notificação quando uma necessidade atinge nível crítico.",
+
+      "CriticalThreshold": "Limite Crítico",
+      "CriticalThresholdHint": "A porcentagem na qual uma necessidade é considerada crítica (50-100).",
+
+      "PunishmentRemovalMode": "Modo de Remoção de Punição",
+      "PunishmentRemovalModeHint": "Como as punições são removidas quando as necessidades caem abaixo do crítico.",
+      "RemovalModeAskGM": "Perguntar ao Mestre (mostrar diálogo)",
+      "RemovalModeImmediate": "Remover imediatamente",
+      "RemovalModeOnRest": "Apenas em descanso (manual)",
+
+      "ShowPunishmentChat": "Mostrar Mensagens de Punição",
+      "ShowPunishmentChatHint": "Exibir mensagens estilizadas no chat quando punições são aplicadas ou removidas.",
+
+      "ConfigureNeeds": "Configurar Necessidades",
+      "ConfigureNeedsLabel": "Abrir Configuração",
+      "ConfigureNeedsHint": "Ativar, desativar e personalizar quais necessidades são rastreadas.",
+
+      "NeedId": "ID da Necessidade",
+      "NeedIdHint": "Um identificador único para esta necessidade (minúsculas, sem espaços).",
+      "NeedIcon": "Ícone",
+      "NeedIconHint": "Classe de ícone Font Awesome (ex: fa-fire, fa-heart).",
+
+      "AddCustomNeed": "Adicionar Necessidade Personalizada",
+      "RemoveNeed": "Remover Necessidade",
+      "RemoveNeedConfirm": "Tem certeza que deseja remover a necessidade personalizada '{name}'? Isso excluirá todos os dados armazenados para esta necessidade.",
+      "Custom": "Personalizado",
+
+      "ConfigureNeedOptions": "Configurar opções da necessidade",
+      "StressAmountPerNeed": "Quantidade de Estresse",
+      "StressAmountPerNeedHint": "Quanto estresse é aplicado ao usar os botões rápidos para esta necessidade.",
+      "ResistanceAttribute": "Atributo de Resistência",
+      "ResistanceAttributeHint": "Personagens com valores mais altos neste atributo ganharão menos estresse para esta necessidade.",
+      "NoResistance": "Nenhum (sem resistência)",
+      "AutoExhaustion": "Auto-Exaustão ao atingir 100%",
+      "AutoExhaustionHint": "Quando esta necessidade atingir 100%, aplica exaustão automaticamente.",
+      "ExhaustionTicks": "Ticks de Exaustão",
+      "ExhaustionTicksHint": "Quantas vezes o estresse deve ser aplicado em 100% antes de ganhar outro ponto de exaustão.",
+      "TicksSuffix": "ticks",
+      "Abilities": "Habilidades",
+      "Skills": "Perícias",
+      "Other": "Outros",
+
+      "UIScale": "Escala da Interface",
+      "UIScaleHint": "Ajuste o tamanho do painel de necessidades. Mudanças são visualizadas instantaneamente.",
+
+      "ConfigureActors": "Selecionar Atores Rastreados",
+      "ConfigureActorsLabel": "Escolher Atores",
+      "ConfigureActorsHint": "Selecione quais atores devem ter suas necessidades rastreadas pelo módulo.",
+      "FirstTimeActorSelection": "Esta é sua primeira vez configurando atores. Todos os personagens com dono são selecionados por padrão.",
+      "NoOwners": "Sem donos",
+      "NoActorsAvailable": "Nenhum ator com dono disponível para rastrear."
+    },
+
+    "Notifications": {
+      "NeedAdded": "Necessidade personalizada '{name}' foi adicionada.",
+      "NeedRemoved": "Necessidade personalizada '{name}' foi removida.",
+      "CriticalLevel": "{need} de {actor} atingiu nível crítico!",
+      "ActorsUpdated": "{count} ator(es) estão sendo rastreados agora.",
+      "ExhaustionGained": "{actor} ganhou exaustão por causa de {need}!",
+      "PunishmentApplied": "{actor} sofreu {punishment} por causa de {need}!",
+      "PunishmentRemoved": "{punishment} de {actor} por {need} foi removido."
+    },
+
+    "Punishment": {
+      "None": "Nenhuma",
+      "Exhaustion": "Exaustão",
+      "Damage": "Dano",
+      "Condition": "Condição",
+      "MaxHpReduction": "Redução de HP Máximo",
+      "MaxHP": "HP Máximo",
+      "Type": "Tipo de Punição",
+      "TypeHint": "O que acontece quando esta necessidade atinge 100%.",
+      "DamageAmount": "Quantidade de Dano",
+      "DamageAmountHint": "Quanto dano aplicar.",
+      "DamageType": "Tipo de Dano",
+      "DamageTypeHint": "Tipo do dano (afeta resistências).",
+      "ConditionType": "Condição",
+      "ConditionTypeHint": "Qual condição aplicar.",
+      "MaxHpAmount": "Redução de HP",
+      "MaxHpAmountHint": "Quanto reduzir o HP máximo.",
+      "Ticks": "Ticks de Punição",
+      "TicksHint": "Quantas vezes o estresse deve ser aplicado em 100% antes da punição disparar novamente."
+    },
+
+    "Tooltips": {
+      "PunishmentExhaustion": "Em 100%: Ganha nível de exaustão",
+      "PunishmentDamage": "Em 100%: Sofre {amount} de dano {type}",
+      "PunishmentCondition": "Em 100%: Fica {condition}",
+      "PunishmentMaxHP": "Em 100%: HP máximo reduzido em {amount}",
+      "NeedProgress": "{value}/{max} ({percent}%)",
+      "TickProgress": "Punição em {remaining} ticks"
+    },
+
+    "Conditions": {
+      "PoisonedDesc": "Desvantagem em jogadas de ataque e testes de habilidade",
+      "FrightenedDesc": "Desvantagem enquanto fonte à vista, não pode se aproximar voluntariamente",
+      "StunnedDesc": "Incapacitado, não pode se mover, falha automática em salvamentos de For/Des",
+      "IncapacitatedDesc": "Não pode realizar ações ou reações"
+    },
+
+    "Chat": {
+      "Removed": "Removido"
+    },
+
+    "Dialogs": {
+      "RemovalTitle": "Recuperação de Punição",
+      "RemovalMessage": "{need} de {actor} caiu abaixo do crítico. Atualmente sofre de {punishment}.",
+      "RemovalQuestion": "Remover a punição?",
+      "RemoveNow": "Remover Agora",
+      "KeepPunishment": "Manter Ativa"
+    },
+
+    "Flavor": {
+      "hunger": {
+        "apply": [
+          "Um vazio corrosivo consome os pensamentos de {actor}, cada batida do coração um lembrete do sustento negado.",
+          "A dor oca no estômago de {actor} tornou-se insuportável, a fraqueza infiltrando-se em cada membro.",
+          "O corpo de {actor} começa a consumir a si mesmo, desesperado por qualquer fonte de nutrição.",
+          "A fome rasga as entranhas de {actor} como uma besta desesperada tentando escapar.",
+          "O mundo desfoca nas bordas enquanto o corpo faminto de {actor} grita por comida."
+        ],
+        "remove": [
+          "A força retorna aos membros de {actor} enquanto a fome corrosiva finalmente diminui.",
+          "O vazio desesperado desvanece, substituído por vigor renovado.",
+          "{actor} sente a vida fluindo de volta enquanto o aperto da fome afrouxa."
+        ]
+      },
+      "thirst": {
+        "apply": [
+          "A garganta de {actor} queima como lixa, cada engolida um lembrete da ausência de água.",
+          "Lábios rachados e língua inchada marcam a necessidade desesperada de {actor} por água.",
+          "A desidratação agarra {actor} impiedosamente, pensamentos ficando lentos e confusos.",
+          "Cada célula no corpo de {actor} clama por água, a sede tornando-se enlouquecedora.",
+          "A boca de {actor} parece um deserto, língua grossa e inútil."
+        ],
+        "remove": [
+          "Alívio refrescante lava {actor} enquanto a terrível sede finalmente cede.",
+          "Hidratação revigorante restaura a clareza e força de {actor}.",
+          "A queimação desesperada na garganta de {actor} finalmente diminui."
+        ]
+      },
+      "exhaustion": {
+        "apply": [
+          "Cansaço profundo arrasta {actor} para baixo, cada movimento um esforço hercúleo.",
+          "As pálpebras de {actor} ficam impossivelmente pesadas, o corpo exigindo descanso que não pode ter.",
+          "A fadiga se instala na própria alma de {actor}, ameaçando extinguir toda motivação.",
+          "Cada passo parece vadear em lama grossa enquanto a exaustão reclama {actor}.",
+          "Os músculos de {actor} gritam por descanso, tremendo a cada esforço."
+        ],
+        "remove": [
+          "Energia renovada flui pelas veias de {actor} enquanto as correntes da exaustão se quebram.",
+          "O vigor retorna ao passo de {actor}, o cansaço opressivo finalmente se dissipando.",
+          "{actor} se sente restaurado, a fadiga esmagadora finalmente liberando seu aperto."
+        ]
+      },
+      "cold": {
+        "apply": [
+          "O frio penetra nos ossos de {actor}, entorpecendo dedos e nublando pensamentos.",
+          "Tremores violentos sacodem o corpo de {actor} enquanto o frio amargo se apodera.",
+          "Os dentes de {actor} batem incontrolavelmente, o calor uma memória distante.",
+          "A geada parece cristalizar no próprio sangue de {actor}, desacelerando tudo.",
+          "O frio implacável envolve {actor} como uma mortalha congelada."
+        ],
+        "remove": [
+          "Calor abençoado retorna às extremidades de {actor}, o frio mortal recuando.",
+          "{actor} sente o gelo em suas veias começar a derreter.",
+          "O frio amargo libera seu aperto enquanto o calor inunda de volta em {actor}."
+        ]
+      },
+      "heat": {
+        "apply": [
+          "Calor opressivo sufoca {actor}, cada respiração como inalar fogo.",
+          "Suor escorre de {actor} enquanto o calor impiedoso ameaça sobrecarregar.",
+          "A visão de {actor} oscila no calor brutal, pensamentos ficando lentos.",
+          "A temperatura escaldante drena a força de {actor} a cada momento que passa.",
+          "{actor} sente como se estivesse sendo lentamente cozido vivo pelo calor implacável."
+        ],
+        "remove": [
+          "Alívio fresco lava {actor} enquanto o calor opressivo finalmente cede.",
+          "A temperatura corporal de {actor} retorna ao normal, o perigo passando.",
+          "O calor sufocante libera seu aperto, permitindo que {actor} respire livremente novamente."
+        ]
+      },
+      "sanity": {
+        "apply": [
+          "A realidade se fratura ao redor de {actor}, sombras sussurrando segredos que deveriam permanecer inéditos.",
+          "O controle de {actor} sobre a sanidade escorrega enquanto visões eldritch nublam sua mente.",
+          "O fino véu entre razão e loucura se rasga, expondo {actor} a horrores além da compreensão.",
+          "Sussurros vindos de lugar nenhum preenchem a mente de {actor}, afogando o pensamento racional.",
+          "O senso de identidade de {actor} começa a se desfazer, a personalidade sangrando."
+        ],
+        "remove": [
+          "Clareza retorna à mente fraturada de {actor}, os sussurros finalmente silenciando.",
+          "As visões de pesadelo desvanecem enquanto {actor} recupera sua sanidade.",
+          "A mente de {actor} se reconstrói, a realidade se solidificando mais uma vez."
+        ]
+      },
+      "pain": {
+        "apply": [
+          "Agonia atravessa {actor}, cada terminação nervosa gritando em protesto.",
+          "{actor} não consegue focar em nada além da dor que consome todo seu corpo.",
+          "Ondas de tormento colidem sobre {actor}, ameaçando arrastá-lo para a inconsciência.",
+          "A dor se torna o mundo inteiro de {actor}, bloqueando todo o resto.",
+          "O corpo de {actor} é uma sinfonia de sofrimento, cada movimento adicionando novas notas de agonia."
+        ],
+        "remove": [
+          "A dor esmagadora finalmente diminui, permitindo que {actor} pense claramente novamente.",
+          "Alívio inunda {actor} enquanto o tormento libera seu aperto.",
+          "{actor} suspira de alívio enquanto a agonia finalmente, misericordiosamente, desvanece."
+        ]
+      },
+      "default": {
+        "apply": [
+          "A tensão se torna insuportável enquanto {actor} atinge seu limite.",
+          "{actor} luta contra a pressão crescente, corpo e mente levados ao limite.",
+          "Algo se quebra dentro de {actor} enquanto não consegue mais suportar o estresse."
+        ],
+        "remove": [
+          "A pressão insuportável finalmente diminui, permitindo que {actor} se recupere.",
+          "{actor} sente o peso esmagador se dissipar enquanto o alívio o invade.",
+          "A recuperação começa enquanto o pior da provação passa para {actor}."
+        ]
+      }
+    },
+
+    "API": {
+      "Description": "API Mortal Needs - Use game.modules.get('mortal-needs').api para acesso programático."
+    }
+  }
+}
