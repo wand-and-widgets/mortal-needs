@@ -145,6 +145,90 @@ export const FLAVOR_TEXTS = {
             "The voices fade to manageable murmurs."
         ]
     },
+    corruption: {
+        apply: [
+            "Darkness seeps into your veins like poison.",
+            "Something ancient and hungry stirs within.",
+            "Your soul blackens at the edges.",
+            "The corruption whispers sweet promises of power."
+        ],
+        remove: [
+            "The taint recedes, but leaves its mark.",
+            "Light finds its way back, barely."
+        ]
+    },
+    radiation: {
+        apply: [
+            "Your cells scream in silent agony.",
+            "The invisible fire burns from within.",
+            "Your body becomes its own enemy.",
+            "The glow isn't beautiful—it's a death sentence."
+        ],
+        remove: [
+            "The burning subsides, damage done.",
+            "Your body begins its slow repair."
+        ]
+    },
+    pain: {
+        apply: [
+            "Pain becomes your entire world.",
+            "Every nerve ending is a live wire.",
+            "Your body is a symphony of agony.",
+            "The hurt has teeth, and it's hungry."
+        ],
+        remove: [
+            "The agony fades to a dull throb.",
+            "You remember what it's like not to hurt."
+        ]
+    },
+    fatigue: {
+        apply: [
+            "Your muscles turn to water.",
+            "Every step is a mountain climbed.",
+            "Exhaustion sits on your chest like a stone.",
+            "Your body has forgotten how to move."
+        ],
+        remove: [
+            "Energy trickles back into tired limbs.",
+            "The weariness lifts like morning fog."
+        ]
+    },
+    morale: {
+        apply: [
+            "Hope dies in your chest.",
+            "The weight of despair crushes your spirit.",
+            "Why even try? The darkness always wins.",
+            "Your will crumbles like ash."
+        ],
+        remove: [
+            "A spark of hope flickers to life.",
+            "The darkness retreats, for now."
+        ]
+    },
+    comfort: {
+        apply: [
+            "Discomfort gnaws at your concentration.",
+            "Nothing feels right. Everything irritates.",
+            "Your body demands relief you cannot provide.",
+            "Misery becomes your constant companion."
+        ],
+        remove: [
+            "Finally, a moment of peace.",
+            "The irritation fades to memory."
+        ]
+    },
+    environmental: {
+        apply: [
+            "The environment turns hostile.",
+            "Nature itself conspires against you.",
+            "Your body rebels against the conditions.",
+            "Survival becomes a conscious effort."
+        ],
+        remove: [
+            "The worst has passed.",
+            "Conditions improve. You can breathe again."
+        ]
+    },
     default: {
         apply: [
             "Your body pays the price.",

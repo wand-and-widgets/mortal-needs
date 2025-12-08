@@ -254,6 +254,149 @@ export class MortalNeedsUI extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     /**
+     * Update a single need's display without full re-render
+     * This prevents the UI from "flashing" when values change
+     * @param {string} actorId - The actor ID
+     * @param {string} needId - The need ID
+     * @private
+     */
+    _updateNeedDisplay(actorId, needId) {
+        const html = this.element;
+        if (!html) return false;
+
+        // Get the actor's current need data
+        const actorNeeds = this.manager.actorNeeds.get(actorId);
+        if (!actorNeeds) return false;
+
+        const needData = actorNeeds[needId];
+        if (!needData) return false;
+
+        // Calculate new values
+        const percentage = Math.round((needData.value / needData.max) * 100);
+        const severity = this._getSeverityClass(percentage);
+        const isAtMax = percentage >= 100;
+
+        // Get need config for punishment/ticks
+        const needConfig = this.manager.getNeedConfig(needId);
+        const hasPunishment = needConfig?.punishment && needConfig.punishment.type && needConfig.punishment.type !== 'none';
+        const punishmentTicks = needConfig?.punishment?.ticks ?? 3;
+        const tickProgress = this.manager.getExhaustionTickProgress?.(actorId, needId) || { current: 0, max: punishmentTicks };
+
+        // Find the actor unit element
+        const actorUnit = html.querySelector(`.mn-actor-unit[data-actor-id="${actorId}"]`);
+        if (!actorUnit) return false;
+
+        // Update vertical bars
+        const vbarContainer = actorUnit.querySelector(`.mn-vbar-container[data-need-id="${needId}"]`);
+        if (vbarContainer) {
+            const vbarFill = vbarContainer.querySelector('.mn-vbar-fill');
+            if (vbarFill) {
+                vbarFill.style.height = `${percentage}%`;
+                vbarFill.className = `mn-vbar-fill ${severity}`;
+            }
+            // Update tooltip
+            const needName = game.i18n.localize(`MORTAL_NEEDS.Needs.${needId}`);
+            vbarContainer.title = `${needName}: ${needData.value}/${needData.max} (${percentage}%)`;
+        }
+
+        // Update horizontal bars (in expanded panel and horizontal mode)
+        actorUnit.querySelectorAll(`.mn-hbar-row[data-need-id="${needId}"], .mn-hbar-row-full[data-need-id="${needId}"]`).forEach(row => {
+            const hbarFill = row.querySelector('.mn-hbar-fill');
+            if (hbarFill) {
+                hbarFill.style.width = `${percentage}%`;
+                hbarFill.className = `mn-hbar-fill ${severity}`;
+            }
+            const hbarText = row.querySelector('.mn-hbar-text');
+            if (hbarText) {
+                hbarText.textContent = needData.value;
+            }
+            const hbarValue = row.querySelector('.mn-hbar-value');
+            if (hbarValue) {
+                hbarValue.textContent = `${percentage}%`;
+            }
+        });
+
+        // Update ticks display
+        const ticksContainer = actorUnit.querySelector(`.mn-ticks-container`);
+        const hticksContainer = actorUnit.querySelector(`.mn-hticks-container`);
+
+        // Handle vertical ticks
+        if (hasPunishment && isAtMax) {
+            if (ticksContainer) {
+                // Update existing ticks
+                const ticks = ticksContainer.querySelectorAll('.mn-tick');
+                ticks.forEach((tick, i) => {
+                    tick.classList.toggle('filled', i < tickProgress.current);
+                });
+                ticksContainer.title = `${game.i18n.localize(`MORTAL_NEEDS.Needs.${needId}`)}: ${game.i18n.localize('MORTAL_NEEDS.UI.ExhaustionTicksTooltip')} (${tickProgress.current}/${tickProgress.max})`;
+                ticksContainer.style.display = '';
+            } else if (vbarContainer) {
+                // Need to create ticks container - requires full render for this edge case
+                return false;
+            }
+        } else if (ticksContainer) {
+            ticksContainer.style.display = 'none';
+        }
+
+        // Handle horizontal ticks
+        if (hasPunishment && isAtMax) {
+            if (hticksContainer) {
+                const hticks = hticksContainer.querySelectorAll('.mn-htick');
+                hticks.forEach((tick, i) => {
+                    tick.classList.toggle('filled', i < tickProgress.current);
+                });
+                hticksContainer.title = `${game.i18n.localize('MORTAL_NEEDS.UI.ExhaustionTicksTooltip')} (${tickProgress.current}/${tickProgress.max})`;
+                hticksContainer.style.display = '';
+            }
+        } else if (hticksContainer) {
+            hticksContainer.style.display = 'none';
+        }
+
+        // Update critical state on actor unit (only if changed to avoid animation restart)
+        const allNeeds = Object.values(actorNeeds);
+        const hasCritical = allNeeds.some(n => Math.round((n.value / n.max) * 100) >= 80);
+        const currentlyHasCritical = actorUnit.classList.contains('has-critical');
+
+        // Only toggle if state actually changed
+        if (hasCritical !== currentlyHasCritical) {
+            actorUnit.classList.toggle('has-critical', hasCritical);
+
+            // Update critical ring on portrait
+            const criticalRing = actorUnit.querySelector('.mn-portrait-critical-ring');
+            if (hasCritical && !criticalRing) {
+                const portraitContainer = actorUnit.querySelector('.mn-portrait-container');
+                if (portraitContainer) {
+                    const ring = document.createElement('div');
+                    ring.className = 'mn-portrait-critical-ring';
+                    portraitContainer.appendChild(ring);
+                }
+            } else if (!hasCritical && criticalRing) {
+                criticalRing.remove();
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Update multiple needs for multiple actors without full re-render
+     * @param {Array<{actorId: string, needId: string}>} updates - Array of updates
+     * @private
+     */
+    _updateMultipleNeeds(updates) {
+        let allSuccess = true;
+        for (const { actorId, needId } of updates) {
+            if (!this._updateNeedDisplay(actorId, needId)) {
+                allSuccess = false;
+            }
+        }
+        // If any update failed (e.g., new ticks needed), do a full render
+        if (!allSuccess) {
+            this.render();
+        }
+    }
+
+    /**
      * Actions performed after rendering
      * @param {object} context - Render context
      * @param {object} options - Render options
@@ -568,7 +711,11 @@ export class MortalNeedsUI extends HandlebarsApplicationMixin(ApplicationV2) {
 
         // Use the need's configured stressAmount (null tells manager to use its own config)
         await this.manager.stressNeed(actorId, needId, null);
-        this.render();
+
+        // Smooth update without full re-render
+        if (!this._updateNeedDisplay(actorId, needId)) {
+            this.render();
+        }
     }
 
     /**
@@ -585,7 +732,11 @@ export class MortalNeedsUI extends HandlebarsApplicationMixin(ApplicationV2) {
         const amount = config?.stressAmount ?? 10;
 
         await this.manager.relieveNeed(actorId, needId, amount);
-        this.render();
+
+        // Smooth update without full re-render
+        if (!this._updateNeedDisplay(actorId, needId)) {
+            this.render();
+        }
     }
 
     /**
@@ -601,10 +752,14 @@ export class MortalNeedsUI extends HandlebarsApplicationMixin(ApplicationV2) {
             : Array.from(this.manager.actorNeeds.keys());
 
         // Use the need's configured stressAmount
+        const updates = [];
         for (const actorId of actorIds) {
             await this.manager.stressNeed(actorId, needId, null);
+            updates.push({ actorId, needId });
         }
-        this.render();
+
+        // Smooth update without full re-render
+        this._updateMultipleNeeds(updates);
     }
 
     /**
@@ -623,10 +778,14 @@ export class MortalNeedsUI extends HandlebarsApplicationMixin(ApplicationV2) {
             ? Array.from(this._selectedActors)
             : Array.from(this.manager.actorNeeds.keys());
 
+        const updates = [];
         for (const actorId of actorIds) {
             await this.manager.relieveNeed(actorId, needId, amount);
+            updates.push({ actorId, needId });
         }
-        this.render();
+
+        // Smooth update without full re-render
+        this._updateMultipleNeeds(updates);
     }
 
     /**
@@ -714,7 +873,15 @@ export class MortalNeedsUI extends HandlebarsApplicationMixin(ApplicationV2) {
                             : Array.from(self.manager.actorNeeds.keys());
 
                         await self.manager.stressMultiple(actorIds, selectedNeeds);
-                        self.render();
+
+                        // Smooth update without full re-render
+                        const updates = [];
+                        for (const actorId of actorIds) {
+                            for (const needId of Object.keys(selectedNeeds)) {
+                                updates.push({ actorId, needId });
+                            }
+                        }
+                        self._updateMultipleNeeds(updates);
                     }
                 },
                 {
@@ -890,7 +1057,11 @@ export class MortalNeedsUI extends HandlebarsApplicationMixin(ApplicationV2) {
         if (config) {
             const newValue = Math.round((percentage / 100) * config.max);
             await this.manager.setNeed(actorId, needId, newValue);
-            this.render();
+
+            // Smooth update without full re-render
+            if (!this._updateNeedDisplay(actorId, needId)) {
+                this.render();
+            }
         }
     }
 
@@ -935,7 +1106,11 @@ export class MortalNeedsUI extends HandlebarsApplicationMixin(ApplicationV2) {
         if (config) {
             const newValue = Math.round((percentage / 100) * config.max);
             await this.manager.setNeed(actorId, needId, newValue);
-            this.render();
+
+            // Smooth update without full re-render
+            if (!this._updateNeedDisplay(actorId, needId)) {
+                this.render();
+            }
         }
     }
 
@@ -1009,6 +1184,7 @@ export class MortalNeedsUI extends HandlebarsApplicationMixin(ApplicationV2) {
     async _onBarDragEnd(event) {
         if (!this._dragData) return;
 
+        const { actorId, needId } = this._dragData;
         const rect = this._dragData.bar.getBoundingClientRect();
         let percentage;
 
@@ -1020,14 +1196,18 @@ export class MortalNeedsUI extends HandlebarsApplicationMixin(ApplicationV2) {
             percentage = Math.max(0, Math.min(100, Math.round((dragX / rect.width) * 100)));
         }
 
-        const config = this.manager.getNeedConfig(this._dragData.needId);
+        const config = this.manager.getNeedConfig(needId);
         if (config) {
             const newValue = Math.round((percentage / 100) * config.max);
-            await this.manager.setNeed(this._dragData.actorId, this._dragData.needId, newValue);
+            await this.manager.setNeed(actorId, needId, newValue);
         }
 
         this._dragData = null;
-        this.render();
+
+        // Smooth update without full re-render
+        if (!this._updateNeedDisplay(actorId, needId)) {
+            this.render();
+        }
     }
 
     /* -------------------------------------------- */

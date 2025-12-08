@@ -59,6 +59,9 @@ class MortalNeeds {
      * @private
      */
     _handleSocketMessage(data) {
+        // Ignore messages from ourselves (we already updated locally)
+        if (data.senderId === game.user.id) return;
+
         switch (data.action) {
             case 'updateNeed':
                 this._onSocketUpdateNeed(data.payload);
@@ -75,7 +78,14 @@ class MortalNeeds {
      */
     _onSocketUpdateNeed(data) {
         this.manager.updateNeedFromSocket(data);
-        this.ui?.render();
+        // Use partial update if possible, fall back to full render
+        if (this.ui && data.actorId && data.needId) {
+            if (!this.ui._updateNeedDisplay(data.actorId, data.needId)) {
+                this.ui.render();
+            }
+        } else {
+            this.ui?.render();
+        }
     }
 
     /**
@@ -93,7 +103,12 @@ class MortalNeeds {
      * @param {object} payload - The data to send
      */
     emitSocket(action, payload) {
-        game.socket.emit(`module.${MODULE_ID}`, { action, payload });
+        // Include sender ID so we can ignore our own messages
+        game.socket.emit(`module.${MODULE_ID}`, {
+            action,
+            payload,
+            senderId: game.user.id
+        });
     }
 
     /**

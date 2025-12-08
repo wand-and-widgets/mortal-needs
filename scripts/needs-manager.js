@@ -99,18 +99,79 @@ export class NeedsManager {
 
     /**
      * Load needs configuration from module settings
+     * Merges saved config with defaults to ensure new fields are always present
      * @private
      */
     async _loadNeedsConfig() {
         const savedConfig = game.settings.get(MODULE_ID, 'needsConfig');
 
         if (savedConfig && savedConfig.length > 0) {
-            this.needsConfig = savedConfig;
+            // Merge saved config with defaults to ensure all fields exist
+            this.needsConfig = this._mergeWithDefaults(savedConfig);
+
+            // Save the merged config to persist any new default fields
+            await game.settings.set(MODULE_ID, 'needsConfig', this.needsConfig);
         } else {
             // Use defaults and save them
             this.needsConfig = foundry.utils.deepClone(DEFAULT_NEEDS);
             await game.settings.set(MODULE_ID, 'needsConfig', this.needsConfig);
         }
+    }
+
+    /**
+     * Merge saved configuration with defaults to ensure all fields exist
+     * This handles cases where new fields (like 'punishment') are added in updates
+     * @param {Array} savedConfig - The saved configuration
+     * @returns {Array} Merged configuration with all default fields
+     * @private
+     */
+    _mergeWithDefaults(savedConfig) {
+        const defaults = foundry.utils.deepClone(DEFAULT_NEEDS);
+        const merged = [];
+
+        // First, update existing needs from saved config
+        for (const defaultNeed of defaults) {
+            const savedNeed = savedConfig.find(n => n.id === defaultNeed.id);
+
+            if (savedNeed) {
+                // Merge: saved values override defaults, but defaults fill in missing fields
+                const mergedNeed = foundry.utils.mergeObject(
+                    foundry.utils.deepClone(defaultNeed),
+                    savedNeed,
+                    { inplace: false }
+                );
+
+                // Special handling for punishment - ensure it always has required fields
+                if (!mergedNeed.punishment || typeof mergedNeed.punishment !== 'object') {
+                    mergedNeed.punishment = defaultNeed.punishment || { type: 'none', ticks: 3 };
+                } else {
+                    // Merge punishment fields with defaults
+                    mergedNeed.punishment = foundry.utils.mergeObject(
+                        defaultNeed.punishment || { type: 'none', ticks: 3 },
+                        mergedNeed.punishment,
+                        { inplace: false }
+                    );
+                }
+
+                merged.push(mergedNeed);
+            } else {
+                // New default need that wasn't in saved config
+                merged.push(foundry.utils.deepClone(defaultNeed));
+            }
+        }
+
+        // Add any custom needs from saved config that aren't in defaults
+        for (const savedNeed of savedConfig) {
+            if (savedNeed.custom && !merged.find(n => n.id === savedNeed.id)) {
+                // Ensure custom needs have punishment field
+                if (!savedNeed.punishment) {
+                    savedNeed.punishment = { type: 'none', ticks: 3 };
+                }
+                merged.push(savedNeed);
+            }
+        }
+
+        return merged;
     }
 
     /**
@@ -729,8 +790,55 @@ export class NeedsManager {
     async setNeedEnabled(needId, enabled) {
         const config = this.needsConfig.find(n => n.id === needId);
         if (config) {
+            const wasEnabled = config.enabled;
             config.enabled = enabled;
             await game.settings.set(MODULE_ID, 'needsConfig', this.needsConfig);
+
+            // If enabling a new need, add it to all tracked actors
+            if (enabled && !wasEnabled) {
+                await this._addNeedToAllActors(needId);
+            }
+            // If disabling, remove it from all tracked actors' maps
+            else if (!enabled && wasEnabled) {
+                this._removeNeedFromAllActors(needId);
+            }
+        }
+    }
+
+    /**
+     * Add a need to all currently tracked actors
+     * @param {string} needId - The need ID to add
+     * @private
+     */
+    async _addNeedToAllActors(needId) {
+        const config = this.getNeedConfig(needId);
+        if (!config) return;
+
+        for (const [actorId, needsMap] of this.actorNeeds) {
+            if (!needsMap.has(needId)) {
+                // Check if actor has a saved value for this need
+                const actor = game.actors.get(actorId);
+                const existingNeeds = actor?.getFlag(MODULE_ID, 'needs') || {};
+                const value = existingNeeds[needId] ?? config.default;
+
+                needsMap.set(needId, value);
+
+                // Persist if it was loaded from defaults
+                if (existingNeeds[needId] === undefined) {
+                    await this._persistActorNeed(actorId, needId, value);
+                }
+            }
+        }
+    }
+
+    /**
+     * Remove a need from all currently tracked actors' maps
+     * @param {string} needId - The need ID to remove
+     * @private
+     */
+    _removeNeedFromAllActors(needId) {
+        for (const [actorId, needsMap] of this.actorNeeds) {
+            needsMap.delete(needId);
         }
     }
 
