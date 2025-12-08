@@ -51,11 +51,8 @@ Works with multiple game systems:
 
 ## Installation
 
-### For Patrons
-1. Link your Patreon account to your Foundry VTT account at [foundryvtt.com](https://foundryvtt.com)
-2. In Foundry VTT, go to **Add-on Modules** > **Install Module**
-3. Find "Mortal Needs" in your subscribed content
-4. Click **Install**
+Foundry Module Browser
+Search for "Mortal Needs" in the Foundry VTT module browser.
 
 ### Manual Installation
 Use the following manifest URL:
