@@ -32,8 +32,10 @@ export class SystemAdapter {
                 return new SwadeAdapter();
             case 'wfrp4e':
                 return new WFRP4eAdapter();
+            case 'custom-system-builder':
+                return new CustomSystemBuilderAdapter();
             default:
-                console.warn(`Mortal Needs | No specific adapter for system '${systemId}', using generic adapter`);
+                console.log(`Mortal Needs | Using generic adapter for system '${systemId}' - core features will work, some advanced features may be limited`);
                 return new SystemAdapter();
         }
     }
@@ -338,5 +340,101 @@ class WFRP4eAdapter extends SystemAdapter {
 
     async applyExhaustion(actor, level) {
         await actor.update({ 'system.status.fatigue.value': level });
+    }
+}
+/**
+ * Custom System Builder adapter
+ * Works with user-defined systems - focuses on core functionality
+ */
+class CustomSystemBuilderAdapter extends SystemAdapter {
+    static get systemId() {
+        return 'custom-system-builder';
+    }
+
+    /**
+     * CSB actors can have any structure, so we try common patterns
+     */
+    getConstitutionScore(actor) {
+        const data = actor.system;
+        if (!data) return 10; // Default value
+        
+        // Try common CSB attribute paths
+        const paths = [
+            'attributes.constitution.value',
+            'attributes.con.value',
+            'stats.constitution.value',
+            'stats.con.value',
+            'characteristics.constitution.value',
+            'body.constitution.value',
+            'body.con.value'
+        ];
+        
+        for (const path of paths) {
+            const value = foundry.utils.getProperty(data, path);
+            if (typeof value === 'number') {
+                return value;
+            }
+        }
+        
+        return 10; // Default if not found
+    }
+
+    getResilienceAttributeName() {
+        return 'Constitution';
+    }
+
+    /**
+     * CSB can have various actor types
+     */
+    isPlayerCharacter(actor) {
+        // Accept any actor with player ownership
+        return actor.hasPlayerOwner;
+    }
+
+    /**
+     * CSB doesn't have built-in exhaustion
+     */
+    getExhaustionLevel(actor) {
+        // Check if there's a custom exhaustion field
+        const data = actor.system;
+        const paths = [
+            'attributes.exhaustion.value',
+            'status.exhaustion.value',
+            'exhaustion.value',
+            'exhaustion'
+        ];
+        
+        for (const path of paths) {
+            const value = foundry.utils.getProperty(data, path);
+            if (typeof value === 'number') {
+                return value;
+            }
+        }
+        
+        return 0;
+    }
+
+    /**
+     * Try to apply exhaustion if field exists
+     */
+    async applyExhaustion(actor, level) {
+        const data = actor.system;
+        const paths = [
+            'attributes.exhaustion.value',
+            'status.exhaustion.value',
+            'exhaustion.value',
+            'exhaustion'
+        ];
+        
+        for (const path of paths) {
+            const currentValue = foundry.utils.getProperty(data, path);
+            if (typeof currentValue === 'number') {
+                await actor.update({ [`system.${path}`]: level });
+                return;
+            }
+        }
+        
+        // If no exhaustion field, just log a warning
+        console.log('Mortal Needs | Custom System Builder: No exhaustion field found. Exhaustion effects will be visual only.');
     }
 }

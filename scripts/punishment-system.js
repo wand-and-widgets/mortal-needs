@@ -6,6 +6,20 @@
 
 import { MODULE_ID, MODULE_NAME } from './constants.js';
 
+
+/**
+ * Localize with fallback - returns fallback if localization key doesn't exist
+ * @param {string} key - The localization key
+ * @param {string} fallback - The fallback string to use
+ * @returns {string} Localized string or fallback
+ */
+function localizeWithFallback(key, fallback) {
+    if (!key) return fallback;
+    const localized = game.i18n.localize(key);
+    // If localize returns the key itself, use fallback
+    return (localized === key) ? fallback : localized;
+}
+
 /**
  * Punishment types available
  */
@@ -21,13 +35,13 @@ export const PUNISHMENT_TYPES = {
  * Available damage types for D&D 5e
  */
 export const DAMAGE_TYPES = {
-    necrotic: { label: 'DND5E.DamageNecrotic', icon: 'fa-skull' },
-    cold: { label: 'DND5E.DamageCold', icon: 'fa-snowflake' },
-    fire: { label: 'DND5E.DamageFire', icon: 'fa-fire' },
-    poison: { label: 'DND5E.DamagePoison', icon: 'fa-skull-crossbones' },
-    psychic: { label: 'DND5E.DamagePsychic', icon: 'fa-brain' },
-    radiant: { label: 'DND5E.DamageRadiant', icon: 'fa-sun' },
-    bludgeoning: { label: 'DND5E.DamageBludgeoning', icon: 'fa-hammer' }
+    necrotic: { label: 'DND5E.DamageNecrotic', fallback: 'Necrotic', icon: 'fa-skull' },
+    cold: { label: 'DND5E.DamageCold', fallback: 'Cold', icon: 'fa-snowflake' },
+    fire: { label: 'DND5E.DamageFire', fallback: 'Fire', icon: 'fa-fire' },
+    poison: { label: 'DND5E.DamagePoison', fallback: 'Poison', icon: 'fa-skull-crossbones' },
+    psychic: { label: 'DND5E.DamagePsychic', fallback: 'Psychic', icon: 'fa-brain' },
+    radiant: { label: 'DND5E.DamageRadiant', fallback: 'Radiant', icon: 'fa-sun' },
+    bludgeoning: { label: 'DND5E.DamageBludgeoning', fallback: 'Bludgeoning', icon: 'fa-hammer' }
 };
 
 /**
@@ -36,24 +50,28 @@ export const DAMAGE_TYPES = {
 export const CONDITIONS = {
     poisoned: {
         label: 'DND5E.ConPoisoned',
+        fallback: 'Poisoned',
         icon: 'fa-biohazard',
         statusId: 'poisoned',
         description: 'MORTAL_NEEDS.Conditions.PoisonedDesc'
     },
     frightened: {
         label: 'DND5E.ConFrightened',
+        fallback: 'Frightened',
         icon: 'fa-ghost',
         statusId: 'frightened',
         description: 'MORTAL_NEEDS.Conditions.FrightenedDesc'
     },
     stunned: {
         label: 'DND5E.ConStunned',
+        fallback: 'Stunned',
         icon: 'fa-dizzy',
         statusId: 'stunned',
         description: 'MORTAL_NEEDS.Conditions.StunnedDesc'
     },
     incapacitated: {
         label: 'DND5E.ConIncapacitated',
+        fallback: 'Incapacitated',
         icon: 'fa-ban',
         statusId: 'incapacitated',
         description: 'MORTAL_NEEDS.Conditions.IncapacitatedDesc'
@@ -441,7 +459,7 @@ export class PunishmentSystem {
 
         // Fallback: Create manual Active Effect
         const effectData = {
-            name: game.i18n.localize(CONDITIONS[conditionId].label),
+            name: localizeWithFallback(CONDITIONS[conditionId].label, CONDITIONS[conditionId].fallback),
             icon: `icons/svg/status/${conditionId}.svg`,
             statuses: [conditionId],
             flags: {
@@ -622,11 +640,13 @@ export class PunishmentSystem {
             case PUNISHMENT_TYPES.EXHAUSTION:
                 return game.i18n.localize('MORTAL_NEEDS.Punishment.Exhaustion');
             case PUNISHMENT_TYPES.DAMAGE:
-                const dmgLabel = DAMAGE_TYPES[damageType]?.label || damageType;
-                return `${game.i18n.localize('MORTAL_NEEDS.Punishment.Damage')} (${game.i18n.localize(dmgLabel)})`;
+                const dmgConfig = DAMAGE_TYPES[damageType];
+                const dmgLabel = dmgConfig ? localizeWithFallback(dmgConfig.label, dmgConfig.fallback) : damageType;
+                return `${game.i18n.localize('MORTAL_NEEDS.Punishment.Damage')} (${dmgLabel})`;
             case PUNISHMENT_TYPES.CONDITION:
-                const condLabel = CONDITIONS[condition]?.label || condition;
-                return game.i18n.localize(condLabel);
+                const condConfig = CONDITIONS[condition];
+                const condLabel = condConfig ? localizeWithFallback(condConfig.label, condConfig.fallback) : condition;
+                return condLabel;
             case PUNISHMENT_TYPES.MAX_HP:
                 return game.i18n.localize('MORTAL_NEEDS.Punishment.MaxHpReduction');
             default:

@@ -1,7 +1,7 @@
 # Mortal Needs
 
 ![Foundry VTT](https://img.shields.io/badge/Foundry%20VTT-v11--v13-informational)
-![Version](https://img.shields.io/badge/Version-1.0.0-blue)
+![Version](https://img.shields.io/badge/Version-1.2.0-blue)
 [![Patreon](https://img.shields.io/badge/Patreon-Wand%20%26%20Widgets-orange)](https://patreon.com/wandandwidgets)
 
 A survival needs management module for Foundry VTT. Track hunger, thirst, exhaustion, temperature, and other mortal necessities for your players with a beautiful, compact floating panel.
@@ -38,12 +38,15 @@ Stress amounts are modified by character Constitution - tougher characters are m
 - Chat cards announcing critical states
 
 ### Multi-System Support
-Works with multiple game systems:
-- D&D 5e (fully supported)
-- Pathfinder 2e
-- Savage Worlds
-- WFRP 4e
-- Generic fallback for other systems
+Works with **any game system**! The module includes optimized adapters for:
+- D&D 5e (fully supported with exhaustion, conditions, damage)
+- Pathfinder 2e (fatigue and drained conditions)
+- Savage Worlds (fatigue system)
+- WFRP 4e (fatigue system)
+- **Custom System Builder** (fully compatible!)
+- Generic adapter for all other systems
+
+**Note for non-D&D systems**: Core features (tracking needs, UI, notifications) work perfectly. Some advanced punishment effects (like auto-applying conditions or exhaustion) may need to be applied manually depending on your system.
 
 ### Localization
 - English
@@ -128,13 +131,14 @@ Hooks.on('mortalNeedsThreshold', (data) => {
 | v12                 | Compatible |
 | v13                 | Verified |
 
-| Game System | Status |
-|-------------|--------|
-| D&D 5e 4.0+ | Fully Supported |
-| Pathfinder 2e | Supported |
-| Savage Worlds | Supported |
-| WFRP 4e | Supported |
-| Other Systems | Generic Fallback |
+| Game System | Status | Notes |
+|-------------|--------|-------|
+| D&D 5e 4.0+ | Fully Supported | All features including exhaustion, conditions, damage |
+| Pathfinder 2e | Supported | Fatigue/drained conditions |
+| Savage Worlds | Supported | Fatigue system integration |
+| WFRP 4e | Supported | Fatigue system integration |
+| Custom System Builder | Supported | Full UI, manual punishment application |
+| Other Systems | Compatible | Generic adapter, core features work |
 
 ## Support
 
