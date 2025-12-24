@@ -1549,7 +1549,7 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
                     icon: 'fas fa-plus',
                     default: true,
                     callback: async (event, button, dialog) => {
-                        const form = dialog.querySelector('form');
+                        const form = dialog.element.querySelector('form');
                         const id = form.querySelector('input[name="id"]').value
                             .trim()
                             .toLowerCase()

@@ -2,7 +2,7 @@
   "id": "mortal-needs",
   "title": "Mortal Needs",
   "description": "A survival needs management system for Foundry VTT. Track hunger, thirst, exhaustion, temperature, and other mortal necessities for your players with a beautiful compact UI. Works with any game system!",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "compatibility": {
     "minimum": "11",
     "verified": "13",
