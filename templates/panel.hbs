@@ -1,0 +1,56 @@
+<div class="mn-panel">
+  <section class="mn-panel__content">
+    {{#if hasTracked}}
+      <div class="mn-toolbar">
+        <div class="mn-toolbar__group">
+          <button class="mn-toolbar__btn" data-action="add-actors" data-tooltip="{{localize 'MORTAL_NEEDS.Toolbar.AddActors'}}">
+            <i class="fas fa-user-plus"></i>
+            <span>{{localize "MORTAL_NEEDS.Toolbar.Add"}}</span>
+          </button>
+          <button class="mn-toolbar__btn" data-action="stress-all" data-tooltip="{{localize 'MORTAL_NEEDS.Toolbar.StressAll'}}">
+            <i class="fas fa-arrow-up"></i>
+            <span>{{localize "MORTAL_NEEDS.Toolbar.StressAll"}}</span>
+          </button>
+          <button class="mn-toolbar__btn" data-action="relieve-all" data-tooltip="{{localize 'MORTAL_NEEDS.Toolbar.RelieveAll'}}">
+            <i class="fas fa-arrow-down"></i>
+            <span>{{localize "MORTAL_NEEDS.Toolbar.RelieveAll"}}</span>
+          </button>
+        </div>
+
+        <div class="mn-toolbar__spacer"></div>
+
+        <div class="mn-toolbar__group">
+          {{#if isGM}}
+          <button class="mn-toolbar__btn mn-toolbar__btn--icon" data-action="configure" data-tooltip="{{localize 'MORTAL_NEEDS.Toolbar.Configure'}}">
+            <i class="fas fa-cog"></i>
+          </button>
+          <button class="mn-toolbar__btn mn-toolbar__btn--icon" data-action="history" data-tooltip="{{localize 'MORTAL_NEEDS.Toolbar.History'}}">
+            <i class="fas fa-history"></i>
+          </button>
+          {{/if}}
+        </div>
+      </div>
+
+      <div class="mn-panel__actors">
+        {{#each actors}}
+          {{> "modules/mortal-needs/templates/components/actor-card.hbs" this isGM=../isGM}}
+        {{/each}}
+      </div>
+    {{else}}
+      {{> "modules/mortal-needs/templates/components/empty-state.hbs"}}
+    {{/if}}
+  </section>
+
+  <footer class="mn-panel__footer">
+    <span class="mn-panel__footer-stat">
+      <i class="fas fa-users"></i>
+      {{trackedCount}}
+    </span>
+    {{#if criticalCount}}
+      <span class="mn-panel__footer-stat mn-badge--critical">
+        <i class="fas fa-exclamation-triangle"></i>
+        {{criticalCount}}
+      </span>
+    {{/if}}
+  </footer>
+</div>

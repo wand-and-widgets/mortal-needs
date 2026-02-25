@@ -1,0 +1,185 @@
+/* Mortal Needs v2.0 — Broadcast HUD (persistent dock) */
+
+.mn-broadcast {
+  position: fixed;
+  left: 16px;
+  bottom: 140px;
+  min-width: 240px;
+  max-width: 360px;
+  background: linear-gradient(135deg, rgba(24, 24, 24, 0.94), rgba(18, 18, 18, 0.92));
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--mn-border-default);
+  border-radius: var(--mn-radius-lg);
+  box-shadow: var(--mn-shadow-lg);
+  z-index: 1000;
+  font-family: var(--mn-font-family);
+  color: var(--mn-text-primary);
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: auto;
+}
+
+.mn-broadcast--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mn-broadcast--exit {
+  opacity: 0;
+  transform: translateY(16px);
+}
+
+/* Header (drag handle) */
+.mn-broadcast__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--mn-space-sm) var(--mn-space-md);
+  border-bottom: 1px solid var(--mn-border-subtle);
+  user-select: none;
+}
+
+.mn-broadcast__title {
+  font-size: var(--mn-font-size-xs);
+  font-weight: var(--mn-font-weight-semibold);
+  color: var(--mn-text-secondary);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mn-broadcast__title i {
+  color: var(--mn-accent);
+  font-size: 10px;
+}
+
+.mn-broadcast__close {
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: transparent;
+  color: var(--mn-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--mn-radius-sm);
+  font-size: 10px;
+  padding: 0;
+  margin: 0;
+  transition: all var(--mn-transition-fast);
+}
+
+.mn-broadcast__close:hover {
+  background: var(--mn-surface-active);
+  color: var(--mn-text-primary);
+}
+
+/* Body */
+.mn-broadcast__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--mn-space-sm);
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+/* Actor row */
+.mn-broadcast__actor {
+  display: flex;
+  align-items: center;
+  gap: var(--mn-space-sm);
+  padding: var(--mn-space-xs);
+  border-radius: var(--mn-radius-sm);
+  transition: background var(--mn-transition-fast);
+}
+
+.mn-broadcast__actor:hover {
+  background: var(--mn-surface-hover);
+}
+
+.mn-broadcast__portrait {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--mn-border-default);
+  flex-shrink: 0;
+}
+
+.mn-broadcast__actor-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.mn-broadcast__actor-name {
+  font-size: var(--mn-font-size-xs);
+  font-weight: var(--mn-font-weight-medium);
+  color: var(--mn-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Need bars */
+.mn-broadcast__needs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mn-broadcast__need {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mn-broadcast__need-icon {
+  font-size: 8px;
+  width: 12px;
+  text-align: center;
+  color: var(--mn-text-muted);
+  flex-shrink: 0;
+}
+
+.mn-broadcast__need-track {
+  flex: 1;
+  height: 5px;
+  background: var(--mn-surface-base);
+  border-radius: var(--mn-radius-pill);
+  overflow: hidden;
+}
+
+.mn-broadcast__need-fill {
+  height: 100%;
+  border-radius: var(--mn-radius-pill);
+  transition: transform var(--mn-transition-slow);
+  transform-origin: left center;
+}
+
+.mn-broadcast__need-fill[data-severity="safe"] { background: var(--mn-severity-safe); }
+.mn-broadcast__need-fill[data-severity="low"] { background: var(--mn-severity-low); }
+.mn-broadcast__need-fill[data-severity="medium"] { background: var(--mn-severity-medium); }
+.mn-broadcast__need-fill[data-severity="high"] { background: var(--mn-severity-high); }
+.mn-broadcast__need-fill[data-severity="critical"] { background: var(--mn-severity-critical); }
+
+/* Scrollbar */
+.mn-broadcast__body::-webkit-scrollbar {
+  width: 4px;
+}
+
+.mn-broadcast__body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mn-broadcast__body::-webkit-scrollbar-thumb {
+  background: var(--mn-border-default);
+  border-radius: var(--mn-radius-pill);
+}

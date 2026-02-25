@@ -1,0 +1,88 @@
+/* Mortal Needs v2.0 — Badges & Status */
+
+.mn-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--mn-radius-pill);
+  font-size: var(--mn-font-size-xs);
+  font-weight: var(--mn-font-weight-medium);
+  white-space: nowrap;
+}
+
+/* Severity badges */
+.mn-badge--safe {
+  color: var(--mn-severity-safe);
+  background: var(--mn-severity-safe-bg);
+}
+
+.mn-badge--low {
+  color: var(--mn-severity-low);
+  background: var(--mn-severity-low-bg);
+}
+
+.mn-badge--medium {
+  color: var(--mn-severity-medium);
+  background: var(--mn-severity-medium-bg);
+}
+
+.mn-badge--high {
+  color: var(--mn-severity-high);
+  background: var(--mn-severity-high-bg);
+}
+
+.mn-badge--critical {
+  color: var(--mn-severity-critical);
+  background: var(--mn-severity-critical-bg);
+}
+
+/* Count badge */
+.mn-badge--count {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: var(--mn-font-weight-bold);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mn-badge--count-accent {
+  background: var(--mn-accent);
+  color: var(--mn-text-primary);
+}
+
+/* Entity source badge */
+.mn-badge--source {
+  font-size: 10px;
+  padding: 1px 6px;
+  background: var(--mn-surface-base);
+  color: var(--mn-text-muted);
+  border: 1px solid var(--mn-border-subtle);
+}
+
+.mn-badge--source-es {
+  border-color: var(--mn-accent-border);
+  color: var(--mn-accent);
+}
+
+/* Status indicator dot */
+.mn-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.mn-status-dot--safe { background: var(--mn-severity-safe); }
+.mn-status-dot--low { background: var(--mn-severity-low); }
+.mn-status-dot--medium { background: var(--mn-severity-medium); }
+.mn-status-dot--high { background: var(--mn-severity-high); }
+.mn-status-dot--critical {
+  background: var(--mn-severity-critical);
+  animation: mn-pulse-critical 2s ease-in-out infinite;
+}

@@ -1,0 +1,178 @@
+/* Mortal Needs v2.0 — Panel Layout */
+
+/* Visual styling on the root window — let Foundry handle positioning/sizing */
+.mortal-needs-panel {
+  background: var(--mn-surface-base);
+  border-radius: var(--mn-radius-lg);
+  border: 1px solid var(--mn-border-subtle);
+  box-shadow: var(--mn-shadow-lg);
+  overflow: hidden;
+}
+
+/* Inner panel wrapper — layout lives here, not on the root */
+.mn-panel {
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+}
+
+/* Header */
+.mn-panel__header {
+  display: flex;
+  align-items: center;
+  gap: var(--mn-space-sm);
+  padding: var(--mn-space-md) var(--mn-space-lg);
+  background: var(--mn-surface-elevated);
+  border-bottom: 1px solid var(--mn-border-subtle);
+  cursor: grab;
+  user-select: none;
+}
+
+.mn-panel__header:active {
+  cursor: grabbing;
+}
+
+.mn-panel__icon {
+  font-size: var(--mn-font-size-lg);
+  color: var(--mn-accent);
+}
+
+.mn-panel__title {
+  font-size: var(--mn-font-size-md);
+  font-weight: var(--mn-font-weight-bold);
+  color: var(--mn-text-primary);
+  flex-grow: 1;
+}
+
+.mn-panel__header-actions {
+  display: flex;
+  gap: 2px;
+}
+
+.mn-panel__header-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--mn-radius-sm);
+  color: var(--mn-text-muted);
+  font-size: 11px;
+  transition: all var(--mn-transition-fast);
+}
+
+.mn-panel__header-btn:hover {
+  color: var(--mn-text-primary);
+  background: var(--mn-surface-hover);
+}
+
+/* Content area */
+.mn-panel__content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--mn-space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--mn-space-sm);
+}
+
+/* Category groups */
+.mn-panel__category {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mn-space-xs);
+}
+
+.mn-panel__category-header {
+  display: flex;
+  align-items: center;
+  gap: var(--mn-space-sm);
+  padding: var(--mn-space-xs) var(--mn-space-sm);
+  cursor: pointer;
+}
+
+.mn-panel__category-label {
+  font-size: var(--mn-font-size-xs);
+  font-weight: var(--mn-font-weight-semibold);
+  color: var(--mn-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex-grow: 1;
+}
+
+.mn-panel__category-count {
+  font-size: var(--mn-font-size-xs);
+  color: var(--mn-text-muted);
+}
+
+.mn-panel__category-toggle {
+  font-size: 10px;
+  color: var(--mn-text-muted);
+  transition: transform var(--mn-transition-normal);
+}
+
+.mn-panel__category.is-collapsed .mn-panel__category-toggle {
+  transform: rotate(-90deg);
+}
+
+.mn-panel__category.is-collapsed .mn-panel__category-body {
+  display: none;
+}
+
+/* Footer / Status bar */
+.mn-panel__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--mn-space-xs) var(--mn-space-md);
+  background: var(--mn-surface-elevated);
+  border-top: 1px solid var(--mn-border-subtle);
+  font-size: var(--mn-font-size-xs);
+  color: var(--mn-text-muted);
+}
+
+.mn-panel__footer-stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Resize handle */
+.mn-panel__resize {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 16px;
+  height: 16px;
+  cursor: nwse-resize;
+}
+
+/* Empty state */
+.mn-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--mn-space-2xl) var(--mn-space-lg);
+  text-align: center;
+  gap: var(--mn-space-md);
+  min-height: 200px;
+}
+
+.mn-empty-state__icon {
+  font-size: 48px;
+  color: var(--mn-accent);
+  opacity: 0.3;
+}
+
+.mn-empty-state__title {
+  font-size: var(--mn-font-size-lg);
+  font-weight: var(--mn-font-weight-semibold);
+  color: var(--mn-text-primary);
+  margin: 0;
+}
+
+.mn-empty-state__text {
+  font-size: var(--mn-font-size-sm);
+  color: var(--mn-text-muted);
+  margin: 0;
+  max-width: 240px;
+  line-height: 1.5;
+}

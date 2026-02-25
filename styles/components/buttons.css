@@ -1,0 +1,95 @@
+/* Mortal Needs v2.0 — Buttons */
+
+.mn-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: var(--mn-space-sm) var(--mn-space-lg);
+  border-radius: var(--mn-radius-pill);
+  font-size: var(--mn-font-size-sm);
+  font-weight: var(--mn-font-weight-medium);
+  font-family: var(--mn-font-family);
+  color: var(--mn-text-primary);
+  cursor: pointer;
+  transition: all var(--mn-transition-fast);
+  border: 1px solid transparent;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.mn-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Primary (filled accent) */
+.mn-btn--primary {
+  background: var(--mn-accent);
+  color: var(--mn-text-primary);
+}
+
+.mn-btn--primary:hover {
+  background: var(--mn-accent-hover);
+  box-shadow: var(--mn-shadow-glow-accent);
+}
+
+/* Secondary (outlined) */
+.mn-btn--secondary {
+  background: transparent;
+  border-color: var(--mn-border-default);
+  color: var(--mn-text-secondary);
+}
+
+.mn-btn--secondary:hover {
+  border-color: var(--mn-text-secondary);
+  color: var(--mn-text-primary);
+  background: var(--mn-surface-hover);
+}
+
+/* Ghost (text only) */
+.mn-btn--ghost {
+  background: transparent;
+  color: var(--mn-text-secondary);
+  padding: var(--mn-space-xs) var(--mn-space-sm);
+}
+
+.mn-btn--ghost:hover {
+  color: var(--mn-text-primary);
+  background: var(--mn-surface-hover);
+}
+
+/* Danger */
+.mn-btn--danger {
+  background: transparent;
+  border-color: var(--mn-severity-critical);
+  color: var(--mn-severity-critical);
+}
+
+.mn-btn--danger:hover {
+  background: var(--mn-severity-critical-bg);
+  box-shadow: var(--mn-shadow-glow-critical);
+}
+
+/* Small */
+.mn-btn--sm {
+  padding: var(--mn-space-xs) var(--mn-space-sm);
+  font-size: var(--mn-font-size-xs);
+}
+
+/* Icon-only */
+.mn-btn--icon {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border-radius: var(--mn-radius-sm);
+}
+
+.mn-btn--icon-sm {
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: var(--mn-radius-sm);
+  font-size: var(--mn-font-size-xs);
+}

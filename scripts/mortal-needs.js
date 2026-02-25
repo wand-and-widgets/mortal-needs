@@ -1,349 +1,325 @@
-/**
- * Mortal Needs - A survival needs management module for Foundry VTT v13
- * @module mortal-needs
- */
+import { MODULE_ID, MODULE_TITLE, Events, EntitySource } from './constants.js';
 
-// Import constants first to avoid circular dependencies
-import { MODULE_ID, MODULE_NAME } from './constants.js';
+// Core systems
+import { EventBus } from './core/event-bus.js';
+import { NeedsStore } from './core/needs-store.js';
+import { NeedsEngine } from './core/needs-engine.js';
+import { ConsequenceEngine } from './core/consequence-engine.js';
+import { ConfigManager } from './core/config-manager.js';
+import { SocketManager } from './core/socket-manager.js';
+import { TimeEngine } from './core/time-engine.js';
 
-// Import submodules
-import { NeedsManager } from './needs-manager.js';
-import { MortalNeedsUI } from './ui/mortal-needs-ui.js';
-import { registerSettings } from './settings.js';
-import { SystemAdapter } from './systems/system-adapter.js';
+// Consequence types (self-registering)
+import './consequences/attribute-modify.js';
+import './consequences/condition-apply.js';
+import './consequences/active-effect-apply.js';
+import './consequences/custom-callback.js';
+import './consequences/chat-notify.js';
+import './consequences/macro-execute.js';
 
-/**
- * Main module class that orchestrates all functionality
- */
-class MortalNeeds {
-    constructor() {
-        this.manager = null;
-        this.ui = null;
-        this.systemAdapter = null;
-        this.socket = null;
-    }
+// Adapters
+import { SystemAdapter } from './adapters/system-adapter.js';
+import { Dnd5eAdapter } from './adapters/dnd5e-adapter.js';
+import { Pf2eAdapter } from './adapters/pf2e-adapter.js';
+import { SwadeAdapter } from './adapters/swade-adapter.js';
+import { Wfrp4eAdapter } from './adapters/wfrp4e-adapter.js';
+import { GenericAdapter } from './adapters/generic-adapter.js';
 
-    /**
-     * Initialize the module
-     */
-    async initialize() {
-        console.log(`${MODULE_NAME} | Initializing module...`);
+// UI
+import { MortalNeedsApp } from './ui/mortal-needs-app.js';
 
-        // Initialize system adapter based on current game system
-        this.systemAdapter = SystemAdapter.create(game.system.id);
+// Integrations
+import { ChatCards } from './integrations/chat-cards.js';
+import { FlavorEngine } from './integrations/flavor-engine.js';
 
-        // Initialize the needs manager
-        this.manager = new NeedsManager(this.systemAdapter);
-        await this.manager.initialize();
+// Broadcast overlays
+import { BroadcastHUD } from './ui/broadcast-hud.js';
+import { FlashPopup } from './ui/flash-popup.js';
 
-        // Initialize UI (only creates instance, doesn't render yet)
-        this.ui = new MortalNeedsUI(this.manager);
+// API
+import { createPublicAPI } from './api/public-api.js';
 
-        // Setup socket for multiplayer sync
-        this._setupSocket();
-
-        console.log(`${MODULE_NAME} | Module initialized successfully`);
-    }
-
-    /**
-     * Setup socket communication for real-time updates
-     * @private
-     */
-    _setupSocket() {
-        // Use Foundry v13 native socket
-        game.socket.on(`module.${MODULE_ID}`, this._handleSocketMessage.bind(this));
-    }
-
-    /**
-     * Handle socket messages
-     * @private
-     */
-    _handleSocketMessage(data) {
-        // Ignore messages from ourselves (we already updated locally)
-        if (data.senderId === game.user.id) return;
-
-        switch (data.action) {
-            case 'updateNeed':
-                this._onSocketUpdateNeed(data.payload);
-                break;
-            case 'syncNeeds':
-                this._onSocketSyncNeeds(data.payload);
-                break;
-        }
-    }
-
-    /**
-     * Handle need update from socket
-     * @private
-     */
-    _onSocketUpdateNeed(data) {
-        this.manager.updateNeedFromSocket(data);
-        // Use partial update if possible, fall back to full render
-        if (this.ui && data.actorId && data.needId) {
-            if (!this.ui._updateNeedDisplay(data.actorId, data.needId)) {
-                this.ui.render();
-            }
-        } else {
-            this.ui?.render();
-        }
-    }
-
-    /**
-     * Handle full sync from socket
-     * @private
-     */
-    _onSocketSyncNeeds(data) {
-        this.manager.syncFromSocket(data);
-        this.ui?.render();
-    }
-
-    /**
-     * Emit socket event to all clients
-     * @param {string} action - The action name
-     * @param {object} payload - The data to send
-     */
-    emitSocket(action, payload) {
-        // Include sender ID so we can ignore our own messages
-        game.socket.emit(`module.${MODULE_ID}`, {
-            action,
-            payload,
-            senderId: game.user.id
-        });
-    }
-
-    /**
-     * Toggle the UI visibility
-     */
-    toggleUI() {
-        if (this.ui) {
-            this.ui.toggle();
-        }
-    }
-
-    /**
-     * Show the UI
-     */
-    showUI() {
-        if (this.ui) {
-            this.ui.render(true);
-        }
-    }
-
-    /**
-     * Hide the UI
-     */
-    hideUI() {
-        if (this.ui) {
-            this.ui.close();
-        }
-    }
-}
-
-// Create global module instance
 let mortalNeeds = null;
 
-/* -------------------------------------------- */
-/*  Foundry VTT Hooks                           */
-/* -------------------------------------------- */
+class MortalNeeds {
+  constructor() {
+    this.eventBus = null;
+    this.store = null;
+    this.engine = null;
+    this.consequenceEngine = null;
+    this.configManager = null;
+    this.socketManager = null;
+    this.timeEngine = null;
+    this.adapter = null;
+    this.chatCards = null;
+    this.flavorEngine = null;
+    this.ui = null;
+  }
 
-/**
- * Hook: init
- * Register settings and prepare module data structures
- */
-Hooks.once('init', () => {
-    console.log(`${MODULE_NAME} | Initializing...`);
+  async initialize() {
+    console.log(`${MODULE_TITLE} | Initializing v2.0...`);
 
-    // Register module settings
-    registerSettings();
+    // 1. Create event bus
+    this.eventBus = new EventBus();
 
-    // Register Handlebars helpers
-    _registerHandlebarsHelpers();
-});
+    // 2. Create system adapter
+    this.adapter = this.#createAdapter();
+    console.log(`${MODULE_TITLE} | System adapter: ${this.adapter.constructor.systemId}`);
 
-/**
- * Hook: ready
- * Module is fully ready, initialize everything
- */
-Hooks.once('ready', async () => {
-    // Create and initialize the main module instance
-    mortalNeeds = new MortalNeeds();
-    await mortalNeeds.initialize();
+    // 3. Create core systems
+    this.store = new NeedsStore(this.eventBus);
+    this.configManager = new ConfigManager(this.eventBus);
+    this.engine = new NeedsEngine(this.store, this.eventBus, this.adapter);
+    this.consequenceEngine = new ConsequenceEngine(this.eventBus, this.store, this.adapter);
+    this.socketManager = new SocketManager(this.eventBus, this.store);
+    this.timeEngine = new TimeEngine(this.eventBus, this.store, this.engine);
 
-    // Expose API globally for macros and other modules
-    game.modules.get(MODULE_ID).api = {
-        get manager() { return mortalNeeds.manager; },
-        get ui() { return mortalNeeds.ui; },
-        toggleUI: () => mortalNeeds.toggleUI(),
-        showUI: () => mortalNeeds.showUI(),
-        hideUI: () => mortalNeeds.hideUI(),
-        stressNeed: (actorId, needId, amount) => mortalNeeds.manager.stressNeed(actorId, needId, amount),
-        relieveNeed: (actorId, needId, amount) => mortalNeeds.manager.relieveNeed(actorId, needId, amount),
-        stressAll: (needId, amount) => mortalNeeds.manager.stressAll(needId, amount),
-        relieveAll: (needId, amount) => mortalNeeds.manager.relieveAll(needId, amount),
-        getNeedValue: (actorId, needId) => mortalNeeds.manager.getNeedValue(actorId, needId),
-        getActorNeeds: (actorId) => mortalNeeds.manager.getActorNeeds(actorId),
-        emitSocket: (action, payload) => mortalNeeds.emitSocket(action, payload),
+    // 4. Load configuration
+    const needsConfig = await this.configManager.loadNeedsConfig();
+    this.store.setNeedConfigs(needsConfig);
 
-        /**
-         * Handle punishment type change in the config dialog
-         * Called from inline onchange handler in the template
-         * @param {HTMLSelectElement} select - The select element that changed
-         */
-        onPunishmentTypeChange: (select) => {
-            const needId = select.dataset.needId;
-            const punishmentType = select.value;
-            console.log(`Mortal Needs | Punishment type changed for ${needId} to ${punishmentType}`);
+    // 5. Load tracked actors
+    await this.#loadTrackedEntities();
 
-            // Find the parent row
-            const row = select.closest('.need-config-row');
-            if (!row) {
-                console.warn('Mortal Needs | Could not find parent row');
-                return;
-            }
+    // 6. Initialize subsystems
+    this.socketManager.initialize();
+    this.timeEngine.initialize();
+    this.chatCards = new ChatCards(this.eventBus, this.store);
+    this.flavorEngine = new FlavorEngine(this.eventBus, this.store);
 
-            // Hide all punishment option groups
-            row.querySelectorAll('[data-punishment-options]').forEach(el => {
-                el.style.display = 'none';
-            });
+    // 7. Request sync if player
+    if (!game.user.isGM) {
+      this.socketManager.requestSync();
+    }
 
-            // Show the relevant option group based on punishment type
-            if (punishmentType !== 'none' && punishmentType !== 'exhaustion') {
-                const optionGroup = row.querySelector(`[data-punishment-options="${punishmentType}"]`);
-                if (optionGroup) {
-                    optionGroup.style.display = 'flex';
-                    optionGroup.style.flexDirection = 'column';
-                }
-            }
+    // 8. Expose public API
+    const api = createPublicAPI(this.store, this.engine, this.consequenceEngine, this.eventBus, this.configManager, this.adapter, this);
+    game.modules.get(MODULE_ID).api = api;
+    // Global convenience reference
+    globalThis.MortalNeeds = api;
 
-            // Show/hide ticks group (visible for all punishment types except 'none')
-            const ticksGroup = row.querySelector('.ticks-group');
-            if (ticksGroup) {
-                ticksGroup.style.display = punishmentType === 'none' ? 'none' : 'flex';
-                if (punishmentType !== 'none') {
-                    ticksGroup.style.flexDirection = 'column';
-                }
-            }
-        }
+    // 9. Initialize broadcast overlays (for all clients)
+    this.broadcastHUD = new BroadcastHUD();
+    this.flashPopup = new FlashPopup();
+
+    // 10. Integrate with SessionFlow (if active)
+    this.#initSessionFlowIntegration();
+
+    // 11. Subscribe to actor events
+    this.#registerActorHooks();
+
+    console.log(`${MODULE_TITLE} | Initialization complete`);
+  }
+
+  #createAdapter() {
+    const systemId = game.system?.id;
+    const adapters = {
+      dnd5e: Dnd5eAdapter,
+      pf2e: Pf2eAdapter,
+      swade: SwadeAdapter,
+      wfrp4e: Wfrp4eAdapter,
     };
+    const AdapterClass = adapters[systemId] || GenericAdapter;
+    return new AdapterClass();
+  }
 
-    // Also expose on globalThis for easy console access
-    globalThis.MortalNeeds = game.modules.get(MODULE_ID).api;
+  async #loadTrackedEntities() {
+    const trackedIds = game.settings.get(MODULE_ID, 'trackedActors') || [];
 
-    console.log(`${MODULE_NAME} | Ready!`);
-});
-
-/**
- * Hook: getSceneControlButtons
- * Add toggle button to token controls (v13 compatible)
- */
-Hooks.on('getSceneControlButtons', (controls) => {
-    // Check player visibility setting - players only see the button if visibility is not 'none'
-    const playerVisibility = game.settings.get(MODULE_ID, 'playerVisibility');
-    const isGM = game.user.isGM;
-
-    // GMs always see the button; players only see it when playerVisibility is 'own' or 'all'
-    if (!isGM && playerVisibility === 'none') return;
-
-    console.log("Mortal Needs | getSceneControlButtons fired", controls);
-
-    // Handle both array (v11/v12) and object (v13) structures
-    let tokenControls;
-    if (Array.isArray(controls)) {
-        tokenControls = controls.find(c => c.name === 'token');
-    } else {
-        tokenControls = controls.tokens;
+    for (const id of trackedIds) {
+      const actor = game.actors.get(id);
+      if (actor) {
+        this.store.trackEntity(id, {
+          source: EntitySource.ACTOR,
+          name: actor.name,
+          img: actor.img || actor.prototypeToken?.texture?.src || 'icons/svg/mystery-man.svg',
+        });
+        await this.store.loadActorNeeds(actor);
+      }
     }
 
-    if (tokenControls) {
-        console.log("Mortal Needs | Adding tool to token controls");
-        const tool = {
-            name: 'mortal-needs',
-            title: game.i18n.localize('MORTAL_NEEDS.Controls.Toggle'),
-            icon: 'fas fa-heartbeat',
-            visible: true,
-            button: true,
-            onClick: () => {
-                mortalNeeds?.toggleUI();
-            }
-        };
+    // Load Exalted Scenes characters (if module active)
+    await this.#loadExaltedScenesCharacters();
+  }
 
-        // Handle different tools structures
-        if (Array.isArray(tokenControls.tools)) {
-            tokenControls.tools.push(tool);
-        } else if (tokenControls.tools instanceof Map) {
-            tokenControls.tools.set('mortal-needs', tool);
-        } else if (typeof tokenControls.tools === 'object' && tokenControls.tools !== null) {
-            tokenControls.tools['mortal-needs'] = tool;
-        } else {
-            console.warn("Mortal Needs | Unknown tools structure:", tokenControls.tools);
+  async #loadExaltedScenesCharacters() {
+    const esModule = game.modules.get('exalted-scenes');
+    if (!esModule?.active || !esModule.api?.isReady) return;
+
+    const esData = game.settings.get(MODULE_ID, 'esCharacterNeeds') || {};
+    const trackedESIds = Object.keys(esData);
+
+    for (const charId of trackedESIds) {
+      try {
+        const char = esModule.api.characters.get(charId);
+        if (char) {
+          this.store.trackEntity(charId, {
+            source: EntitySource.EXALTED_SCENES,
+            name: char.name,
+            img: char.thumbnail || char.image || 'icons/svg/mystery-man.svg',
+            linkedActorId: char.actorId || null,
+          });
+          await this.store.loadESCharacterNeeds(charId);
         }
-    } else {
-        console.warn("Mortal Needs | Token controls not found!");
+      } catch (err) {
+        console.warn(`${MODULE_TITLE} | Failed to load ES character ${charId}:`, err);
+      }
     }
-});
 
-/**
- * Hook: updateActor
- * React to actor changes (e.g., Constitution changes)
- */
-Hooks.on('updateActor', (actor, changes, options, userId) => {
-    if (!mortalNeeds?.manager) return;
-    mortalNeeds.manager.onActorUpdate(actor, changes);
-});
+    // Listen for ES character changes
+    if (esModule.api?.hooks) {
+      Hooks.on(esModule.api.hooks.CHARACTER_UPDATE, ({ characterId }) => {
+        if (this.store.isTracked(characterId)) {
+          const char = esModule.api.characters.get(characterId);
+          if (char) {
+            this.store.trackEntity(characterId, {
+              source: EntitySource.EXALTED_SCENES,
+              name: char.name,
+              img: char.thumbnail || char.image || 'icons/svg/mystery-man.svg',
+              linkedActorId: char.actorId || null,
+            });
+          }
+        }
+      });
 
-/**
- * Hook: createToken
- * Initialize needs for new tokens
- */
-Hooks.on('createToken', (token, options, userId) => {
-    if (!mortalNeeds?.manager) return;
-    if (token.actor?.hasPlayerOwner) {
-        mortalNeeds.manager.initializeActorNeeds(token.actor);
-        mortalNeeds.ui?.render();
+      Hooks.on(esModule.api.hooks.CHARACTER_DELETE, ({ characterId }) => {
+        if (this.store.isTracked(characterId)) {
+          this.store.untrackEntity(characterId);
+        }
+      });
     }
-});
+  }
 
-/**
- * Hook: deleteToken
- * Clean up needs data when token is deleted
- */
-Hooks.on('deleteToken', (token, options, userId) => {
-    if (!mortalNeeds?.ui) return;
-    mortalNeeds.ui.render();
-});
-
-/* -------------------------------------------- */
-/*  Handlebars Helpers                          */
-/* -------------------------------------------- */
-
-/**
- * Register custom Handlebars helpers for templates
- * @private
- */
-function _registerHandlebarsHelpers() {
-    // Helper to calculate percentage for bars
-    Handlebars.registerHelper('needPercentage', function(value, max) {
-        return Math.round((value / max) * 100);
+  #registerActorHooks() {
+    Hooks.on('updateActor', (actor) => {
+      if (this.store.isTracked(actor.id)) {
+        // Refresh entity info (name/img might have changed)
+        this.store.trackEntity(actor.id, {
+          source: EntitySource.ACTOR,
+          name: actor.name,
+          img: actor.img || actor.prototypeToken?.texture?.src || 'icons/svg/mystery-man.svg',
+        });
+      }
     });
 
-    // Helper to get severity class based on percentage
-    Handlebars.registerHelper('needSeverity', function(value, max) {
-        const percentage = (value / max) * 100;
-        if (percentage >= 80) return 'critical';
-        if (percentage >= 60) return 'high';
-        if (percentage >= 40) return 'medium';
-        if (percentage >= 20) return 'low';
-        return 'minimal';
+    Hooks.on('deleteActor', (actor) => {
+      if (this.store.isTracked(actor.id)) {
+        this.store.untrackEntity(actor.id);
+        // Remove from tracked list
+        const trackedIds = (game.settings.get(MODULE_ID, 'trackedActors') || []).filter(id => id !== actor.id);
+        game.settings.set(MODULE_ID, 'trackedActors', trackedIds);
+      }
     });
+  }
 
-    // Helper to localize need names
-    Handlebars.registerHelper('localizeNeed', function(needId) {
-        return game.i18n.localize(`MORTAL_NEEDS.Needs.${needId}`);
-    });
+  async #initSessionFlowIntegration() {
+    const sf = game.modules.get('sessionflow');
+    if (!sf?.active || !sf.api?.registerWidgetType) return;
+
+    try {
+      const { createMortalNeedsWidgetClass } = await import('./integrations/sessionflow-widget.js');
+      const WidgetClass = createMortalNeedsWidgetClass();
+      if (WidgetClass) {
+        sf.api.registerWidgetType(WidgetClass.TYPE, WidgetClass);
+      }
+      console.log(`${MODULE_TITLE} | Registered SessionFlow widget`);
+    } catch (err) {
+      console.warn(`${MODULE_TITLE} | Failed to register SessionFlow widget:`, err);
+    }
+  }
+
+  // --- UI Control ---
+
+  toggle() {
+    if (this.ui) {
+      if (this.ui.rendered) {
+        this.ui.close();
+      } else {
+        this.ui.render(true);
+      }
+      this.eventBus.emit(Events.UI_TOGGLED, { visible: this.ui.rendered });
+    }
+  }
 }
 
-/* -------------------------------------------- */
-/*  Module Exports                              */
-/* -------------------------------------------- */
+// --- Foundry Hook Registration ---
 
-export { MortalNeeds };
+Hooks.once('init', () => {
+  console.log(`${MODULE_TITLE} | Registering settings...`);
+  mortalNeeds = new MortalNeeds();
+  mortalNeeds.configManager = new ConfigManager(null);
+  mortalNeeds.configManager.registerAllSettings();
+
+  // Pre-load partial templates so {{> "path"}} works in Handlebars
+  loadTemplates([
+    `modules/${MODULE_ID}/templates/components/actor-card.hbs`,
+    `modules/${MODULE_ID}/templates/components/need-bar-horizontal.hbs`,
+    `modules/${MODULE_ID}/templates/components/empty-state.hbs`,
+  ]);
+
+  // Register Handlebars helpers
+  Handlebars.registerHelper('mnPercentage', (value, max) => {
+    return NeedsEngine.getPercentage(value, max);
+  });
+  Handlebars.registerHelper('mnSeverity', (value, max) => {
+    return NeedsEngine.getSeverity(NeedsEngine.getPercentage(value, max));
+  });
+  Handlebars.registerHelper('mnLocalize', (key) => {
+    return game.i18n.localize(key);
+  });
+
+  // Register keybindings (must be in init hook)
+  game.keybindings.register(MODULE_ID, 'togglePanel', {
+    name: 'MORTAL_NEEDS.Keybindings.TogglePanel',
+    hint: 'MORTAL_NEEDS.Keybindings.TogglePanelHint',
+    editable: [{ key: 'KeyN', modifiers: ['Control', 'Shift'] }],
+    onDown: () => mortalNeeds.toggle(),
+  });
+
+  // Add scene control button (must be registered before ready)
+  Hooks.on('getSceneControlButtons', (controls) => {
+    // Handle both v12 (array) and v13 (object) structures
+    let tokenControls;
+    if (Array.isArray(controls)) {
+      tokenControls = controls.find(c => c.name === 'token');
+    } else {
+      tokenControls = controls?.tokens;
+    }
+
+    if (!tokenControls?.tools) return;
+
+    const tool = {
+      name: 'mortal-needs',
+      title: 'MORTAL_NEEDS.Controls.Toggle',
+      icon: 'fas fa-heartbeat',
+      button: true,
+      onChange: () => mortalNeeds.toggle(),
+    };
+
+    if (Array.isArray(tokenControls.tools)) {
+      tokenControls.tools.push(tool);
+    } else if (tokenControls.tools instanceof Map) {
+      tokenControls.tools.set('mortal-needs', tool);
+    } else if (typeof tokenControls.tools === 'object') {
+      tokenControls.tools['mortal-needs'] = tool;
+    }
+  });
+});
+
+Hooks.once('ready', async () => {
+  // Run migration before initialization
+  const { MigrationRunner } = await import('./migration/migration-runner.js');
+  await MigrationRunner.run();
+
+  await mortalNeeds.initialize();
+
+  // Initialize UI
+  mortalNeeds.ui = new MortalNeedsApp(
+    mortalNeeds.store,
+    mortalNeeds.engine,
+    mortalNeeds.eventBus,
+    mortalNeeds.configManager,
+    mortalNeeds.adapter,
+    mortalNeeds,
+  );
+});

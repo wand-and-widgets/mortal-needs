@@ -1,0 +1,97 @@
+/* Mortal Needs v2.0 — Scoped Foundry Overrides */
+
+/* Root element: only set font and smoothing — let Foundry handle positioning */
+.mortal-needs-panel {
+  font-family: var(--mn-font-family);
+  color: var(--mn-text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Dark theme for the Foundry window header */
+.mortal-needs-panel .window-header {
+  background: var(--mn-surface-elevated);
+  color: var(--mn-text-primary);
+  border-bottom: 1px solid var(--mn-border-subtle);
+}
+
+.mortal-needs-panel .window-header .window-title {
+  color: var(--mn-text-primary);
+}
+
+/* Window content area — our main styling scope */
+.mortal-needs-panel .window-content {
+  background: var(--mn-surface-base);
+  color: var(--mn-text-primary);
+  font-family: var(--mn-font-family);
+  font-size: var(--mn-font-size-base);
+  line-height: 1.5;
+  padding: 0;
+}
+
+.mortal-needs-panel .window-content *,
+.mortal-needs-panel .window-content *::before,
+.mortal-needs-panel .window-content *::after {
+  box-sizing: border-box;
+}
+
+/* Button layout reset — high specificity to beat Foundry defaults.
+   ONLY sets layout/font/chrome properties.
+   Visual properties (background, border, padding) are set by each component class. */
+.mortal-needs-panel .window-content button {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--mn-font-family);
+  font-size: var(--mn-font-size-sm);
+  box-sizing: border-box;
+  color: inherit;
+  line-height: inherit;
+  box-shadow: none;
+  text-shadow: none;
+  text-decoration: none;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Form controls within our content area */
+.mortal-needs-panel .window-content input,
+.mortal-needs-panel .window-content select,
+.mortal-needs-panel .window-content textarea {
+  font-family: var(--mn-font-family);
+  font-size: var(--mn-font-size-sm);
+  color: var(--mn-text-primary);
+  background: var(--mn-surface-base);
+  border: 1px solid var(--mn-border-default);
+  border-radius: var(--mn-radius-sm);
+  padding: var(--mn-space-xs) var(--mn-space-sm);
+  box-sizing: border-box;
+}
+
+.mortal-needs-panel .window-content input:focus,
+.mortal-needs-panel .window-content select:focus,
+.mortal-needs-panel .window-content textarea:focus {
+  outline: none;
+  border-color: var(--mn-accent);
+  box-shadow: 0 0 0 2px var(--mn-accent-muted);
+}
+
+/* Scrollbar styling (scoped to content) */
+.mortal-needs-panel .window-content ::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mortal-needs-panel .window-content ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mortal-needs-panel .window-content ::-webkit-scrollbar-thumb {
+  background: var(--mn-surface-hover);
+  border-radius: var(--mn-radius-pill);
+}
+
+.mortal-needs-panel .window-content ::-webkit-scrollbar-thumb:hover {
+  background: var(--mn-surface-active);
+}

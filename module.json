@@ -1,10 +1,10 @@
 {
   "id": "mortal-needs",
   "title": "Mortal Needs",
-  "description": "A survival needs management system for Foundry VTT. Track hunger, thirst, exhaustion, temperature, and other mortal necessities for your players with a beautiful compact UI. Works with any game system!",
-  "version": "1.2.1",
+  "description": "A survival needs management system for Foundry VTT. Track hunger, thirst, exhaustion, temperature, sanity, and other mortal necessities with a modern Spotify-inspired UI. System-agnostic with adapters for D&D 5e, PF2e, SWADE, and WFRP4e. Rich public API for module integration.",
+  "version": "2.0.0",
   "compatibility": {
-    "minimum": "11",
+    "minimum": "12",
     "verified": "13",
     "maximum": "13"
   },
@@ -18,7 +18,13 @@
   ],
   "relationships": {
     "requires": [],
-    "recommends": []
+    "recommends": [
+      {
+        "id": "sessionflow",
+        "type": "module",
+        "reason": "Enables Mortal Needs widget integration in SessionFlow canvases"
+      }
+    ]
   },
   "esmodules": [
     "scripts/mortal-needs.js"

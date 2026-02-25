@@ -1,0 +1,55 @@
+/* Mortal Needs v2.0 — Tooltips */
+
+.mn-tooltip {
+  position: absolute;
+  z-index: var(--mn-z-tooltip);
+  background: var(--mn-surface-elevated);
+  border: 1px solid var(--mn-border-default);
+  border-radius: var(--mn-radius-md);
+  padding: var(--mn-space-sm) var(--mn-space-md);
+  box-shadow: var(--mn-shadow-md);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 100ms ease, transform 100ms ease;
+  max-width: 280px;
+}
+
+.mn-tooltip.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mn-tooltip__title {
+  font-size: var(--mn-font-size-sm);
+  font-weight: var(--mn-font-weight-semibold);
+  color: var(--mn-text-primary);
+  margin-bottom: 4px;
+}
+
+.mn-tooltip__row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--mn-space-md);
+  font-size: var(--mn-font-size-xs);
+}
+
+.mn-tooltip__label {
+  color: var(--mn-text-muted);
+}
+
+.mn-tooltip__value {
+  color: var(--mn-text-secondary);
+  font-weight: var(--mn-font-weight-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+.mn-tooltip__flavor {
+  font-size: var(--mn-font-size-xs);
+  color: var(--mn-text-muted);
+  font-style: italic;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--mn-border-subtle);
+  line-height: 1.4;
+}

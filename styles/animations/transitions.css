@@ -1,0 +1,108 @@
+/* Mortal Needs v2.0 — Animations & Transitions */
+
+/* Critical pulse on portraits */
+@keyframes mn-pulse-critical {
+  0%, 100% { transform: scale(1); box-shadow: none; }
+  50% { transform: scale(1.05); box-shadow: var(--mn-shadow-glow-critical); }
+}
+
+/* Bar pulse at critical */
+@keyframes mn-bar-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+/* Card entry animation */
+@keyframes mn-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mn-actor-card {
+  animation: mn-card-enter 300ms cubic-bezier(0.4, 0, 0.2, 1) both;
+}
+
+/* Stagger card animations */
+.mn-actor-card:nth-child(1) { animation-delay: 0ms; }
+.mn-actor-card:nth-child(2) { animation-delay: 50ms; }
+.mn-actor-card:nth-child(3) { animation-delay: 100ms; }
+.mn-actor-card:nth-child(4) { animation-delay: 150ms; }
+.mn-actor-card:nth-child(5) { animation-delay: 200ms; }
+.mn-actor-card:nth-child(6) { animation-delay: 250ms; }
+.mn-actor-card:nth-child(7) { animation-delay: 300ms; }
+.mn-actor-card:nth-child(8) { animation-delay: 350ms; }
+
+/* Fade in/out utility */
+.mn-fade-enter {
+  animation: mn-fade-in 200ms ease both;
+}
+
+@keyframes mn-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.mn-fade-exit {
+  animation: mn-fade-out 150ms ease both;
+}
+
+@keyframes mn-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+/* Collapse/expand */
+.mn-collapse-enter {
+  animation: mn-collapse-in 250ms ease both;
+  overflow: hidden;
+}
+
+@keyframes mn-collapse-in {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 500px;
+    opacity: 1;
+  }
+}
+
+/* Value change flash */
+@keyframes mn-value-flash {
+  0% { background-color: transparent; }
+  20% { background-color: var(--mn-accent-muted); }
+  100% { background-color: transparent; }
+}
+
+.mn-value-changed {
+  animation: mn-value-flash 800ms ease;
+}
+
+/* Shake for stress */
+@keyframes mn-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-3px); }
+  75% { transform: translateX(3px); }
+}
+
+.mn-stressed {
+  animation: mn-shake 300ms ease;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .mortal-needs-panel *,
+  .mortal-needs-panel *::before,
+  .mortal-needs-panel *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

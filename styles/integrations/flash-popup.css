@@ -1,0 +1,195 @@
+/* Mortal Needs v2.0 — Flash Popup (dramatic temporary) */
+
+.mn-flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.mn-flash--visible {
+  opacity: 1;
+}
+
+.mn-flash--exit {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+/* Content card */
+.mn-flash__content {
+  min-width: 280px;
+  max-width: 440px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding: var(--mn-space-xl) var(--mn-space-2xl);
+  background: linear-gradient(135deg, rgba(24, 24, 24, 0.96), rgba(12, 12, 12, 0.94));
+  backdrop-filter: blur(16px);
+  border: 2px solid var(--mn-accent-border);
+  border-radius: 16px;
+  box-shadow: 0 0 30px rgba(220, 38, 38, 0.25), var(--mn-shadow-lg);
+  font-family: var(--mn-font-family);
+  color: var(--mn-text-primary);
+  transform: scale(0.6);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.mn-flash--visible .mn-flash__content {
+  transform: scale(1);
+  animation: mn-flash-glow 1.5s ease-in-out infinite 0.4s;
+}
+
+.mn-flash--exit .mn-flash__content {
+  transform: scale(0.8);
+  transition: transform 0.4s ease;
+}
+
+@keyframes mn-flash-glow {
+  0%, 100% {
+    box-shadow: 0 0 30px rgba(220, 38, 38, 0.25), var(--mn-shadow-lg);
+  }
+  50% {
+    box-shadow: 0 0 50px rgba(220, 38, 38, 0.45), 0 8px 60px rgba(0, 0, 0, 0.6);
+  }
+}
+
+/* Title */
+.mn-flash__title {
+  font-size: var(--mn-font-size-md);
+  font-weight: var(--mn-font-weight-bold);
+  color: var(--mn-text-primary);
+  text-align: center;
+  margin-bottom: var(--mn-space-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.mn-flash__title i {
+  color: var(--mn-accent);
+}
+
+/* Actors list */
+.mn-flash__actors {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mn-space-sm);
+}
+
+/* Actor card */
+.mn-flash__actor {
+  display: flex;
+  align-items: center;
+  gap: var(--mn-space-md);
+  padding: var(--mn-space-sm);
+  border-radius: var(--mn-radius-md);
+  background: var(--mn-surface-card);
+  border: 1px solid var(--mn-border-subtle);
+}
+
+.mn-flash__portrait {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--mn-border-strong);
+  flex-shrink: 0;
+}
+
+.mn-flash__actor-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mn-flash__actor-name {
+  font-size: var(--mn-font-size-sm);
+  font-weight: var(--mn-font-weight-semibold);
+  color: var(--mn-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Need bars (larger for dramatic effect) */
+.mn-flash__needs {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.mn-flash__need {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.mn-flash__need-icon {
+  font-size: 10px;
+  width: 14px;
+  text-align: center;
+  color: var(--mn-text-muted);
+  flex-shrink: 0;
+}
+
+.mn-flash__need-track {
+  flex: 1;
+  height: 8px;
+  background: var(--mn-surface-base);
+  border-radius: var(--mn-radius-pill);
+  overflow: hidden;
+}
+
+.mn-flash__need-fill {
+  height: 100%;
+  border-radius: var(--mn-radius-pill);
+  transform-origin: left center;
+}
+
+.mn-flash__need-fill[data-severity="safe"] { background: var(--mn-severity-safe); }
+.mn-flash__need-fill[data-severity="low"] { background: var(--mn-severity-low); }
+.mn-flash__need-fill[data-severity="medium"] { background: var(--mn-severity-medium); }
+.mn-flash__need-fill[data-severity="high"] { background: var(--mn-severity-high); }
+.mn-flash__need-fill[data-severity="critical"] { background: var(--mn-severity-critical); }
+
+/* Percentage value */
+.mn-flash__need-value {
+  font-size: 10px;
+  font-weight: var(--mn-font-weight-semibold);
+  min-width: 28px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.mn-flash__need-value[data-severity="safe"] { color: var(--mn-severity-safe); }
+.mn-flash__need-value[data-severity="low"] { color: var(--mn-severity-low); }
+.mn-flash__need-value[data-severity="medium"] { color: var(--mn-severity-medium); }
+.mn-flash__need-value[data-severity="high"] { color: var(--mn-severity-high); }
+.mn-flash__need-value[data-severity="critical"] { color: var(--mn-severity-critical); }
+
+/* Scrollbar */
+.mn-flash__content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.mn-flash__content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mn-flash__content::-webkit-scrollbar-thumb {
+  background: var(--mn-border-default);
+  border-radius: var(--mn-radius-pill);
+}

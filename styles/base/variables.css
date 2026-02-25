@@ -1,0 +1,93 @@
+/* Mortal Needs v2.0 — Design Tokens */
+
+:root {
+  /* === Surfaces === */
+  --mn-surface-base: #121212;
+  --mn-surface-elevated: #181818;
+  --mn-surface-card: #232323;
+  --mn-surface-hover: #2a2a2a;
+  --mn-surface-active: #333333;
+  --mn-surface-overlay: rgba(0, 0, 0, 0.6);
+
+  /* === Accent (Blood Red) === */
+  --mn-accent: #DC2626;
+  --mn-accent-hover: #EF4444;
+  --mn-accent-muted: rgba(220, 38, 38, 0.15);
+  --mn-accent-border: rgba(220, 38, 38, 0.3);
+
+  /* === Text === */
+  --mn-text-primary: #ffffff;
+  --mn-text-secondary: #b3b3b3;
+  --mn-text-muted: #6a6a6a;
+  --mn-text-inverse: #121212;
+
+  /* === Severity Palette === */
+  --mn-severity-safe: #22c55e;
+  --mn-severity-low: #a7c957;
+  --mn-severity-medium: #f59e0b;
+  --mn-severity-high: #ef4444;
+  --mn-severity-critical: #dc2626;
+
+  /* === Severity Backgrounds (muted) === */
+  --mn-severity-safe-bg: rgba(34, 197, 94, 0.12);
+  --mn-severity-low-bg: rgba(167, 201, 87, 0.12);
+  --mn-severity-medium-bg: rgba(245, 158, 11, 0.12);
+  --mn-severity-high-bg: rgba(239, 68, 68, 0.12);
+  --mn-severity-critical-bg: rgba(220, 38, 38, 0.15);
+
+  /* === Borders === */
+  --mn-border-subtle: rgba(255, 255, 255, 0.06);
+  --mn-border-default: rgba(255, 255, 255, 0.1);
+  --mn-border-strong: rgba(255, 255, 255, 0.15);
+
+  /* === Typography === */
+  --mn-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --mn-font-size-xs: 0.6875rem;   /* 11px */
+  --mn-font-size-sm: 0.75rem;     /* 12px */
+  --mn-font-size-base: 0.8125rem; /* 13px */
+  --mn-font-size-md: 0.875rem;    /* 14px */
+  --mn-font-size-lg: 1rem;        /* 16px */
+  --mn-font-size-xl: 1.125rem;    /* 18px */
+  --mn-font-weight-normal: 400;
+  --mn-font-weight-medium: 500;
+  --mn-font-weight-semibold: 600;
+  --mn-font-weight-bold: 700;
+
+  /* === Spacing === */
+  --mn-space-xs: 4px;
+  --mn-space-sm: 8px;
+  --mn-space-md: 12px;
+  --mn-space-lg: 16px;
+  --mn-space-xl: 20px;
+  --mn-space-2xl: 24px;
+
+  /* === Radius === */
+  --mn-radius-sm: 4px;
+  --mn-radius-md: 8px;
+  --mn-radius-lg: 12px;
+  --mn-radius-pill: 9999px;
+
+  /* === Shadows === */
+  --mn-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --mn-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --mn-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --mn-shadow-glow-accent: 0 0 12px rgba(220, 38, 38, 0.3);
+  --mn-shadow-glow-critical: 0 0 8px rgba(220, 38, 38, 0.4);
+
+  /* === Transitions === */
+  --mn-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --mn-transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --mn-transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  --mn-transition-color: 600ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* === Z-Index === */
+  --mn-z-panel: 100;
+  --mn-z-tooltip: 200;
+  --mn-z-dialog: 300;
+
+  /* === Bar Dimensions === */
+  --mn-bar-height: 8px;
+  --mn-bar-height-lg: 12px;
+  --mn-portrait-size: 36px;
+  --mn-portrait-size-sm: 24px;
+}

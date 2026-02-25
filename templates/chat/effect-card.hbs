@@ -1,0 +1,41 @@
+<div class="mn-chat-card">
+  <div class="mn-chat-card__header">
+    <i class="mn-chat-card__icon fas fa-heartbeat"></i>
+    <span class="mn-chat-card__title">{{localize "MORTAL_NEEDS.Chat.ConsequenceApplied"}}</span>
+    <span class="mn-chat-card__severity mn-badge mn-badge--{{severity}}">{{localize severityLabel}}</span>
+  </div>
+
+  <div class="mn-chat-card__body">
+    <div class="mn-chat-card__actor">
+      <img class="mn-chat-card__actor-img" src="{{actorImg}}" alt="{{actorName}}">
+      <span class="mn-chat-card__actor-name">{{actorName}}</span>
+    </div>
+
+    <div class="mn-chat-card__details">
+      <div class="mn-chat-card__detail-row">
+        <span class="mn-chat-card__detail-label">{{localize "MORTAL_NEEDS.Chat.Need"}}</span>
+        <span class="mn-chat-card__detail-value">
+          <i class="fas {{needIcon}}"></i> {{needName}}
+        </span>
+      </div>
+      <div class="mn-chat-card__detail-row">
+        <span class="mn-chat-card__detail-label">{{localize "MORTAL_NEEDS.Chat.Level"}}</span>
+        <span class="mn-chat-card__detail-value">{{value}}/{{max}} ({{percentage}}%)</span>
+      </div>
+      {{#if consequenceDescription}}
+        <div class="mn-chat-card__detail-row">
+          <span class="mn-chat-card__detail-label">{{localize "MORTAL_NEEDS.Chat.Consequence"}}</span>
+          <span class="mn-chat-card__detail-value">{{consequenceDescription}}</span>
+        </div>
+      {{/if}}
+    </div>
+
+    <div class="mn-chat-card__bar">
+      <div class="mn-chat-card__bar-fill mn-badge--{{severity}}" style="width: {{percentage}}%;"></div>
+    </div>
+
+    {{#if flavor}}
+      <div class="mn-chat-card__flavor">{{flavor}}</div>
+    {{/if}}
+  </div>
+</div>

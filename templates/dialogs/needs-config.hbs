@@ -1,0 +1,90 @@
+<div class="mn-dialog__body">
+  <div class="mn-dialog__tabs">
+    <button class="mn-dialog__tab is-active" data-tab="needs">{{localize "MORTAL_NEEDS.Config.NeedsTab"}}</button>
+    <button class="mn-dialog__tab" data-tab="presets">{{localize "MORTAL_NEEDS.Config.PresetsTab"}}</button>
+    <button class="mn-dialog__tab" data-tab="import-export">{{localize "MORTAL_NEEDS.Config.ImportExportTab"}}</button>
+  </div>
+
+  {{!-- Needs Tab --}}
+  <div class="mn-dialog__tab-content" data-tab-content="needs">
+    <div class="mn-dialog__list">
+      {{#each needs}}
+        <div class="mn-dialog__list-item mn-need-config-row" data-need-id="{{id}}">
+          <label class="mn-dialog__checkbox">
+            <input type="checkbox" name="needs.{{id}}.enabled" {{#if enabled}}checked{{/if}}>
+          </label>
+          <span class="mn-need-bar__icon"><i class="fas {{icon}}"></i></span>
+          <span class="mn-dialog__list-item-name">{{localize label}}</span>
+          <span class="mn-badge mn-badge--source">{{category}}</span>
+          {{#if custom}}
+            <span class="mn-badge mn-badge--source">custom</span>
+          {{/if}}
+          <button class="mn-btn mn-btn--ghost mn-btn--icon-sm" data-action="edit-need" data-need-id="{{id}}">
+            <i class="fas fa-pen"></i>
+          </button>
+        </div>
+      {{/each}}
+    </div>
+
+    <button class="mn-btn mn-btn--secondary" data-action="add-custom-need">
+      <i class="fas fa-plus"></i>
+      <span>{{localize "MORTAL_NEEDS.Config.AddCustomNeed"}}</span>
+    </button>
+  </div>
+
+  {{!-- Presets Tab --}}
+  <div class="mn-dialog__tab-content" data-tab-content="presets" style="display:none">
+    <div class="mn-dialog__grid">
+      {{#each presets}}
+        <div class="mn-dialog__grid-card" data-preset-id="{{id}}">
+          <div class="mn-heading-sm">{{localize label}}</div>
+          <p class="mn-text-xs" style="margin-top: 4px;">{{localize description}}</p>
+          <div style="margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px;">
+            {{#each needs}}
+              <span class="mn-badge mn-badge--source">{{this}}</span>
+            {{/each}}
+          </div>
+          {{#unless builtIn}}
+            <button class="mn-btn mn-btn--ghost mn-btn--sm" data-action="delete-preset" data-preset-id="{{id}}" style="margin-top: 8px;">
+              <i class="fas fa-trash"></i>
+            </button>
+          {{/unless}}
+        </div>
+      {{/each}}
+    </div>
+    <div style="margin-top: 12px; display: flex; gap: 8px;">
+      <button class="mn-btn mn-btn--secondary" data-action="save-preset">
+        <i class="fas fa-save"></i>
+        <span>{{localize "MORTAL_NEEDS.Config.SavePreset"}}</span>
+      </button>
+    </div>
+  </div>
+
+  {{!-- Import/Export Tab --}}
+  <div class="mn-dialog__tab-content" data-tab-content="import-export" style="display:none">
+    <div class="mn-dialog__section">
+      <div class="mn-dialog__section-title">{{localize "MORTAL_NEEDS.Config.Export"}}</div>
+      <button class="mn-btn mn-btn--secondary" data-action="export-config">
+        <i class="fas fa-download"></i>
+        <span>{{localize "MORTAL_NEEDS.Config.ExportJSON"}}</span>
+      </button>
+    </div>
+    <div class="mn-dialog__section">
+      <div class="mn-dialog__section-title">{{localize "MORTAL_NEEDS.Config.Import"}}</div>
+      <div class="mn-dialog__form-group">
+        <textarea name="importJson" rows="6" placeholder='{{localize "MORTAL_NEEDS.Config.ImportPlaceholder"}}'></textarea>
+      </div>
+      <button class="mn-btn mn-btn--primary" data-action="import-config">
+        <i class="fas fa-upload"></i>
+        <span>{{localize "MORTAL_NEEDS.Config.ImportJSON"}}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="mn-dialog__footer">
+    <button class="mn-btn mn-btn--primary" data-action="save">
+      <i class="fas fa-save"></i>
+      <span>{{localize "Save"}}</span>
+    </button>
+  </div>
+</div>

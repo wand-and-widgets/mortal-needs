@@ -1,0 +1,40 @@
+<div class="mn-dialog__body">
+  <div class="mn-dialog__section">
+    <div class="mn-dialog__section-title">{{localize "MORTAL_NEEDS.MultiStress.SelectNeed"}}</div>
+    <div class="mn-dialog__form-group">
+      <select name="needId">
+        {{#each needs}}
+          <option value="{{id}}">{{localize label}}</option>
+        {{/each}}
+      </select>
+    </div>
+  </div>
+
+  <div class="mn-dialog__section">
+    <div class="mn-dialog__section-title">{{localize "MORTAL_NEEDS.MultiStress.Amount"}}</div>
+    <div class="mn-dialog__form-row">
+      <input type="range" name="amount" min="1" max="100" value="{{defaultAmount}}" style="flex-grow: 1;">
+      <input type="number" name="amountDisplay" value="{{defaultAmount}}" min="1" max="100" style="width: 60px;">
+    </div>
+  </div>
+
+  <div class="mn-dialog__section">
+    <div class="mn-dialog__section-title">{{localize "MORTAL_NEEDS.MultiStress.Targets"}}</div>
+    <div class="mn-dialog__list">
+      {{#each actors}}
+        <label class="mn-dialog__checkbox">
+          <input type="checkbox" name="targets" value="{{id}}" checked>
+          <img class="mn-dialog__list-item-img" src="{{img}}" alt="{{name}}" style="width: 24px; height: 24px;">
+          <span class="mn-dialog__list-item-name">{{name}}</span>
+        </label>
+      {{/each}}
+    </div>
+  </div>
+
+  <div class="mn-dialog__footer">
+    <button class="mn-btn mn-btn--primary" data-action="apply">
+      <i class="fas fa-check"></i>
+      <span>{{localize "MORTAL_NEEDS.Dialogs.Apply"}}</span>
+    </button>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+/* Mortal Needs v2.0 — Typography */
+
+.mortal-needs-panel .mn-heading-lg {
+  font-size: var(--mn-font-size-xl);
+  font-weight: var(--mn-font-weight-bold);
+  color: var(--mn-text-primary);
+  letter-spacing: -0.01em;
+}
+
+.mortal-needs-panel .mn-heading-md {
+  font-size: var(--mn-font-size-md);
+  font-weight: var(--mn-font-weight-semibold);
+  color: var(--mn-text-primary);
+}
+
+.mortal-needs-panel .mn-heading-sm {
+  font-size: var(--mn-font-size-sm);
+  font-weight: var(--mn-font-weight-semibold);
+  color: var(--mn-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.mortal-needs-panel .mn-text {
+  font-size: var(--mn-font-size-base);
+  color: var(--mn-text-primary);
+}
+
+.mortal-needs-panel .mn-text-sm {
+  font-size: var(--mn-font-size-sm);
+  color: var(--mn-text-secondary);
+}
+
+.mortal-needs-panel .mn-text-xs {
+  font-size: var(--mn-font-size-xs);
+  color: var(--mn-text-muted);
+}
+
+.mortal-needs-panel .mn-label {
+  font-size: var(--mn-font-size-xs);
+  font-weight: var(--mn-font-weight-medium);
+  color: var(--mn-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.mortal-needs-panel .mn-mono {
+  font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+  font-size: var(--mn-font-size-xs);
+}

@@ -1,0 +1,191 @@
+/* Mortal Needs v2.0 — Dialogs */
+
+.mn-dialog {
+  background: var(--mn-surface-base);
+  color: var(--mn-text-primary);
+  font-family: var(--mn-font-family);
+}
+
+.mn-dialog .window-content {
+  background: var(--mn-surface-base);
+  padding: 0;
+}
+
+.mn-dialog__body {
+  padding: var(--mn-space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--mn-space-md);
+}
+
+.mn-dialog__section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mn-space-sm);
+}
+
+.mn-dialog__section-title {
+  font-size: var(--mn-font-size-sm);
+  font-weight: var(--mn-font-weight-semibold);
+  color: var(--mn-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding-bottom: var(--mn-space-xs);
+  border-bottom: 1px solid var(--mn-border-subtle);
+}
+
+/* Form groups */
+.mn-dialog__form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mn-space-xs);
+}
+
+.mn-dialog__form-group label {
+  font-size: var(--mn-font-size-xs);
+  font-weight: var(--mn-font-weight-medium);
+  color: var(--mn-text-secondary);
+}
+
+.mn-dialog__form-row {
+  display: flex;
+  align-items: center;
+  gap: var(--mn-space-sm);
+}
+
+/* Checkbox rows */
+.mn-dialog__checkbox {
+  display: flex;
+  align-items: center;
+  gap: var(--mn-space-sm);
+  padding: var(--mn-space-sm);
+  border-radius: var(--mn-radius-sm);
+  cursor: pointer;
+  transition: background var(--mn-transition-fast);
+}
+
+.mn-dialog__checkbox:hover {
+  background: var(--mn-surface-hover);
+}
+
+.mn-dialog__checkbox input[type="checkbox"] {
+  accent-color: var(--mn-accent);
+  width: 16px;
+  height: 16px;
+}
+
+/* Footer with action buttons */
+.mn-dialog__footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--mn-space-sm);
+  padding: var(--mn-space-md) var(--mn-space-lg);
+  border-top: 1px solid var(--mn-border-subtle);
+  background: var(--mn-surface-elevated);
+}
+
+/* Tabs */
+.mn-dialog__tabs {
+  display: flex;
+  gap: 2px;
+  padding: var(--mn-space-xs) var(--mn-space-sm);
+  background: var(--mn-surface-elevated);
+  border-bottom: 1px solid var(--mn-border-subtle);
+}
+
+.mn-dialog__tab {
+  background: transparent;
+  border: 1px solid transparent;
+  padding: var(--mn-space-xs) var(--mn-space-md);
+  margin: 0;
+  font-size: var(--mn-font-size-sm);
+  font-weight: var(--mn-font-weight-medium);
+  color: var(--mn-text-muted);
+  cursor: pointer;
+  border-radius: var(--mn-radius-sm);
+  transition: all var(--mn-transition-fast);
+}
+
+.mn-dialog__tab:hover {
+  color: var(--mn-text-primary);
+  background: var(--mn-surface-hover);
+}
+
+.mn-dialog__tab.is-active {
+  color: var(--mn-text-primary);
+  background: var(--mn-surface-active);
+  border-color: var(--mn-border-default);
+}
+
+/* List items (for actor selection, presets, etc.) */
+.mn-dialog__list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.mn-dialog__list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--mn-space-sm);
+  padding: var(--mn-space-sm);
+  border-radius: var(--mn-radius-sm);
+  cursor: pointer;
+  transition: background var(--mn-transition-fast);
+}
+
+.mn-dialog__list-item:hover {
+  background: var(--mn-surface-hover);
+}
+
+.mn-dialog__list-item.is-selected {
+  background: var(--mn-accent-muted);
+  border: 1px solid var(--mn-accent-border);
+}
+
+.mn-dialog__list-item-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.mn-dialog__list-item-name {
+  font-size: var(--mn-font-size-sm);
+  font-weight: var(--mn-font-weight-medium);
+  color: var(--mn-text-primary);
+  flex-grow: 1;
+}
+
+.mn-dialog__list-item-detail {
+  font-size: var(--mn-font-size-xs);
+  color: var(--mn-text-muted);
+}
+
+/* Grid layout for presets / config */
+.mn-dialog__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--mn-space-sm);
+}
+
+.mn-dialog__grid-card {
+  background: var(--mn-surface-card);
+  border-radius: var(--mn-radius-md);
+  padding: var(--mn-space-md);
+  border: 1px solid var(--mn-border-subtle);
+  cursor: pointer;
+  transition: all var(--mn-transition-fast);
+}
+
+.mn-dialog__grid-card:hover {
+  border-color: var(--mn-accent-border);
+  background: var(--mn-surface-hover);
+}
+
+.mn-dialog__grid-card.is-selected {
+  border-color: var(--mn-accent);
+  background: var(--mn-accent-muted);
+}

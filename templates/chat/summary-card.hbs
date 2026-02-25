@@ -1,0 +1,26 @@
+<div class="mn-chat-card">
+  <div class="mn-chat-card__header">
+    <i class="mn-chat-card__icon fas fa-heartbeat"></i>
+    <span class="mn-chat-card__title">{{localize "MORTAL_NEEDS.Chat.NeedsSummary"}}</span>
+  </div>
+
+  <div class="mn-chat-card__body">
+    <div class="mn-chat-card__actor">
+      <img class="mn-chat-card__actor-img" src="{{actorImg}}" alt="{{actorName}}">
+      <span class="mn-chat-card__actor-name">{{actorName}}</span>
+    </div>
+
+    <div class="mn-chat-card__summary-list">
+      {{#each needs}}
+        <div class="mn-chat-card__summary-item">
+          <i class="fas {{icon}}" style="color: var(--mn-severity-{{severity}})"></i>
+          <span class="mn-text-sm" style="flex: 1;">{{localize label}}</span>
+          <span class="mn-text-xs mn-mono">{{value}}/{{max}}</span>
+          <div class="mn-chat-card__bar" style="width: 60px;">
+            <div class="mn-chat-card__bar-fill mn-badge--{{severity}}" style="width: {{percentage}}%;"></div>
+          </div>
+        </div>
+      {{/each}}
+    </div>
+  </div>
+</div>

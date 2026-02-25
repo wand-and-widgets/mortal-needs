@@ -1,0 +1,13 @@
+<div class="mn-need-bar mn-need-bar--radial" data-need-id="{{id}}" data-entity-id="{{entityId}}" data-tooltip="{{localize label}}: {{percentage}}%">
+  <svg class="mn-need-bar__ring" viewBox="0 0 44 44">
+    <circle class="mn-need-bar__ring-track" cx="22" cy="22" r="18" />
+    <circle class="mn-need-bar__ring-fill"
+            data-severity="{{severity}}"
+            cx="22" cy="22" r="18"
+            stroke-dasharray="{{circumference}}"
+            stroke-dashoffset="{{dashOffset}}" />
+  </svg>
+  <span class="mn-need-bar__radial-icon">
+    <i class="fas {{icon}}"></i>
+  </span>
+</div>

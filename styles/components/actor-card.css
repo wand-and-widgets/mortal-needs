@@ -1,0 +1,159 @@
+/* Mortal Needs v2.0 — Actor Card */
+
+.mn-actor-card {
+  background: var(--mn-surface-card);
+  border-radius: var(--mn-radius-md);
+  padding: var(--mn-space-md);
+  transition: background var(--mn-transition-fast);
+  border: 1px solid transparent;
+  position: relative;
+}
+
+.mn-actor-card:hover {
+  background: var(--mn-surface-hover);
+}
+
+/* Critical state left border */
+.mn-actor-card[data-worst-severity="critical"] {
+  border-left: 3px solid var(--mn-severity-critical);
+}
+
+.mn-actor-card[data-worst-severity="high"] {
+  border-left: 3px solid var(--mn-severity-high);
+}
+
+/* Card Header */
+.mn-actor-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--mn-space-sm);
+  margin-bottom: var(--mn-space-sm);
+}
+
+/* Portrait */
+.mn-actor-card__portrait {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.mn-actor-card__portrait-img {
+  width: var(--mn-portrait-size);
+  height: var(--mn-portrait-size);
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--mn-border-default);
+  transition: border-color var(--mn-transition-color);
+}
+
+.mn-actor-card__portrait-img[data-severity="safe"] {
+  border-color: var(--mn-severity-safe);
+}
+.mn-actor-card__portrait-img[data-severity="low"] {
+  border-color: var(--mn-severity-low);
+}
+.mn-actor-card__portrait-img[data-severity="medium"] {
+  border-color: var(--mn-severity-medium);
+}
+.mn-actor-card__portrait-img[data-severity="high"] {
+  border-color: var(--mn-severity-high);
+}
+.mn-actor-card__portrait-img[data-severity="critical"] {
+  border-color: var(--mn-severity-critical);
+  animation: mn-pulse-critical 2s ease-in-out infinite;
+}
+
+/* Actor name */
+.mn-actor-card__name {
+  font-size: var(--mn-font-size-md);
+  font-weight: var(--mn-font-weight-semibold);
+  color: var(--mn-text-primary);
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Source badge (ES / Actor) */
+.mn-actor-card__source {
+  font-size: var(--mn-font-size-xs);
+  color: var(--mn-text-muted);
+  background: var(--mn-surface-base);
+  padding: 2px 6px;
+  border-radius: var(--mn-radius-pill);
+}
+
+/* Expand/Collapse button */
+.mn-actor-card__expand {
+  background: transparent;
+  border: none;
+  margin: 0;
+  color: var(--mn-text-muted);
+  padding: var(--mn-space-xs);
+  border-radius: var(--mn-radius-sm);
+  transition: color var(--mn-transition-fast), background var(--mn-transition-fast);
+}
+
+.mn-actor-card__expand:hover {
+  color: var(--mn-text-primary);
+  background: var(--mn-surface-active);
+}
+
+.mn-actor-card__expand i {
+  transition: transform var(--mn-transition-normal);
+}
+
+.mn-actor-card__expand.is-expanded i {
+  transform: rotate(180deg);
+}
+
+/* Needs List */
+.mn-actor-card__needs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mn-space-xs);
+}
+
+/* Quick Actions row */
+.mn-actor-card__actions {
+  display: flex;
+  gap: var(--mn-space-xs);
+  margin-top: var(--mn-space-sm);
+  padding-top: var(--mn-space-sm);
+  border-top: 1px solid var(--mn-border-subtle);
+}
+
+.mn-actor-card__action-btn {
+  background: transparent;
+  border: none;
+  margin: 0;
+  font-size: var(--mn-font-size-xs);
+  color: var(--mn-text-muted);
+  padding: var(--mn-space-xs) var(--mn-space-sm);
+  border-radius: var(--mn-radius-sm);
+  transition: all var(--mn-transition-fast);
+  gap: 4px;
+}
+
+.mn-actor-card__action-btn:hover {
+  color: var(--mn-text-primary);
+  background: var(--mn-surface-active);
+}
+
+.mn-actor-card__action-btn--danger:hover {
+  color: var(--mn-severity-critical);
+  background: var(--mn-severity-critical-bg);
+}
+
+/* Compact mode */
+.mn-actor-card--compact {
+  padding: var(--mn-space-sm);
+}
+
+.mn-actor-card--compact .mn-actor-card__portrait-img {
+  width: var(--mn-portrait-size-sm);
+  height: var(--mn-portrait-size-sm);
+}
+
+.mn-actor-card--compact .mn-actor-card__name {
+  font-size: var(--mn-font-size-sm);
+}

@@ -1,0 +1,94 @@
+/* Mortal Needs v2.0 — Toolbar */
+
+.mn-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--mn-space-xs);
+  padding: var(--mn-space-sm) var(--mn-space-md);
+  background: var(--mn-surface-elevated);
+  border-bottom: 1px solid var(--mn-border-subtle);
+  flex-wrap: wrap;
+}
+
+.mn-toolbar__group {
+  display: flex;
+  align-items: center;
+  gap: var(--mn-space-xs);
+}
+
+.mn-toolbar__separator {
+  width: 1px;
+  height: 20px;
+  background: var(--mn-border-subtle);
+  margin: 0 var(--mn-space-xs);
+}
+
+/* Toolbar button */
+.mn-toolbar__btn {
+  background: transparent;
+  border: none;
+  padding: var(--mn-space-xs) var(--mn-space-sm);
+  margin: 0;
+  border-radius: var(--mn-radius-pill);
+  font-size: var(--mn-font-size-xs);
+  font-weight: var(--mn-font-weight-medium);
+  color: var(--mn-text-secondary);
+  transition: all var(--mn-transition-fast);
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.mn-toolbar__btn:hover {
+  color: var(--mn-text-primary);
+  background: var(--mn-surface-hover);
+}
+
+.mn-toolbar__btn.is-active {
+  color: var(--mn-text-primary);
+  background: var(--mn-accent-muted);
+  border: 1px solid var(--mn-accent-border);
+}
+
+.mn-toolbar__btn--accent {
+  color: var(--mn-accent);
+}
+
+.mn-toolbar__btn--accent:hover {
+  background: var(--mn-accent-muted);
+  color: var(--mn-accent-hover);
+}
+
+/* Icon-only button */
+.mn-toolbar__btn--icon {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border-radius: var(--mn-radius-sm);
+}
+
+/* Spacer */
+.mn-toolbar__spacer {
+  flex-grow: 1;
+}
+
+/* Search input */
+.mn-toolbar__search {
+  background: var(--mn-surface-base);
+  border: 1px solid var(--mn-border-subtle);
+  border-radius: var(--mn-radius-pill);
+  padding: var(--mn-space-xs) var(--mn-space-md);
+  font-size: var(--mn-font-size-xs);
+  color: var(--mn-text-primary);
+  width: 140px;
+  transition: all var(--mn-transition-fast);
+}
+
+.mn-toolbar__search:focus {
+  width: 200px;
+  border-color: var(--mn-accent);
+  box-shadow: 0 0 0 2px var(--mn-accent-muted);
+}
+
+.mn-toolbar__search::placeholder {
+  color: var(--mn-text-muted);
+}

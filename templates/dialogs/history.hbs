@@ -1,0 +1,37 @@
+<div class="mn-dialog__body">
+  <div class="mn-dialog__section">
+    <div class="mn-dialog__form-row" style="margin-bottom: 8px;">
+      <select name="filterEntity" style="flex: 1;">
+        <option value="">{{localize "MORTAL_NEEDS.History.AllEntities"}}</option>
+        {{#each entities}}
+          <option value="{{id}}">{{name}}</option>
+        {{/each}}
+      </select>
+      <select name="filterNeed" style="flex: 1;">
+        <option value="">{{localize "MORTAL_NEEDS.History.AllNeeds"}}</option>
+        {{#each needs}}
+          <option value="{{id}}">{{localize label}}</option>
+        {{/each}}
+      </select>
+    </div>
+  </div>
+
+  <div class="mn-dialog__list mn-history-list" style="max-height: 400px;">
+    {{#each entries}}
+      <div class="mn-dialog__list-item mn-history-entry" data-entity-id="{{entityId}}" data-need-id="{{needId}}">
+        <span class="mn-text-xs" style="min-width: 60px; color: var(--mn-text-muted);">{{time}}</span>
+        <span class="mn-badge mn-badge--source">{{entityName}}</span>
+        <span class="mn-need-bar__icon"><i class="fas {{needIcon}}"></i></span>
+        <span class="mn-text-sm" style="flex: 1;">{{needLabel}}</span>
+        <span class="mn-text-xs" style="color: var(--mn-text-muted);">{{previousValue}}</span>
+        <i class="fas fa-arrow-right" style="font-size: 8px; color: var(--mn-text-muted);"></i>
+        <span class="mn-text-xs mn-mono" data-severity="{{newSeverity}}">{{newValue}}</span>
+        <span class="mn-badge mn-badge--source">{{source}}</span>
+      </div>
+    {{else}}
+      <p class="mn-text-sm" style="padding: 24px; text-align: center; color: var(--mn-text-muted);">
+        {{localize "MORTAL_NEEDS.History.NoEntries"}}
+      </p>
+    {{/each}}
+  </div>
+</div>

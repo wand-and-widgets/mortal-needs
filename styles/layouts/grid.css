@@ -1,0 +1,50 @@
+/* Mortal Needs v2.0 — Grid Layouts */
+
+/* Compact grid layout (radial mode) */
+.mn-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--mn-space-sm);
+  padding: var(--mn-space-sm);
+}
+
+.mn-grid__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--mn-space-xs);
+  padding: var(--mn-space-md);
+  background: var(--mn-surface-card);
+  border-radius: var(--mn-radius-md);
+  transition: background var(--mn-transition-fast);
+  cursor: pointer;
+}
+
+.mn-grid__item:hover {
+  background: var(--mn-surface-hover);
+}
+
+.mn-grid__item-portrait {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--mn-border-default);
+}
+
+.mn-grid__item-name {
+  font-size: var(--mn-font-size-xs);
+  font-weight: var(--mn-font-weight-medium);
+  color: var(--mn-text-primary);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.mn-grid__item-bars {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}

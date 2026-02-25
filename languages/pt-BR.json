@@ -1,313 +1,885 @@
 {
   "MORTAL_NEEDS": {
+    "Title": "Necessidades Mortais",
+
     "Controls": {
       "Toggle": "Alternar Painel de Necessidades Mortais"
     },
 
-    "UI": {
-      "Title": "Necessidades Mortais",
-      "SelectAll": "Selecionar Todos",
-      "DeselectAll": "Desmarcar Todos",
-      "SelectAllForStress": "Selecionar todos os atores para operações de estresse",
-      "DeselectAllForStress": "Desmarcar todos os atores",
-      "SelectionHint": "Ctrl+clique nos retratos para multi-seleção",
-      "SelectActors": "Atores",
-      "MultiStress": "Multi-Estresse",
-      "MultiStressHint": "Selecione necessidades e valores para aplicar estresse a todos os atores selecionados (ou todos).",
-      "Settings": "Configurar Necessidades",
-      "Stress": "Aumentar",
-      "Relieve": "Diminuir",
-      "StressAll": "Aumentar para todos:",
-      "RelieveAll": "Diminuir para todos:",
-      "StressAmount": "Quantidade",
-      "NoActors": "Nenhum ator rastreado. Clique em 'Atores' para selecionar quais personagens rastrear.",
-      "ClickToSelect": "clique para selecionar",
-      "OpenSheet": "Abrir ficha do personagem",
-      "ResistanceShort": "Resistência",
-      "AutoExhaustionBadge": "Auto-Exaustão",
-      "ExhaustionTicksTooltip": "Progresso de punição"
+    "Keybindings": {
+      "TogglePanel": "Alternar Painel de Necessidades",
+      "TogglePanelHint": "Mostrar ou ocultar o painel de Necessidades Mortais"
     },
 
     "Needs": {
-      "hunger": "Fome",
-      "thirst": "Sede",
-      "exhaustion": "Exaustão",
-      "cold": "Frio",
-      "heat": "Calor",
-      "comfort": "Conforto",
-      "sanity": "Sanidade",
-      "morale": "Moral",
-      "pain": "Dor",
-      "radiation": "Radiação",
-      "corruption": "Corrupção",
-      "fatigue": "Fadiga",
-      "environmental": "Estresse Ambiental"
+      "Hunger": "Fome",
+      "Thirst": "Sede",
+      "Exhaustion": "Exaustão",
+      "Cold": "Frio",
+      "Heat": "Calor",
+      "Comfort": "Conforto",
+      "Sanity": "Sanidade",
+      "Morale": "Moral",
+      "Pain": "Dor",
+      "Radiation": "Radiação",
+      "Corruption": "Corrupção",
+      "Fatigue": "Fadiga",
+      "Environmental": "Estresse Ambiental"
     },
 
     "Severity": {
-      "minimal": "Mínimo",
-      "low": "Baixo",
-      "medium": "Moderado",
-      "high": "Alto",
-      "critical": "Crítico"
+      "Safe": "Seguro",
+      "Low": "Baixo",
+      "Medium": "Moderado",
+      "High": "Alto",
+      "Critical": "Crítico"
+    },
+
+    "Toolbar": {
+      "Add": "Adicionar",
+      "AddActors": "Adicionar Atores",
+      "StressAll": "Estressar Todos",
+      "RelieveAll": "Aliviar Todos",
+      "Configure": "Configurar",
+      "History": "Histórico"
+    },
+
+    "Actions": {
+      "Stress": "Estressar",
+      "Relieve": "Aliviar",
+      "ResetAll": "Resetar Tudo",
+      "Untrack": "Parar Rastreamento"
+    },
+
+    "EmptyState": {
+      "Title": "Nenhum Personagem Rastreado",
+      "Description": "Adicione atores para começar a rastrear suas necessidades de sobrevivência.",
+      "AddActors": "Adicionar Atores",
+      "PlayerWaiting": "Aguardando o Mestre adicionar personagens..."
+    },
+
+    "ActorSelection": {
+      "Title": "Selecionar Personagens para Rastrear",
+      "FoundryActors": "Atores do Foundry",
+      "ESCharacters": "Personagens do Exalted Scenes",
+      "SearchPlaceholder": "Buscar atores...",
+      "AlreadyTracked": "Rastreado",
+      "NoESCharacters": "Nenhum personagem do Exalted Scenes disponível.",
+      "AddSelected": "Adicionar Selecionados"
+    },
+
+    "MultiStress": {
+      "Title": "Estressar Todos os Personagens",
+      "RelieveTitle": "Aliviar Todos os Personagens",
+      "SelectNeed": "Selecionar Necessidade",
+      "Amount": "Quantidade",
+      "Targets": "Personagens Alvo"
+    },
+
+    "Config": {
+      "Title": "Configurar Necessidades",
+      "NeedsTab": "Necessidades",
+      "PresetsTab": "Predefinições",
+      "ImportExportTab": "Importar / Exportar",
+      "AddCustomNeed": "Adicionar Necessidade Personalizada",
+      "ApplyPresetTitle": "Aplicar Predefinição",
+      "ApplyPresetConfirm": "Isso irá ativar/desativar necessidades conforme a predefinição. Continuar?",
+      "SavePresetTitle": "Salvar Predefinição",
+      "PresetName": "Nome da Predefinição",
+      "PresetDescription": "Descrição",
+      "SavePreset": "Salvar Atual como Predefinição",
+      "Export": "Exportar",
+      "ExportJSON": "Exportar Configuração",
+      "Import": "Importar",
+      "ImportJSON": "Importar Configuração",
+      "ImportPlaceholder": "Cole a configuração JSON aqui..."
+    },
+
+    "NeedEdit": {
+      "Title": "Editar Necessidade",
+      "General": "Geral",
+      "Id": "ID da Necessidade",
+      "Label": "Nome de Exibição",
+      "Icon": "Ícone (FontAwesome)",
+      "Category": "Categoria",
+      "Enabled": "Ativada",
+      "Values": "Valores",
+      "Min": "Mín",
+      "Max": "Máx",
+      "Default": "Padrão",
+      "StressAmount": "Estresse por Clique",
+      "Decay": "Decaimento Automático",
+      "DecayEnabled": "Ativar decaimento baseado em tempo",
+      "DecayRate": "Quantidade de Decaimento",
+      "DecayInterval": "Intervalo",
+      "Consequences": "Consequências",
+      "NoConsequences": "Nenhuma consequência configurada.",
+      "AddConsequence": "Adicionar Consequência",
+      "Delete": "Excluir Necessidade",
+      "DeleteTitle": "Excluir Necessidade Personalizada",
+      "DeleteConfirm": "Tem certeza? Isso removerá a necessidade e todos os dados associados."
+    },
+
+    "EffectConfig": {
+      "Title": "Configurar Consequência",
+      "Type": "Tipo de Consequência",
+      "Configuration": "Configuração",
+      "Behavior": "Comportamento de Disparo",
+      "Threshold": "Limite",
+      "Ticks": "Ticks antes de repetir",
+      "Reversible": "Reversível quando necessidade se recupera"
+    },
+
+    "Consequences": {
+      "AttributeModify": "Modificar Atributo",
+      "ConditionApply": "Aplicar Condição",
+      "ActiveEffectApply": "Aplicar Efeito Ativo",
+      "CustomCallback": "Callback Personalizado",
+      "ChatNotify": "Notificação no Chat",
+      "AttributePath": "Caminho do Atributo",
+      "Operation": "Operação",
+      "Amount": "Quantidade",
+      "ConditionId": "Condição",
+      "EffectName": "Nome do Efeito",
+      "EffectChanges": "Mudanças do Efeito (JSON)",
+      "CallbackId": "ID do Callback",
+      "Message": "Mensagem",
+      "WhisperGM": "Sussurrar apenas para o Mestre",
+      "MacroExecute": "Executar Macro",
+      "MacroSelect": "Macro"
+    },
+
+    "History": {
+      "Title": "Histórico de Necessidades",
+      "AllEntities": "Todos os Personagens",
+      "AllNeeds": "Todas as Necessidades",
+      "NoEntries": "Nenhuma entrada no histórico ainda."
+    },
+
+    "Presets": {
+      "Survival": "Sobrevivência",
+      "SurvivalDesc": "Sobrevivência clássica: fome, sede, exaustão, frio, calor",
+      "Horror": "Horror",
+      "HorrorDesc": "Horror psicológico: sanidade, moral, dor, corrupção",
+      "SciFi": "Ficção Científica",
+      "SciFiDesc": "Ficção científica: radiação, fadiga, moral",
+      "DarkFantasy": "Fantasia Sombria",
+      "DarkFantasyDesc": "Fantasia sombria: fome, sede, exaustão, corrupção, sanidade",
+      "Minimalist": "Minimalista",
+      "MinimalistDesc": "Sobrevivência simples: apenas fome e sede"
     },
 
     "Settings": {
-      "DefaultStressAmount": "Quantidade de Estresse Padrão",
-      "DefaultStressAmountHint": "A quantidade padrão de estresse a aplicar ao usar os botões rápidos (1-50).",
-
-      "ApplyConModifier": "Aplicar Modificador de Constituição",
-      "ApplyConModifierHint": "Quando ativado, as quantidades de estresse são modificadas pela Constituição do personagem. Maior Con = menos estresse.",
-
-      "ShowNeedValues": "Mostrar Valores",
-      "ShowNeedValuesHint": "Exibir os valores numéricos nas barras de necessidade.",
-
+      "DefaultStress": "Quantidade de Estresse Padrão",
+      "DefaultStressHint": "A quantidade padrão de estresse aplicado por clique (1-50).",
       "PlayerVisibility": "Visibilidade para Jogadores",
       "PlayerVisibilityHint": "Controla o que os jogadores podem ver no painel de necessidades.",
-      "PlayerVisibilityNone": "Oculto (apenas GM)",
-      "PlayerVisibilityOwn": "Apenas próprio personagem",
-      "PlayerVisibilityAll": "Todos os personagens",
-
-      "AnimateBars": "Animar Barras",
-      "AnimateBarsHint": "Ativar animações suaves quando os valores das barras mudam.",
-
-      "CompactMode": "Modo Compacto",
-      "CompactModeHint": "Usar exibição mais compacta com retratos e barras menores.",
-
-      "BarOrientation": "Orientação das Barras",
-      "BarOrientationHint": "Escolha entre barras verticais (compacto) ou barras horizontais (visão detalhada).",
-      "BarOrientationVertical": "Barras Verticais",
-      "BarOrientationHorizontal": "Barras Horizontais",
-
-      "NotifyOnCritical": "Notificar em Crítico",
-      "NotifyOnCriticalHint": "Exibir uma notificação quando uma necessidade atinge nível crítico.",
-
+      "VisibilityNone": "Oculto (apenas Mestre)",
+      "VisibilityOwn": "Apenas próprio personagem",
+      "VisibilityAll": "Todos os personagens",
+      "PlayerControl": "Autogestão do Jogador",
+      "PlayerControlHint": "Permite que jogadores gerenciem as necessidades de seu próprio personagem.",
+      "NotifyCritical": "Notificar em Crítico",
+      "NotifyCriticalHint": "Enviar notificação no chat quando uma necessidade atinge nível crítico.",
       "CriticalThreshold": "Limite Crítico",
       "CriticalThresholdHint": "A porcentagem na qual uma necessidade é considerada crítica (50-100).",
-
-      "PunishmentRemovalMode": "Modo de Remoção de Punição",
-      "PunishmentRemovalModeHint": "Como as punições são removidas quando as necessidades caem abaixo do crítico.",
-      "RemovalModeAskGM": "Perguntar ao Mestre (mostrar diálogo)",
-      "RemovalModeImmediate": "Remover imediatamente",
-      "RemovalModeOnRest": "Apenas em descanso (manual)",
-
-      "ShowPunishmentChat": "Mostrar Mensagens de Punição",
-      "ShowPunishmentChatHint": "Exibir mensagens estilizadas no chat quando punições são aplicadas ou removidas.",
-
-      "ConfigureNeeds": "Configurar Necessidades",
-      "ConfigureNeedsLabel": "Abrir Configuração",
-      "ConfigureNeedsHint": "Ativar, desativar e personalizar quais necessidades são rastreadas.",
-
-      "NeedId": "ID da Necessidade",
-      "NeedIdHint": "Um identificador único para esta necessidade (minúsculas, sem espaços).",
-      "NeedIcon": "Ícone",
-      "NeedIconHint": "Classe de ícone Font Awesome (ex: fa-fire, fa-heart).",
-
-      "AddCustomNeed": "Adicionar Necessidade Personalizada",
-      "RemoveNeed": "Remover Necessidade",
-      "RemoveNeedConfirm": "Tem certeza que deseja remover a necessidade personalizada '{name}'? Isso excluirá todos os dados armazenados para esta necessidade.",
-      "Custom": "Personalizado",
-
-      "ConfigureNeedOptions": "Configurar opções da necessidade",
-      "StressAmountPerNeed": "Quantidade de Estresse",
-      "StressAmountPerNeedHint": "Quanto estresse é aplicado ao usar os botões rápidos para esta necessidade.",
-      "ResistanceAttribute": "Atributo de Resistência",
-      "ResistanceAttributeHint": "Personagens com valores mais altos neste atributo ganharão menos estresse para esta necessidade.",
-      "NoResistance": "Nenhum (sem resistência)",
-      "AutoExhaustion": "Auto-Exaustão ao atingir 100%",
-      "AutoExhaustionHint": "Quando esta necessidade atingir 100%, aplica exaustão automaticamente.",
-      "ExhaustionTicks": "Ticks de Exaustão",
-      "ExhaustionTicksHint": "Quantas vezes o estresse deve ser aplicado em 100% antes de ganhar outro ponto de exaustão.",
-      "TicksSuffix": "ticks",
-      "Abilities": "Habilidades",
-      "Skills": "Perícias",
-      "Other": "Outros",
-
+      "ConsequenceRemoval": "Remoção de Consequências",
+      "ConsequenceRemovalHint": "Como as consequências são tratadas quando necessidades caem abaixo do crítico.",
+      "RemovalAskGM": "Perguntar ao Mestre (mostrar diálogo)",
+      "RemovalImmediate": "Remover imediatamente",
+      "RemovalManual": "Apenas manual",
+      "ShowConsequenceChat": "Mostrar Chat de Consequências",
+      "ShowConsequenceChatHint": "Exibir mensagens estilizadas no chat quando consequências são aplicadas.",
+      "AnimateBars": "Animar Barras",
+      "AnimateBarsHint": "Ativar animações suaves quando os valores das barras mudam.",
+      "BarOrientation": "Estilo das Barras",
+      "BarOrientationHint": "Escolha entre barras horizontais, verticais ou arcos radiais.",
+      "OrientationHorizontal": "Barras Horizontais",
+      "OrientationVertical": "Barras Verticais",
+      "OrientationRadial": "Arcos Radiais",
       "UIScale": "Escala da Interface",
-      "UIScaleHint": "Ajuste o tamanho do painel de necessidades. Mudanças são visualizadas instantaneamente.",
-
-      "ConfigureActors": "Selecionar Atores Rastreados",
-      "ConfigureActorsLabel": "Escolher Atores",
-      "ConfigureActorsHint": "Selecione quais atores devem ter suas necessidades rastreadas pelo módulo.",
-      "FirstTimeActorSelection": "Esta é sua primeira vez configurando atores. Todos os personagens com dono são selecionados por padrão.",
-      "NoOwners": "Sem donos",
-      "NoActorsAvailable": "Nenhum ator com dono disponível para rastrear."
-    },
-
-    "Notifications": {
-      "NeedAdded": "Necessidade personalizada '{name}' foi adicionada.",
-      "NeedRemoved": "Necessidade personalizada '{name}' foi removida.",
-      "CriticalLevel": "{need} de {actor} atingiu nível crítico!",
-      "ActorsUpdated": "{count} ator(es) estão sendo rastreados agora.",
-      "ExhaustionGained": "{actor} ganhou exaustão por causa de {need}!",
-      "PunishmentApplied": "{actor} sofreu {punishment} por causa de {need}!",
-      "PunishmentRemoved": "{punishment} de {actor} por {need} foi removido."
-    },
-
-    "Punishment": {
-      "None": "Nenhuma",
-      "Exhaustion": "Exaustão",
-      "Damage": "Dano",
-      "Condition": "Condição",
-      "MaxHpReduction": "Redução de HP Máximo",
-      "MaxHP": "HP Máximo",
-      "Type": "Tipo de Punição",
-      "TypeHint": "O que acontece quando esta necessidade atinge 100%.",
-      "DamageAmount": "Quantidade de Dano",
-      "DamageAmountHint": "Quanto dano aplicar.",
-      "DamageType": "Tipo de Dano",
-      "DamageTypeHint": "Tipo do dano (afeta resistências).",
-      "ConditionType": "Condição",
-      "ConditionTypeHint": "Qual condição aplicar.",
-      "MaxHpAmount": "Redução de HP",
-      "MaxHpAmountHint": "Quanto reduzir o HP máximo.",
-      "Ticks": "Ticks de Punição",
-      "TicksHint": "Quantas vezes o estresse deve ser aplicado em 100% antes da punição disparar novamente."
-    },
-
-    "Tooltips": {
-      "PunishmentExhaustion": "Em 100%: Ganha nível de exaustão",
-      "PunishmentDamage": "Em 100%: Sofre {amount} de dano {type}",
-      "PunishmentCondition": "Em 100%: Fica {condition}",
-      "PunishmentMaxHP": "Em 100%: HP máximo reduzido em {amount}",
-      "NeedProgress": "{value}/{max} ({percent}%)",
-      "TickProgress": "Punição em {remaining} ticks"
-    },
-
-    "Conditions": {
-      "PoisonedDesc": "Desvantagem em jogadas de ataque e testes de habilidade",
-      "FrightenedDesc": "Desvantagem enquanto fonte à vista, não pode se aproximar voluntariamente",
-      "StunnedDesc": "Incapacitado, não pode se mover, falha automática em salvamentos de For/Des",
-      "IncapacitatedDesc": "Não pode realizar ações ou reações"
+      "UIScaleHint": "Ajuste o tamanho do painel de necessidades (80-200%).",
+      "CompactMode": "Modo Compacto",
+      "CompactModeHint": "Usar exibição mais compacta com retratos menores.",
+      "FlavorMessages": "Mensagens Narrativas",
+      "FlavorMessagesHint": "Ativar mensagens narrativas quando necessidades cruzam limiares de severidade.",
+      "FlavorVerbosity": "Verbosidade Narrativa",
+      "FlavorVerbosityHint": "Controla a frequência das mensagens narrativas no chat.",
+      "VerbosityMinimal": "Mínimo (apenas transições críticas)",
+      "VerbosityNormal": "Normal (todos os cruzamentos de limiar)",
+      "VerbosityVerbose": "Detalhado (todos os cruzamentos + sustentado)",
+      "FlavorVisibility": "Visibilidade das Mensagens Narrativas",
+      "FlavorVisibilityHint": "Quem pode ver as mensagens narrativas no chat.",
+      "FlavorVisibilityGM": "Apenas Mestre",
+      "FlavorVisibilityAll": "Todos os Jogadores",
+      "FlavorBatchMode": "Agrupar Mensagens Simultâneas",
+      "FlavorBatchModeHint": "Combinar cruzamentos simultâneos de limiar em um único card no chat."
     },
 
     "Chat": {
-      "Removed": "Removido"
+      "ConsequenceApplied": "Consequência Aplicada",
+      "Need": "Necessidade",
+      "Level": "Nível",
+      "Consequence": "Consequência",
+      "NeedsSummary": "Resumo de Necessidades",
+      "Removed": "Removido",
+      "FlavorWorsening": "Piorando",
+      "FlavorImproving": "Melhorando"
     },
 
     "Dialogs": {
-      "RemovalTitle": "Recuperação de Punição",
-      "RemovalMessage": "{need} de {actor} caiu abaixo do crítico. Atualmente sofre de {punishment}.",
-      "RemovalQuestion": "Remover a punição?",
-      "RemoveNow": "Remover Agora",
-      "KeepPunishment": "Manter Ativa"
+      "RemoveConsequenceTitle": "Remover Consequência",
+      "RemoveConsequenceContent": "<strong>{name}</strong> se recuperou de <em>{need}</em>. Remover <em>{consequence}</em>?",
+      "Remove": "Remover",
+      "Keep": "Manter Ativa",
+      "ResetAllTitle": "Resetar Todas as Necessidades",
+      "ResetAllContent": "Resetar todas as necessidades deste personagem para seus valores padrão?",
+      "Apply": "Aplicar",
+      "SelectNeed": "Selecionar Necessidade",
+      "Amount": "Quantidade",
+      "QuickStressTitle": "Estresse Rápido"
     },
 
-    "Flavor": {
-      "hunger": {
-        "apply": [
-          "Um vazio corrosivo consome os pensamentos de {actor}, cada batida do coração um lembrete do sustento negado.",
-          "A dor oca no estômago de {actor} tornou-se insuportável, a fraqueza infiltrando-se em cada membro.",
-          "O corpo de {actor} começa a consumir a si mesmo, desesperado por qualquer fonte de nutrição.",
-          "A fome rasga as entranhas de {actor} como uma besta desesperada tentando escapar.",
-          "O mundo desfoca nas bordas enquanto o corpo faminto de {actor} grita por comida."
-        ],
-        "remove": [
-          "A força retorna aos membros de {actor} enquanto a fome corrosiva finalmente diminui.",
-          "O vazio desesperado desvanece, substituído por vigor renovado.",
-          "{actor} sente a vida fluindo de volta enquanto o aperto da fome afrouxa."
-        ]
-      },
-      "thirst": {
-        "apply": [
-          "A garganta de {actor} queima como lixa, cada engolida um lembrete da ausência de água.",
-          "Lábios rachados e língua inchada marcam a necessidade desesperada de {actor} por água.",
-          "A desidratação agarra {actor} impiedosamente, pensamentos ficando lentos e confusos.",
-          "Cada célula no corpo de {actor} clama por água, a sede tornando-se enlouquecedora.",
-          "A boca de {actor} parece um deserto, língua grossa e inútil."
-        ],
-        "remove": [
-          "Alívio refrescante lava {actor} enquanto a terrível sede finalmente cede.",
-          "Hidratação revigorante restaura a clareza e força de {actor}.",
-          "A queimação desesperada na garganta de {actor} finalmente diminui."
-        ]
-      },
-      "exhaustion": {
-        "apply": [
-          "Cansaço profundo arrasta {actor} para baixo, cada movimento um esforço hercúleo.",
-          "As pálpebras de {actor} ficam impossivelmente pesadas, o corpo exigindo descanso que não pode ter.",
-          "A fadiga se instala na própria alma de {actor}, ameaçando extinguir toda motivação.",
-          "Cada passo parece vadear em lama grossa enquanto a exaustão reclama {actor}.",
-          "Os músculos de {actor} gritam por descanso, tremendo a cada esforço."
-        ],
-        "remove": [
-          "Energia renovada flui pelas veias de {actor} enquanto as correntes da exaustão se quebram.",
-          "O vigor retorna ao passo de {actor}, o cansaço opressivo finalmente se dissipando.",
-          "{actor} se sente restaurado, a fadiga esmagadora finalmente liberando seu aperto."
-        ]
-      },
-      "cold": {
-        "apply": [
-          "O frio penetra nos ossos de {actor}, entorpecendo dedos e nublando pensamentos.",
-          "Tremores violentos sacodem o corpo de {actor} enquanto o frio amargo se apodera.",
-          "Os dentes de {actor} batem incontrolavelmente, o calor uma memória distante.",
-          "A geada parece cristalizar no próprio sangue de {actor}, desacelerando tudo.",
-          "O frio implacável envolve {actor} como uma mortalha congelada."
-        ],
-        "remove": [
-          "Calor abençoado retorna às extremidades de {actor}, o frio mortal recuando.",
-          "{actor} sente o gelo em suas veias começar a derreter.",
-          "O frio amargo libera seu aperto enquanto o calor inunda de volta em {actor}."
-        ]
-      },
-      "heat": {
-        "apply": [
-          "Calor opressivo sufoca {actor}, cada respiração como inalar fogo.",
-          "Suor escorre de {actor} enquanto o calor impiedoso ameaça sobrecarregar.",
-          "A visão de {actor} oscila no calor brutal, pensamentos ficando lentos.",
-          "A temperatura escaldante drena a força de {actor} a cada momento que passa.",
-          "{actor} sente como se estivesse sendo lentamente cozido vivo pelo calor implacável."
-        ],
-        "remove": [
-          "Alívio fresco lava {actor} enquanto o calor opressivo finalmente cede.",
-          "A temperatura corporal de {actor} retorna ao normal, o perigo passando.",
-          "O calor sufocante libera seu aperto, permitindo que {actor} respire livremente novamente."
-        ]
-      },
-      "sanity": {
-        "apply": [
-          "A realidade se fratura ao redor de {actor}, sombras sussurrando segredos que deveriam permanecer inéditos.",
-          "O controle de {actor} sobre a sanidade escorrega enquanto visões eldritch nublam sua mente.",
-          "O fino véu entre razão e loucura se rasga, expondo {actor} a horrores além da compreensão.",
-          "Sussurros vindos de lugar nenhum preenchem a mente de {actor}, afogando o pensamento racional.",
-          "O senso de identidade de {actor} começa a se desfazer, a personalidade sangrando."
-        ],
-        "remove": [
-          "Clareza retorna à mente fraturada de {actor}, os sussurros finalmente silenciando.",
-          "As visões de pesadelo desvanecem enquanto {actor} recupera sua sanidade.",
-          "A mente de {actor} se reconstrói, a realidade se solidificando mais uma vez."
-        ]
-      },
-      "pain": {
-        "apply": [
-          "Agonia atravessa {actor}, cada terminação nervosa gritando em protesto.",
-          "{actor} não consegue focar em nada além da dor que consome todo seu corpo.",
-          "Ondas de tormento colidem sobre {actor}, ameaçando arrastá-lo para a inconsciência.",
-          "A dor se torna o mundo inteiro de {actor}, bloqueando todo o resto.",
-          "O corpo de {actor} é uma sinfonia de sofrimento, cada movimento adicionando novas notas de agonia."
-        ],
-        "remove": [
-          "A dor esmagadora finalmente diminui, permitindo que {actor} pense claramente novamente.",
-          "Alívio inunda {actor} enquanto o tormento libera seu aperto.",
-          "{actor} suspira de alívio enquanto a agonia finalmente, misericordiosamente, desvanece."
-        ]
-      },
-      "default": {
-        "apply": [
-          "A tensão se torna insuportável enquanto {actor} atinge seu limite.",
-          "{actor} luta contra a pressão crescente, corpo e mente levados ao limite.",
-          "Algo se quebra dentro de {actor} enquanto não consegue mais suportar o estresse."
-        ],
-        "remove": [
-          "A pressão insuportável finalmente diminui, permitindo que {actor} se recupere.",
-          "{actor} sente o peso esmagador se dissipar enquanto o alívio o invade.",
-          "A recuperação começa enquanto o pior da provação passa para {actor}."
-        ]
-      }
+    "SessionFlow": {
+      "WidgetLabel": "Necessidades Mortais",
+      "NoTracked": "Nenhum personagem rastreado. Use a barra de ferramentas para adicionar.",
+      "AddActors": "Adicionar Personagens",
+      "ToggleNeeds": "Alternar Necessidades",
+      "Apply": "Aplicar",
+      "Broadcast": "Mostrar aos Jogadores",
+      "BroadcastStop": "Ocultar dos Jogadores",
+      "Flash": "Flash para Jogadores",
+      "BroadcastTitle": "Necessidades Mortais",
+      "FlashTitle": "Necessidades Mortais",
+      "ResetAll": "Resetar Todas as Necessidades",
+      "ResetActor": "Resetar Necessidades"
+    },
+
+    "Notifications": {
+      "GMOnly": "Apenas o Mestre pode realizar esta ação.",
+      "NoTokenSelected": "Nenhum token selecionado.",
+      "NoTargetsSelected": "Nenhum alvo selecionado.",
+      "NoNeedsEnabled": "Nenhuma necessidade está ativada no momento.",
+      "ConfigSaved": "Configuração de necessidades salva.",
+      "ConfigExported": "Configuração exportada.",
+      "ConfigImported": "Configuração importada com sucesso.",
+      "ImportEmpty": "Nenhum dado para importar.",
+      "ImportFailed": "Falha ao importar configuração.",
+      "PresetApplied": "Predefinição aplicada.",
+      "PresetSaved": "Predefinição salva.",
+      "LongRestComplete": "Descanso longo completo — todas as necessidades resetadas.",
+      "ShortRestComplete": "Descanso curto completo — necessidades parcialmente aliviadas.",
+      "SceneModifierSet": "Modificador de cena atualizado."
+    },
+
+    "Migration": {
+      "Complete": "Necessidades Mortais foi atualizado para v2.0. Seus dados foram migrados automaticamente.",
+      "Failed": "Falha na migração do Necessidades Mortais. Verifique o console para detalhes."
     },
 
     "API": {
-      "Description": "API Mortal Needs - Use game.modules.get('mortal-needs').api para acesso programático."
+      "Description": "API do Necessidades Mortais — Use game.modules.get('mortal-needs').api para acesso programático."
+    },
+
+    "Flavor": {
+      "Hunger": {
+        "Worsening": {
+          "Low": {
+            "1": "Uma dor oca se instala no estômago, quieta mas insistente.",
+            "2": "Pensamentos sobre comida surgem sem aviso — um zumbido baixo e persistente de desejo.",
+            "3": "O corpo envia seu primeiro pedido educado: gostaria muito de comer."
+          },
+          "Medium": {
+            "1": "A fome se instalou como um hóspede indesejado, exigente e impossível de ignorar.",
+            "2": "O estômago se retorce com uma urgência que sufoca pensamentos mais suaves.",
+            "3": "A concentração se desfaz nas bordas — a paciência do corpo chegando ao limite."
+          },
+          "High": {
+            "1": "O corpo começa a se rebelar, a fome sobrepondo pensamento e razão.",
+            "2": "Uma necessidade profunda e animal sobe das entranhas, apagando todo o resto.",
+            "3": "A fome crava seus dentes fundo, um predador paciente que nunca dorme."
+          },
+          "Critical": {
+            "1": "O vazio corrosivo se torna uma coisa viva, arranhando as paredes do estômago.",
+            "2": "O corpo começa a consumir a si mesmo, uma aritmética lenta e terrível de sobrevivência.",
+            "3": "A inanição escreve seu nome em mãos trêmulas e bochechas encovadas."
+          }
+        },
+        "Improving": {
+          "High": {
+            "1": "O pior da fome recua, mas o corpo ainda se lembra da dor.",
+            "2": "Um pouco de sustento ameniza o pior — o bastante para pensar, mal o bastante para se mover.",
+            "3": "A corrosão diminui, embora o estômago ainda rosne seus protestos."
+          },
+          "Medium": {
+            "1": "A fome diminui para uma dor manejável — ainda presente, mas não mais comandante.",
+            "2": "Comida encontra seu caminho até onde é mais necessária, e o corpo exala alívio silencioso.",
+            "3": "A névoa da fome se dissipa, o pensamento retornando em ondas lentas e bem-vindas."
+          },
+          "Low": {
+            "1": "Quase satisfeito. A provação se torna uma memória que o corpo não esquecerá tão cedo.",
+            "2": "Força retorna aos poucos enquanto o alimento faz seu trabalho paciente e constante.",
+            "3": "A barriga se aquieta. Não completamente cheia, mas não mais gritando."
+          },
+          "Safe": {
+            "1": "Sustento chega como chuva após a seca, cada célula cantando de alívio.",
+            "2": "A primeira saciedade real em tempos — o corpo desaba em exaustão agradecida.",
+            "3": "Alimentado e inteiro novamente. A fome era um pesadelo, agora misericordiosamente encerrado."
+          }
+        }
+      },
+      "Thirst": {
+        "Worsening": {
+          "Low": {
+            "1": "Uma coceira seca no fundo da garganta — fácil de ignorar, difícil de esquecer.",
+            "2": "Os lábios parecem um pouco secos demais, a boca um tom vazia demais.",
+            "3": "A sede sussurra seu primeiro aviso, gentil como areia movendo ao vento."
+          },
+          "Medium": {
+            "1": "A garganta aperta, cada engolida um esforço consciente contra a secura crescente.",
+            "2": "A sede se afia em algo inevitável, uma companheira constante exigindo atenção.",
+            "3": "A língua começa a grudar, pensamentos circulando inevitavelmente de volta à água."
+          },
+          "High": {
+            "1": "Cada engolida é uma lâmina. O corpo grita pelo que não pode ter.",
+            "2": "A desidratação puxa um véu sobre a mente — pensamentos vêm lentos e pegajosos como alcatrão.",
+            "3": "A língua se torna uma coisa morta, inchada e rachada como terra ressecada pelo sol."
+          },
+          "Critical": {
+            "1": "A sede é a necessidade mais cruel — mata mais rápido e dói mais que todas as outras.",
+            "2": "O sangue engrossa, o coração labuta, e cada célula clama por umidade.",
+            "3": "A visão nada. A realidade se curva. O corpo é um deserto consumindo a si mesmo."
+          }
+        },
+        "Improving": {
+          "High": {
+            "1": "Algumas gotas preciosas amenizam o pior, mas o corpo ainda anseia por mais.",
+            "2": "O fio cortante da sede se embota, embora a garganta ainda queime.",
+            "3": "Algum alívio, como as primeiras gotas antes de uma tempestade — não o bastante, mas uma promessa."
+          },
+          "Medium": {
+            "1": "Água encontra caminho por canais ressecados, e a mente começa a clarear.",
+            "2": "O desespero some. Engolir não parece mais um castigo.",
+            "3": "A hidratação retorna em medidas cuidadosas, cada gole um pequeno ato de misericórdia."
+          },
+          "Low": {
+            "1": "A crise passa. A garganta se lembra do que é conforto.",
+            "2": "Quase inteiro novamente — o corpo guarda cada gota como um avarento contando ouro.",
+            "3": "A sede recua a um sussurro, mal audível sobre o som da recuperação."
+          },
+          "Safe": {
+            "1": "Água toca lábios ressecados como uma bênção, espalhando vida por veias dessecadas.",
+            "2": "O alívio é tão agudo que beira a dor — o corpo bebendo a salvação.",
+            "3": "Completamente saciado enfim. A memória da sede persiste como um sonho ruim."
+          }
+        }
+      },
+      "Exhaustion": {
+        "Worsening": {
+          "Low": {
+            "1": "Um bocejo que vem de algum lugar profundo, um puxão gentil em direção ao descanso.",
+            "2": "As pálpebras ficam pesadas com a primeira sugestão de cansaço.",
+            "3": "O cansaço se instala nos membros como areia fina enchendo uma ampulheta."
+          },
+          "Medium": {
+            "1": "A exaustão os envolve como um manto pesado, embotando sentidos e desacelerando passos.",
+            "2": "O corpo se move como se vadejando mel — cada ação exigindo o dobro do esforço.",
+            "3": "O foco escapa como água entre os dedos, o cansaço nublando a mente."
+          },
+          "High": {
+            "1": "O peso da consciência se torna insuportável, a gravidade puxando cada pensamento.",
+            "2": "A exaustão os envolve como uma mortalha, pesada e inescapável.",
+            "3": "Os ossos doem com uma fadiga tão profunda que parece geológica."
+          },
+          "Critical": {
+            "1": "O corpo desliga em etapas, como luzes se apagando uma a uma num edifício vazio.",
+            "2": "A consciência vacila — uma vela tremulando numa corrente de ar que não pode mais resistir.",
+            "3": "Além da exaustão agora. O corpo opera apenas com teimosia animal e desesperada."
+          }
+        },
+        "Improving": {
+          "High": {
+            "1": "Um breve alívio. Não o bastante para restaurar, mas o bastante para evitar o colapso.",
+            "2": "O peso mais pesado se ergue, embora a exaustão ainda more em cada articulação.",
+            "3": "Alguma energia retorna — um filete onde uma enchente é necessária."
+          },
+          "Medium": {
+            "1": "O descanso descasca as piores camadas de exaustão como curativos de uma ferida sarando.",
+            "2": "A névoa começa a afinar. Pensamentos se formam mais facilmente, membros se movem mais livremente.",
+            "3": "Recuperação, lenta e bem-vinda, penetra em músculos cansados."
+          },
+          "Low": {
+            "1": "Energia retorna em ondas lentas, cada uma alcançando um pouco mais fundo nos membros mortos.",
+            "2": "Quase restaurado. O corpo vibra com gratidão silenciosa pela chance de recuperar.",
+            "3": "Força se reconstrói, tijolo por paciente tijolo."
+          },
+          "Safe": {
+            "1": "Completamente descansado enfim — o mundo se afia, cores brilham, pensamentos cristalizam.",
+            "2": "Vitalidade surge de volta como um rio encontrando seu curso após uma seca.",
+            "3": "A exaustão se foi. Cada respiração parece a primeira em dias."
+          }
+        }
+      },
+      "Cold": {
+        "Worsening": {
+          "Low": {
+            "1": "Um calafrio se insinua nas extremidades — pontas dos dedos, orelhas, ponta do nariz.",
+            "2": "O frio se anuncia com um tremor gentil e persistente.",
+            "3": "Arrepios surgem sem aviso, o primeiro alarme silencioso do corpo."
+          },
+          "Medium": {
+            "1": "O frio aperta seu abraço, transformando respiração em névoa e articulações em ferrugem.",
+            "2": "Os tremores se tornam involuntários, o corpo queimando combustível que não pode gastar.",
+            "3": "O calor se retira para o centro, abandonando as extremidades ao gelo invasor."
+          },
+          "High": {
+            "1": "O frio não morde — ele engole. A dormência se espalha como geada sobre vidro.",
+            "2": "Gelo cristaliza no sangue, cada batida do coração bombeando inverno mais fundo.",
+            "3": "O pensamento desacelera até rastejar, o frio envolvendo a mente como um punho congelado."
+          },
+          "Critical": {
+            "1": "Os tremores param — um sinal terrível. O corpo desistiu de gerar calor.",
+            "2": "Uma sonolência traiçoeira desce, o truque mais sedutor e letal do frio.",
+            "3": "A carne embranquece nas bordas. O corpo está perdendo sua guerra contra o inverno."
+          }
+        },
+        "Improving": {
+          "High": {
+            "1": "Um fino fio de calor — o bastante para se agarrar, não o bastante para descongelar.",
+            "2": "A pior dormência recua, substituída pela picada dolorosa da sensação retornando.",
+            "3": "Os tremores se intensificam — paradoxalmente, um bom sinal. O corpo luta de novo."
+          },
+          "Medium": {
+            "1": "O calor retorna em incrementos dolorosos, descongelando nervos de volta à vida.",
+            "2": "O frio afrouxa seu aperto, embora o calafrio ainda more fundo nos ossos.",
+            "3": "A sensação retorna às extremidades — agulhadas, depois calor abençoado."
+          },
+          "Low": {
+            "1": "Quase aquecido de novo. O frio se torna memória, desvanecendo a cada momento.",
+            "2": "Cor retorna à pele pálida, a circulação lembrando suas rotas ancestrais.",
+            "3": "O corpo relaxa seu aperto desesperado no calor restante. O perigo passou."
+          },
+          "Safe": {
+            "1": "O calor volta como o amanhecer, doloroso e belo em igual medida.",
+            "2": "O frio é vencido. Cada membro formiga com a alegria do calor restaurado.",
+            "3": "Completamente descongelado e inteiro. A geada não passa de um pesadelo desvanecendo."
+          }
+        }
+      },
+      "Heat": {
+        "Worsening": {
+          "Low": {
+            "1": "Uma fina camada de suor se forma — o primeiro reconhecimento do corpo ao calor crescente.",
+            "2": "O calor se aproxima, ainda não opressivo mas já não confortável.",
+            "3": "A pele enrubesce enquanto o corpo começa seu trabalho quieto e constante de resfriamento."
+          },
+          "Medium": {
+            "1": "O calor pressiona como um peso físico, espremendo umidade de cada poro.",
+            "2": "O suor corre livremente agora, o corpo despejando calor que não consegue conter.",
+            "3": "O ar tremula e pensamentos vacilam, a concentração derretendo no calor."
+          },
+          "High": {
+            "1": "O próprio ar se torna hostil, cada respiração como inalar de um forno.",
+            "2": "Tontura gira enquanto os sistemas de resfriamento do corpo começam a falhar sob o assalto.",
+            "3": "O calor é um martelo, e o corpo é a bigorna. Algo tem que ceder."
+          },
+          "Critical": {
+            "1": "O suor seca antes de se formar. O corpo cozinha por dentro, lento e impiedoso.",
+            "2": "A visão escurece nas bordas. O calor se tornou um inimigo vivo.",
+            "3": "O corpo se rende — músculos contraem, pele queima, consciência vacila no inferno."
+          }
+        },
+        "Improving": {
+          "High": {
+            "1": "Um sussurro de ar fresco — mal o bastante, mas o corpo se agarra como a uma tábua de salvação.",
+            "2": "O pior do calor se quebra, embora o ar ainda tremelique com fúria residual.",
+            "3": "A temperatura cai uma fração. O corpo ousa ter esperança."
+          },
+          "Medium": {
+            "1": "O peso opressivo diminui aos poucos, o suor finalmente fazendo seu trabalho.",
+            "2": "Respirar fica mais fácil enquanto o ar perde um pouco de sua brutalidade.",
+            "3": "A fornalha diminui. Pensamento e movimento retornam a algo próximo do normal."
+          },
+          "Low": {
+            "1": "Ar fresco lava a pele aquecida, e o corpo lembra o que é conforto.",
+            "2": "Quase recuperado. O rubor desvanece, o pulso se firma, o mundo para de tremer.",
+            "3": "O calor recua, deixando apenas a vaga memória de sua opressão."
+          },
+          "Safe": {
+            "1": "Alívio fresco lava a pele febril, a fornalha do corpo lentamente se apagando.",
+            "2": "O calor foi derrotado. Cada brisa fresca parece um presente de deuses misericordiosos.",
+            "3": "A temperatura retorna à normalidade abençoada. A provação derrete como geada matinal."
+          }
+        }
+      },
+      "Comfort": {
+        "Worsening": {
+          "Low": {
+            "1": "Uma sensação insistente de algo errado — o chão duro demais, o ar parado demais.",
+            "2": "O desconforto sussurra de uma dúzia de pequenas fontes, nenhuma séria, todas irritantes.",
+            "3": "O corpo se mexe inquieto, buscando uma posição que não existe."
+          },
+          "Medium": {
+            "1": "Toda superfície está errada. Toda posição dói. Descanso se torna fantasia distante.",
+            "2": "O corpo reclama num coro de pequenas agonias — apertado, dolorido, insatisfeito.",
+            "3": "Conforto é memória agora, substituído pela agitação constante dos miseráveis."
+          },
+          "High": {
+            "1": "Toda superfície está errada. Toda posição dói. O corpo esqueceu o que é alívio.",
+            "2": "A miséria se instala nas articulações e não será desalojada por nenhum ajuste.",
+            "3": "O desconforto implacável corrói paciência e sanidade igualmente."
+          },
+          "Critical": {
+            "1": "Conforto é uma palavra de outra vida. O corpo existe apenas em estados de sofrimento.",
+            "2": "Dor, pressão, calor, frio — o corpo é assaltado de todos os lados, sem trégua.",
+            "3": "A mente começa a desfiar sob o assalto constante e implacável do desconforto."
+          }
+        },
+        "Improving": {
+          "High": {
+            "1": "Uma pequena misericórdia — uma dor a menos, uma fonte a menos de sofrimento.",
+            "2": "A pior borda se embota, embora o conforto permaneça uma costa distante.",
+            "3": "Algo se ajusta, e o corpo encontra uma fração de alívio."
+          },
+          "Medium": {
+            "1": "O corpo começa a se descontrair, encontrando posições que não punem ativamente.",
+            "2": "O conforto retorna em fragmentos — uma superfície mais macia, uma temperatura mais gentil.",
+            "3": "A agitação constante diminui. Não confortável ainda, mas não mais miserável."
+          },
+          "Low": {
+            "1": "Quase à vontade. Os últimos sussurros de desconforto se perdem no ruído de fundo.",
+            "2": "O corpo se acomoda, músculos se soltando um por um como punhos abertos.",
+            "3": "O conforto volta como um gato retornando a um lugar quente — quieto, agradecido."
+          },
+          "Safe": {
+            "1": "O conforto se instala como um cobertor quente, músculos se soltando um por um.",
+            "2": "À vontade enfim. O corpo afunda no conforto com o alívio de um suspiro longamente contido.",
+            "3": "Toda dor e ponto de pressão se dissolve. Bem-estar, simples e completo."
+          }
+        }
+      },
+      "Sanity": {
+        "Worsening": {
+          "Low": {
+            "1": "Uma sombra passa na periferia da visão — ali e sumiu. Provavelmente nada.",
+            "2": "Pensamentos giram em padrões estranhos, circulando verdades que a mente não está pronta para encarar.",
+            "3": "O mundo parece ligeiramente torto, como visto através de vidro deformado."
+          },
+          "Medium": {
+            "1": "A realidade desfia nas bordas, fios de certeza se desfazendo um por um.",
+            "2": "A mente se curva sob pesos que nunca foi construída para suportar.",
+            "3": "Sussurros no estático. Padrões no caos. A mente busca significado que não está lá."
+          },
+          "High": {
+            "1": "Sombras sussurram verdades que mentes sãs se recusam a ouvir.",
+            "2": "A fronteira entre real e irreal se afina até virar seda — e algo pressiona do outro lado.",
+            "3": "Pensamentos se fraturam e se remontam errados, como um espelho quebrado e recolado por mãos alienígenas."
+          },
+          "Critical": {
+            "1": "A sanidade é uma costa recuando na distância, e a corrente puxa apenas para o fundo.",
+            "2": "A mente se abre e algo terrível e belo se derrama dentro.",
+            "3": "A realidade se dissolve. O que a substitui é pior — e de alguma forma, mais verdadeiro."
+          }
+        },
+        "Improving": {
+          "High": {
+            "1": "Um momento de clareza perfura a névoa — breve, frágil, desesperadamente necessário.",
+            "2": "As piores visões recuam, embora seus ecos ainda ressoem nos vazios da mente.",
+            "3": "A mente se firma, mesmo que por um momento. Um apoio na face do precipício da razão."
+          },
+          "Medium": {
+            "1": "A clareza retorna como um feixe de farol cortando a névoa da loucura.",
+            "2": "O mundo começa a fazer sentido novamente, peça por peça hesitante.",
+            "3": "Os sussurros se aquietam. As sombras afinam. A realidade reassume sua forma familiar e reconfortante."
+          },
+          "Low": {
+            "1": "As peças fraturadas da razão lentamente se remontam, encaixando de volta no lugar.",
+            "2": "Quase inteiro novamente. A loucura se desvanece como um sonho febril na luz da manhã.",
+            "3": "O pensamento flui claramente mais uma vez, um rio retornando às suas margens."
+          },
+          "Safe": {
+            "1": "Sanidade restaurada — o mundo é sólido, real e abençoadamente comum.",
+            "2": "A mente sela suas rachaduras, reconstruindo muros que nunca deveriam ter sido violados.",
+            "3": "Clareza, completa e brilhante. Qualquer escuridão que tocou a mente foi banida."
+          }
+        }
+      },
+      "Morale": {
+        "Worsening": {
+          "Low": {
+            "1": "Um suspiro silencioso escapa — do tipo que carrega o peso de dúvidas não ditas.",
+            "2": "O entusiasmo diminui um tom. A estrada adiante parece mais longa do que antes.",
+            "3": "Uma centelha de dúvida, pequena e persistente, como a chama de uma vela na corrente."
+          },
+          "Medium": {
+            "1": "A esperança vacila como uma vela num furacão. Para quê? Por que tentar?",
+            "2": "O peso de tudo se instala — não esmagador, mas pesado, tão pesado.",
+            "3": "O propósito escoa como água de um vaso rachado. Qual é o sentido?"
+          },
+          "High": {
+            "1": "O desespero é uma coisa silenciosa — não grita, simplesmente... para.",
+            "2": "A vontade de seguir em frente desmorona, substituída por uma indiferença cinza e pesada.",
+            "3": "Cada pequeno revés parece confirmação de que nada jamais vai melhorar."
+          },
+          "Critical": {
+            "1": "Não há mais nada pelo que lutar. O espírito é um edifício esvaziado — oco e frio.",
+            "2": "A esperança morreu em algum lugar lá atrás. O que resta é só... resistência sem propósito.",
+            "3": "Os olhos se apagam. Os ombros caem. A última brasa de vontade se extingue."
+          }
+        },
+        "Improving": {
+          "High": {
+            "1": "Algo acende na escuridão. Pequeno, frágil, mas inegavelmente vivo.",
+            "2": "Um fino fio de determinação — não esperança, não ainda, mas a memória dela.",
+            "3": "O cinza pesado se ergue uma fração. O bastante para ver um passo à frente."
+          },
+          "Medium": {
+            "1": "A moral retorna não como enchente, mas como um amanhecer lento após noite sem fim.",
+            "2": "O propósito se agita, se espreguiçando cautelosamente como um animal saindo da hibernação.",
+            "3": "A estrada adiante ainda se estende longe, mas a vontade de caminhá-la voltou."
+          },
+          "Low": {
+            "1": "Os ânimos se erguem. O riso se torna possível de novo — hesitante, surpreso, real.",
+            "2": "A força de vontade se reconstrói, e o futuro não parece mais tão sombrio.",
+            "3": "O peso se ergue. O horizonte clareia. Propósito flui de volta em correntes firmes."
+          },
+          "Safe": {
+            "1": "Moral restaurada — os ânimos ardem brilhantes, firmes e inabaláveis.",
+            "2": "A escuridão passou. A convicção retorna com uma certeza feroz e silenciosa.",
+            "3": "A esperança não apenas retorna — ela surge, feroz e desafiadora, desafiando o mundo a tentar de novo."
+          }
+        }
+      },
+      "Pain": {
+        "Worsening": {
+          "Low": {
+            "1": "Uma dor surda se faz conhecer — insistente, como uma batida numa porta indesejada.",
+            "2": "A dor anuncia sua chegada silenciosamente, instalando-se com a paciência de um velho inimigo.",
+            "3": "O corpo envia sua primeira queixa afiada — um tiro de aviso."
+          },
+          "Medium": {
+            "1": "A dor se torna um segundo coração, pulsando brilhante e implacável.",
+            "2": "Cada movimento traça uma nova linha de fogo por nervos em protesto.",
+            "3": "Os protestos do corpo crescem mais altos, um coro de ferimentos exigindo atenção."
+          },
+          "High": {
+            "1": "O corpo grita numa linguagem mais antiga que as palavras.",
+            "2": "A dor se torna o mundo — tudo mais é distante, abafado, secundário.",
+            "3": "A agonia reescreve prioridades. Nada importa além de fazê-la parar."
+          },
+          "Critical": {
+            "1": "A dor transcende a sensação e se torna um lugar — um país sem fronteiras e sem saída.",
+            "2": "O corpo não tem mais nada além de suportar. A dor é a única realidade agora.",
+            "3": "Além dos gritos, além das lágrimas. O corpo desliga tudo que não é essencial para sobreviver."
+          }
+        },
+        "Improving": {
+          "High": {
+            "1": "A borda mais afiada se embota. Ainda agonizante, mas o corpo ousa acreditar que pode suportar.",
+            "2": "A dor recua uma fração — o bastante para puxar um fôlego que não seja um ofego.",
+            "3": "O pior passa. O que resta ainda é terrível, mas sobrevivível."
+          },
+          "Medium": {
+            "1": "A dor recua para uma pulsação constante — permanente, mas não mais avassaladora.",
+            "2": "Nervos aquietam seus gritos para uma queixa persistente e manejável.",
+            "3": "Movimento se torna possível de novo, embora cada ação ainda seja uma negociação com a dor."
+          },
+          "Low": {
+            "1": "A dor se desvanece para um eco surdo, facilmente ignorado se não habitado.",
+            "2": "Alívio lava nervos sobrecarregados, o corpo lentamente se soltando.",
+            "3": "Quase sem dor. O corpo prende a respiração, mal ousando acreditar."
+          },
+          "Safe": {
+            "1": "A dor recua como uma maré, deixando para trás a estranha euforia de sua ausência.",
+            "2": "Livre de dor enfim. O corpo treme com o alívio disso.",
+            "3": "Foi embora. Cada nervo suspira com uma gratidão que beira o sagrado."
+          }
+        }
+      },
+      "Radiation": {
+        "Worsening": {
+          "Low": {
+            "1": "Um vago gosto metálico floresce na língua — o primeiro aviso invisível.",
+            "2": "O ar carrega algo errado, sentido antes de ser compreendido.",
+            "3": "Uma náusea sutil se agita, sem fonte e perturbadora."
+          },
+          "Medium": {
+            "1": "Fogo invisível reescreve o DNA fio por fio. O corpo ainda não sabe que está morrendo.",
+            "2": "Náusea vem em ondas, e a pele formiga com uma energia que não deveria estar ali.",
+            "3": "Os sistemas de reparo do corpo se apressam para consertar danos que chegam mais rápido que a cura."
+          },
+          "High": {
+            "1": "Células se amotinam, dividindo e torcendo em algo errado.",
+            "2": "O sangue se rebela contra seu próprio propósito enquanto radiação rasga tecido e medula.",
+            "3": "O corpo trava uma guerra silenciosa e desesperada contra um inimigo que não pode ver nem tocar."
+          },
+          "Critical": {
+            "1": "O dano é profundo, celular, fundamental. O corpo se desfaz no nível do código.",
+            "2": "A radiação queima de dentro — um fogo sem fumaça, uma ferida sem arma.",
+            "3": "A própria vida começa a se desfazer, o código fundamental do ser corrompido além do reparo."
+          }
+        },
+        "Improving": {
+          "High": {
+            "1": "O assalto invisível diminui — ainda perigoso, mas as defesas do corpo se reagrupam.",
+            "2": "A exposição cai, e o corpo agarra a chance de reforçar suas defesas em ruínas.",
+            "3": "A náusea recua uma fração, embora os danos já causados persistam."
+          },
+          "Medium": {
+            "1": "Células cautelosamente retomam sua dança ordenada, curando o que a radiação quebrou.",
+            "2": "O gosto metálico se desvanece, e com ele o pior da náusea.",
+            "3": "Os sistemas de reparo do corpo ganham terreno, remendando danos mais rápido do que acumulam."
+          },
+          "Low": {
+            "1": "O veneno invisível se desvanece, células cautelosamente retomando sua dança antiga e ordenada.",
+            "2": "A recuperação continua — lenta, celular, medida em moléculas ao invés de momentos.",
+            "3": "Quase limpo. A resiliência natural do corpo lentamente apaga as cicatrizes invisíveis."
+          },
+          "Safe": {
+            "1": "Livre de contaminação enfim. O corpo reconstrói o que foi quebrado, célula por paciente célula.",
+            "2": "A radiação se foi. O que resta é cura — lenta, constante e profundamente bem-vinda.",
+            "3": "Limpo. Seguro. O corpo treme de alívio, suas células não mais sob cerco."
+          }
+        }
+      },
+      "Corruption": {
+        "Worsening": {
+          "Low": {
+            "1": "Um pensamento sombrio emerge — desconhecido, indesejado, estranhamente atraente.",
+            "2": "Algo se move nas sombras da alma, um peso que não estava lá antes.",
+            "3": "A mais leve mancha se espalha na borda da consciência, mal perceptível."
+          },
+          "Medium": {
+            "1": "Algo escuro cria raízes, estendendo tentáculos pela alma como hera negra.",
+            "2": "A escuridão sussurra, e o terrível é — começa a fazer sentido.",
+            "3": "Uma corrupção de propósito se insinua, torcendo instintos nobres para fins mais sombrios."
+          },
+          "High": {
+            "1": "A corrupção se espalha como tinta na água — lenta, bela e fatal.",
+            "2": "A alma se esforça sob um peso que nunca deveria suportar, rachaduras se espalhando por suas fundações.",
+            "3": "Certo e errado se confundem. A escuridão oferece clareza que a luz nunca pôde."
+          },
+          "Critical": {
+            "1": "A corrupção está quase completa. O que resta da alma original é apenas um fino verniz.",
+            "2": "A escuridão preenche cada canto, cada fresta. A alma se afoga em água negra.",
+            "3": "A mácula venceu. O que olha de trás daqueles olhos não é mais inteiramente humano."
+          }
+        },
+        "Improving": {
+          "High": {
+            "1": "Um lampejo de luz no escuro — não muito, mas o bastante para lembrar o que foi perdido.",
+            "2": "O aperto da corrupção afrouxa uma fração, e a alma ofega por ar.",
+            "3": "Algo puro emerge, lutando contra a maré escura."
+          },
+          "Medium": {
+            "1": "Luz varre a escuridão, queimando a corrupção como névoa matinal.",
+            "2": "A alma se livra de algumas correntes. Os sussurros ficam mais silenciosos.",
+            "3": "Clareza retorna em manchas, como luz do sol rompendo nuvens de tempestade."
+          },
+          "Low": {
+            "1": "A mancha desvanece até quase nada — uma sombra de uma sombra, facilmente ignorada.",
+            "2": "A alma se reasserta, empurrando os últimos resquícios de escuridão para as margens.",
+            "3": "Quase limpo. A corrupção recua, sibilando, da luz."
+          },
+          "Safe": {
+            "1": "Purificado. A alma brilha de novo, imaculada e inabalada pela escuridão que a testou.",
+            "2": "A corrupção se foi — banida, queimada, deixando apenas luz limpa.",
+            "3": "Inteiro de novo, e mais forte pela provação. A escuridão não encontrou ancoragem permanente."
+          }
+        }
+      },
+      "Fatigue": {
+        "Worsening": {
+          "Low": {
+            "1": "Uma suave pesadez nos membros — o pedido quieto do corpo por um ritmo mais lento.",
+            "2": "Os níveis de energia baixam, como um poço diminuindo a cada balde.",
+            "3": "Os primeiros tentáculos de fadiga envolvem os músculos, suaves mas insistentes."
+          },
+          "Medium": {
+            "1": "O mundo embaça nas bordas enquanto a fadiga puxa sua cortina.",
+            "2": "Músculos viram chumbo, pensamentos viram melaço. Tudo exige o dobro do esforço.",
+            "3": "A fadiga se instala como névoa, embaçando bordas e desacelerando reflexos."
+          },
+          "High": {
+            "1": "O corpo se move com tempo emprestado, cada ação pagando juros sobre uma dívida crescente.",
+            "2": "A fadiga se torna algo físico — um peso amarrado a cada membro, uma corrente em cada pensamento.",
+            "3": "Reações desaceleram até rastejar. O corpo opera com vapores e teimosia apenas."
+          },
+          "Critical": {
+            "1": "O tanque está vazio. O corpo funciona apenas com pura e desesperada vontade.",
+            "2": "O colapso se aproxima — inevitável, incontornável. O corpo deu tudo que tinha.",
+            "3": "A fadiga vence sua guerra de atrito. Até ficar de pé requer um tipo de heroísmo."
+          }
+        },
+        "Improving": {
+          "High": {
+            "1": "Uma pequena reserva, raspada do fundo do barril. Não vai durar, mas ajuda.",
+            "2": "As correntes mais pesadas da fadiga se afrouxam, embora o corpo ainda cambaleeie sob a carga.",
+            "3": "Alguma energia retorna — não o bastante para prosperar, mas o bastante para sobreviver."
+          },
+          "Medium": {
+            "1": "Vitalidade retorna, quieta e constante como uma maré virando.",
+            "2": "A névoa da fadiga começa a se dissipar, revelando um mundo que sempre esteve lá.",
+            "3": "Força retorna em incrementos bem-vindos, cada um uma pequena vitória."
+          },
+          "Low": {
+            "1": "Energia se reconstrói firmemente, as reservas do corpo lentamente reabastecendo.",
+            "2": "Quase restaurado. O corpo vibra com gratidão silenciosa pela chance de recuperar.",
+            "3": "A fadiga se torna um sussurro, facilmente abafado pelo vigor retornando."
+          },
+          "Safe": {
+            "1": "Completamente recarregado. O corpo pulsa com a energia da recuperação completa.",
+            "2": "A fadiga é uma memória distante. Cada músculo responde com disposição ansiosa.",
+            "3": "Restaurado, revitalizado, pronto. O corpo lembra como é se sentir inteiro."
+          }
+        }
+      },
+      "Environmental": {
+        "Worsening": {
+          "Low": {
+            "1": "O ambiente muda — algo sutilmente errado no ar, no chão, na luz.",
+            "2": "Algo neste lugar põe os nervos à flor da pele, embora seja difícil dizer o quê.",
+            "3": "O entorno pressiona com uma hostilidade vaga e difusa."
+          },
+          "Medium": {
+            "1": "O ambiente se torna hostil, pressionando de todos os lados.",
+            "2": "O mundo ganha dentes — bordas afiadas, superfícies ásperas, uma paisagem implacável.",
+            "3": "Cada elemento conspira: o terreno castiga, o ar resiste, o chão reluta a cada passo."
+          },
+          "High": {
+            "1": "A natureza mostra seus dentes — indiferente, impiedosa, absoluta.",
+            "2": "O ambiente não é mais cenário — é um adversário, e um paciente.",
+            "3": "Sobrevivência se torna o único pensamento enquanto o próprio mundo se torna uma arma."
+          },
+          "Critical": {
+            "1": "Este lugar está ativamente tentando matá-los. Cada momento de sobrevivência é um pequeno milagre.",
+            "2": "O ambiente atinge seu ponto de ruptura — ou melhor, o deles. Algo tem que ceder.",
+            "3": "Além de hostil. O mundo é uma máquina de destruição, e eles estão presos em suas engrenagens."
+          }
+        },
+        "Improving": {
+          "High": {
+            "1": "O ambiente cede uma fração — o bastante para tomar fôlego, planejar o próximo passo.",
+            "2": "O pior do assalto passa, embora o entorno permaneça longe de amigável.",
+            "3": "Uma fina margem de segurança se abre. Não confortável, mas sobrevivível."
+          },
+          "Medium": {
+            "1": "A pressão diminui. O mundo lembra como ser gentil.",
+            "2": "As condições melhoram — ainda desafiadoras, mas não mais ameaçadoras.",
+            "3": "O ambiente muda de inimigo para obstáculo. Manejável, embora desagradável."
+          },
+          "Low": {
+            "1": "O entorno amolece em direção a algo próximo de habitável.",
+            "2": "Quase confortável. O ambiente retira sua hostilidade a um resmungo baixo.",
+            "3": "As condições se normalizam. O pior claramente já passou."
+          },
+          "Safe": {
+            "1": "O ambiente se acalma. Solo firme, ar respirável, chão estável.",
+            "2": "Tudo limpo. O mundo é hospitaleiro novamente, e cada sentido relaxa com alívio.",
+            "3": "Segurança, genuína e completa. O ambiente não é mais uma preocupação."
+          }
+        }
+      }
     }
   }
 }

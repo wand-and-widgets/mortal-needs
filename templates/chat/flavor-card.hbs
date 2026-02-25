@@ -1,0 +1,24 @@
+<div class="mn-chat-card mn-chat-card--flavor mn-chat-card--{{#if isWorsening}}worsening{{else}}improving{{/if}}">
+  <div class="mn-chat-card__header">
+    <i class="mn-chat-card__icon fas {{directionIcon}}"></i>
+    <span class="mn-chat-card__title">
+      <i class="fas {{needIcon}}"></i> {{needName}} — {{localize directionLabel}}
+    </span>
+    <span class="mn-chat-card__severity mn-badge mn-badge--{{severity}}">{{localize severityLabel}}</span>
+  </div>
+
+  <div class="mn-chat-card__body">
+    <div class="mn-chat-card__actor">
+      <img class="mn-chat-card__actor-img" src="{{actorImg}}" alt="{{actorName}}">
+      <span class="mn-chat-card__actor-name">{{actorName}}</span>
+    </div>
+
+    <div class="mn-chat-card__bar">
+      <div class="mn-chat-card__bar-fill mn-badge--{{severity}}" style="width: {{percentage}}%;"></div>
+    </div>
+
+    {{#if flavor}}
+      <div class="mn-chat-card__flavor">{{flavor}}</div>
+    {{/if}}
+  </div>
+</div>

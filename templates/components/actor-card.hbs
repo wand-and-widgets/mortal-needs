@@ -1,0 +1,44 @@
+<article class="mn-actor-card" data-entity-id="{{id}}" data-worst-severity="{{worstSeverity}}">
+  <header class="mn-actor-card__header">
+    <div class="mn-actor-card__portrait">
+      <img class="mn-actor-card__portrait-img"
+           src="{{img}}"
+           alt="{{name}}"
+           data-severity="{{worstSeverity}}"
+           loading="lazy">
+    </div>
+
+    <span class="mn-actor-card__name">{{name}}</span>
+
+    {{#if (eq source "exalted-scenes")}}
+      <span class="mn-badge mn-badge--source mn-badge--source-es" data-tooltip="Exalted Scenes">ES</span>
+    {{/if}}
+
+    <button class="mn-actor-card__expand {{#if expanded}}is-expanded{{/if}}" data-action="toggle-expand" data-entity-id="{{id}}">
+      <i class="fas fa-chevron-down"></i>
+    </button>
+  </header>
+
+  <div class="mn-actor-card__needs">
+    {{#each needs}}
+      {{#if this.enabled}}
+        {{> "modules/mortal-needs/templates/components/need-bar-horizontal.hbs" this entityId=../id}}
+      {{/if}}
+    {{/each}}
+  </div>
+
+  {{#if expanded}}
+    <div class="mn-actor-card__actions">
+      <button class="mn-actor-card__action-btn" data-action="reset-all" data-entity-id="{{id}}">
+        <i class="fas fa-undo"></i>
+        <span>{{localize "MORTAL_NEEDS.Actions.ResetAll"}}</span>
+      </button>
+      {{#if isGM}}
+        <button class="mn-actor-card__action-btn mn-actor-card__action-btn--danger" data-action="untrack" data-entity-id="{{id}}">
+          <i class="fas fa-times"></i>
+          <span>{{localize "MORTAL_NEEDS.Actions.Untrack"}}</span>
+        </button>
+      {{/if}}
+    </div>
+  {{/if}}
+</article>

@@ -1,0 +1,15 @@
+<div class="mn-empty-state">
+  <div class="mn-empty-state__icon">
+    <i class="fas fa-heartbeat"></i>
+  </div>
+  <h3 class="mn-empty-state__title">{{localize "MORTAL_NEEDS.EmptyState.Title"}}</h3>
+  <p class="mn-empty-state__text">{{localize "MORTAL_NEEDS.EmptyState.Description"}}</p>
+  {{#if isGM}}
+    <button class="mn-btn mn-btn--primary" data-action="add-actors">
+      <i class="fas fa-user-plus"></i>
+      <span>{{localize "MORTAL_NEEDS.EmptyState.AddActors"}}</span>
+    </button>
+  {{else}}
+    <p class="mn-empty-state__text mn-text-xs">{{localize "MORTAL_NEEDS.EmptyState.PlayerWaiting"}}</p>
+  {{/if}}
+</div>

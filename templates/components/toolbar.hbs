@@ -1,0 +1,29 @@
+<div class="mn-toolbar">
+  <div class="mn-toolbar__group">
+    <button class="mn-toolbar__btn" data-action="add-actors">
+      <i class="fas fa-user-plus"></i>
+      <span>{{localize "MORTAL_NEEDS.Toolbar.Add"}}</span>
+    </button>
+    <button class="mn-toolbar__btn" data-action="stress-all">
+      <i class="fas fa-arrow-up"></i>
+      <span>{{localize "MORTAL_NEEDS.Toolbar.StressAll"}}</span>
+    </button>
+    <button class="mn-toolbar__btn" data-action="relieve-all">
+      <i class="fas fa-arrow-down"></i>
+      <span>{{localize "MORTAL_NEEDS.Toolbar.RelieveAll"}}</span>
+    </button>
+  </div>
+
+  <div class="mn-toolbar__spacer"></div>
+
+  <div class="mn-toolbar__group">
+    {{#if isGM}}
+    <button class="mn-toolbar__btn mn-toolbar__btn--icon" data-action="configure">
+      <i class="fas fa-cog"></i>
+    </button>
+    <button class="mn-toolbar__btn mn-toolbar__btn--icon" data-action="history">
+      <i class="fas fa-history"></i>
+    </button>
+    {{/if}}
+  </div>
+</div>

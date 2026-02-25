@@ -1,0 +1,153 @@
+/* Mortal Needs v2.0 — Chat Cards */
+
+.mn-chat-card {
+  font-family: var(--mn-font-family);
+  background: var(--mn-surface-card);
+  border-radius: var(--mn-radius-md);
+  border: 1px solid var(--mn-border-subtle);
+  overflow: hidden;
+  margin: 4px 0;
+}
+
+.mn-chat-card__header {
+  display: flex;
+  align-items: center;
+  gap: var(--mn-space-sm);
+  padding: var(--mn-space-sm) var(--mn-space-md);
+  background: var(--mn-surface-elevated);
+  border-bottom: 1px solid var(--mn-border-subtle);
+}
+
+.mn-chat-card__icon {
+  font-size: var(--mn-font-size-md);
+  color: var(--mn-accent);
+}
+
+.mn-chat-card__title {
+  font-size: var(--mn-font-size-sm);
+  font-weight: var(--mn-font-weight-semibold);
+  color: var(--mn-text-primary);
+  flex-grow: 1;
+}
+
+.mn-chat-card__severity {
+  font-size: var(--mn-font-size-xs);
+  font-weight: var(--mn-font-weight-medium);
+  padding: 2px 8px;
+  border-radius: var(--mn-radius-pill);
+}
+
+.mn-chat-card__body {
+  padding: var(--mn-space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--mn-space-sm);
+}
+
+.mn-chat-card__actor {
+  display: flex;
+  align-items: center;
+  gap: var(--mn-space-sm);
+}
+
+.mn-chat-card__actor-img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.mn-chat-card__actor-name {
+  font-size: var(--mn-font-size-sm);
+  font-weight: var(--mn-font-weight-medium);
+  color: var(--mn-text-primary);
+}
+
+.mn-chat-card__details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mn-chat-card__detail-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--mn-font-size-xs);
+}
+
+.mn-chat-card__detail-label {
+  color: var(--mn-text-muted);
+}
+
+.mn-chat-card__detail-value {
+  color: var(--mn-text-secondary);
+  font-weight: var(--mn-font-weight-medium);
+}
+
+/* Mini bar in chat card */
+.mn-chat-card__bar {
+  height: 6px;
+  background: var(--mn-surface-base);
+  border-radius: var(--mn-radius-pill);
+  overflow: hidden;
+}
+
+.mn-chat-card__bar-fill {
+  height: 100%;
+  border-radius: var(--mn-radius-pill);
+}
+
+/* Flavor text */
+.mn-chat-card__flavor {
+  font-size: var(--mn-font-size-xs);
+  color: var(--mn-text-muted);
+  font-style: italic;
+  line-height: 1.4;
+  padding: var(--mn-space-sm);
+  background: var(--mn-surface-base);
+  border-radius: var(--mn-radius-sm);
+  border-left: 2px solid var(--mn-accent);
+}
+
+/* Batch card — actors listed compactly under shared flavor */
+.mn-chat-card__batch-actors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--mn-space-sm);
+}
+
+.mn-chat-card__batch-actor {
+  display: flex;
+  align-items: center;
+  gap: var(--mn-space-xs);
+}
+
+.mn-chat-card__batch-actor .mn-chat-card__actor-img {
+  width: 24px;
+  height: 24px;
+}
+
+.mn-chat-card__batch-actor .mn-chat-card__actor-name {
+  font-size: var(--mn-font-size-xs);
+}
+
+/* Summary card (multiple consequences) */
+.mn-chat-card__summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--mn-space-xs);
+}
+
+.mn-chat-card__summary-item {
+  display: flex;
+  align-items: center;
+  gap: var(--mn-space-sm);
+  padding: var(--mn-space-xs) 0;
+}
+
+.mn-chat-card__summary-item i {
+  width: 16px;
+  text-align: center;
+  font-size: var(--mn-font-size-xs);
+  color: var(--mn-text-muted);
+}
