@@ -146,12 +146,15 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
       a.needs.some(n => n.percentage >= criticalThreshold)
     ).length;
 
+    const barOrientation = game.settings.get(MODULE_ID, 'barOrientation') ?? 'horizontal';
+
     return {
       actors,
       hasTracked: actors.length > 0,
       trackedCount: actors.length,
       criticalCount,
       isGM,
+      barOrientation,
     };
   }
 

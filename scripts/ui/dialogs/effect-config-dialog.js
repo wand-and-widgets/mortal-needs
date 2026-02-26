@@ -9,6 +9,7 @@ export class EffectConfigDialog extends HandlebarsApplicationMixin(ApplicationV2
   #configManager;
   #eventBus;
   #selectedType = 'attribute-modify';
+  #editIndex = null;
 
   static DEFAULT_OPTIONS = {
     id: 'mortal-needs-effect-config',
@@ -34,56 +35,102 @@ export class EffectConfigDialog extends HandlebarsApplicationMixin(ApplicationV2
     },
   };
 
-  constructor(needId, store, configManager, eventBus) {
+  constructor(needId, store, configManager, eventBus, { editIndex } = {}) {
     super();
     this.#needId = needId;
     this.#store = store;
     this.#configManager = configManager;
     this.#eventBus = eventBus;
+
+    // Edit mode: load existing consequence data
+    if (editIndex != null) {
+      this.#editIndex = editIndex;
+      const needConfig = this.#store.getNeedConfig(this.#needId);
+      const existing = needConfig?.consequences?.[editIndex];
+      if (existing) {
+        this.#selectedType = existing.type;
+      }
+    }
+  }
+
+  get title() {
+    return game.i18n.localize(
+      this.#editIndex != null
+        ? 'MORTAL_NEEDS.EffectConfig.EditTitle'
+        : 'MORTAL_NEEDS.EffectConfig.Title'
+    );
   }
 
   async _prepareContext(options) {
     const types = getAllConsequenceTypes();
+    const isEdit = this.#editIndex != null;
+
+    // Load existing consequence for edit mode
+    let existingConfig = null;
+    if (isEdit) {
+      const needConfig = this.#store.getNeedConfig(this.#needId);
+      existingConfig = needConfig?.consequences?.[this.#editIndex] || null;
+    }
+
+    // Get available attributes for datalist autocomplete
+    const api = game.modules.get(MODULE_ID)?.api;
+    const availableAttributes = api?.system?.availableAttributes || [];
 
     return {
       types,
       selectedType: this.#selectedType,
-      configSchema: this.#getConfigSchema(this.#selectedType),
-      threshold: 100,
-      ticks: 3,
-      reversible: true,
+      configSchema: this.#getConfigSchema(this.#selectedType, existingConfig?.config),
+      threshold: existingConfig?.threshold ?? 100,
+      ticks: existingConfig?.ticks ?? 3,
+      reversible: existingConfig?.reversible ?? true,
+      isEdit,
+      availableAttributes,
     };
   }
 
-  #getConfigSchema(type) {
+  #getConfigSchema(type, existingValues = null) {
     const TypeClass = getConsequenceType(type);
     if (!TypeClass?.CONFIG_SCHEMA) return [];
     return TypeClass.CONFIG_SCHEMA.map(field => {
-      const resolved = { ...field, value: field.default ?? '' };
+      const resolved = { ...field };
+      // Pre-populate from existing values in edit mode, otherwise use default
+      resolved.value = existingValues?.[field.key] ?? field.default ?? '';
       if (typeof resolved.options === 'string') {
-        resolved.options = this.#resolveOptions(resolved.options);
+        resolved.options = this.#resolveOptions(resolved.options, resolved.value);
+      } else if (Array.isArray(resolved.options)) {
+        // Mark the selected option
+        resolved.options = resolved.options.map(opt => ({
+          ...opt,
+          selected: opt.value === resolved.value,
+        }));
+      }
+      // Flag text fields that use attribute paths for datalist binding
+      if (field.key === 'path' || field.key === 'changeKey') {
+        resolved.useAttributeDatalist = true;
       }
       return resolved;
     });
   }
 
-  #resolveOptions(source) {
+  #resolveOptions(source, currentValue) {
+    let options = [];
     if (source === 'adapter:conditions') {
       const api = game.modules.get(MODULE_ID)?.api;
       if (api?.system?.availableConditions) {
-        return api.system.availableConditions.map(c => ({
+        options = api.system.availableConditions.map(c => ({
           value: c.id,
           label: typeof c.label === 'string' ? game.i18n.localize(c.label) : c.label,
         }));
       }
     }
     if (source === 'game:macros') {
-      return game.macros.contents
+      options = game.macros.contents
         .filter(m => m.canExecute)
         .sort((a, b) => a.name.localeCompare(b.name))
         .map(m => ({ value: m.id, label: m.name }));
     }
-    return [];
+    // Mark selected
+    return options.map(opt => ({ ...opt, selected: opt.value === currentValue }));
   }
 
   _onRender(context, options) {
@@ -121,14 +168,25 @@ export class EffectConfigDialog extends HandlebarsApplicationMixin(ApplicationV2
 
     const consequence = { type, threshold, ticks, reversible, config };
 
-    // Add to need's consequences
+    // Add or update the consequence
     const needConfig = this.#store.getNeedConfig(this.#needId);
     if (needConfig) {
-      const consequences = [...(needConfig.consequences || []), consequence];
+      const consequences = [...(needConfig.consequences || [])];
+
+      if (this.#editIndex != null && this.#editIndex < consequences.length) {
+        // Edit mode: replace at index
+        consequences[this.#editIndex] = consequence;
+      } else {
+        // Add mode: push new
+        consequences.push(consequence);
+      }
+
       this.#store.updateNeedConfig(this.#needId, { consequences });
       const allConfigs = this.#store.getAllNeedConfigs();
       await this.#configManager.saveNeedsConfig(allConfigs);
-      this.#eventBus.emit(Events.CONFIG_CHANGED, { source: 'consequence-add', needId: this.#needId });
+
+      const source = this.#editIndex != null ? 'consequence-edit' : 'consequence-add';
+      this.#eventBus.emit(Events.CONFIG_CHANGED, { source, needId: this.#needId });
     }
 
     this.close();

@@ -17,6 +17,31 @@ export function getAllConsequenceTypes() {
   }));
 }
 
+/**
+ * Get a human-readable description for a consequence without needing a full instance.
+ * Creates a lightweight proxy adapter from the public API for description resolution.
+ * @param {string} type - The consequence type key
+ * @param {object} config - The consequence config object
+ * @returns {string} Localized description string
+ */
+export function getConsequenceDescription(type, config) {
+  const TypeClass = CONSEQUENCE_TYPE_REGISTRY.get(type);
+  if (!TypeClass) return type;
+
+  const api = game.modules.get('mortal-needs')?.api;
+  const proxyAdapter = {
+    getAvailableConditions() { return api?.system?.availableConditions || []; },
+    getAvailableAttributes() { return api?.system?.availableAttributes || []; },
+  };
+
+  const instance = new TypeClass(proxyAdapter);
+  try {
+    return instance.getDescription(config);
+  } catch {
+    return game.i18n.localize(TypeClass.LABEL);
+  }
+}
+
 export class ConsequenceType {
   static TYPE = '';
   static LABEL = 'Consequence';

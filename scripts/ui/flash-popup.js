@@ -108,8 +108,11 @@ export class FlashPopup {
     info.appendChild(name);
 
     // Need bars
+    const orientation = game.settings.get(MODULE_ID, 'barOrientation') ?? 'horizontal';
     const needsEl = document.createElement('div');
     needsEl.className = 'mn-flash__needs';
+    if (orientation === 'vertical') needsEl.classList.add('mn-flash__needs--vertical');
+    else if (orientation === 'radial') needsEl.classList.add('mn-flash__needs--radial');
 
     for (const config of needs) {
       const state = actor.needs[config.id];
@@ -120,37 +123,126 @@ export class FlashPopup {
       const percentage = NeedsEngine.getPercentage(value, max);
       const severity = NeedsEngine.getSeverity(percentage);
       const decimal = max > 0 ? value / max : 0;
+      const tooltip = `${game.i18n.localize(config.label)}: ${value}/${max} (${percentage}%)`;
 
-      const needEl = document.createElement('div');
-      needEl.className = 'mn-flash__need';
-
-      const icon = document.createElement('span');
-      icon.className = 'mn-flash__need-icon';
-      icon.innerHTML = `<i class="fas ${config.icon}"></i>`;
-      needEl.appendChild(icon);
-
-      const track = document.createElement('div');
-      track.className = 'mn-flash__need-track';
-
-      const fill = document.createElement('div');
-      fill.className = 'mn-flash__need-fill';
-      fill.dataset.severity = severity;
-      fill.style.transform = `scaleX(${decimal})`;
-      track.appendChild(fill);
-      needEl.appendChild(track);
-
-      const valueEl = document.createElement('span');
-      valueEl.className = 'mn-flash__need-value';
-      valueEl.dataset.severity = severity;
-      valueEl.textContent = `${percentage}%`;
-      needEl.appendChild(valueEl);
-
-      needsEl.appendChild(needEl);
+      if (orientation === 'radial') {
+        needsEl.appendChild(this.#buildRadialNeed(config, severity, decimal, tooltip));
+      } else if (orientation === 'vertical') {
+        needsEl.appendChild(this.#buildVerticalNeed(config, severity, decimal, percentage, tooltip));
+      } else {
+        needsEl.appendChild(this.#buildHorizontalNeed(config, severity, decimal, percentage, tooltip));
+      }
     }
 
     info.appendChild(needsEl);
     card.appendChild(info);
 
     return card;
+  }
+
+  // ─── Need Bar Builders ─────────────────────────────────
+
+  #buildHorizontalNeed(config, severity, decimal, percentage, tooltip) {
+    const needEl = document.createElement('div');
+    needEl.className = 'mn-flash__need';
+    needEl.title = tooltip;
+
+    const icon = document.createElement('span');
+    icon.className = 'mn-flash__need-icon';
+    icon.innerHTML = `<i class="fas ${config.icon}"></i>`;
+    needEl.appendChild(icon);
+
+    const track = document.createElement('div');
+    track.className = 'mn-flash__need-track';
+
+    const fill = document.createElement('div');
+    fill.className = 'mn-flash__need-fill';
+    fill.dataset.severity = severity;
+    fill.style.transform = `scaleX(${decimal})`;
+    track.appendChild(fill);
+    needEl.appendChild(track);
+
+    const valueEl = document.createElement('span');
+    valueEl.className = 'mn-flash__need-value';
+    valueEl.dataset.severity = severity;
+    valueEl.textContent = `${percentage}%`;
+    needEl.appendChild(valueEl);
+
+    return needEl;
+  }
+
+  #buildVerticalNeed(config, severity, decimal, percentage, tooltip) {
+    const needEl = document.createElement('div');
+    needEl.className = 'mn-flash__need mn-flash__need--vertical';
+    needEl.title = tooltip;
+
+    const icon = document.createElement('span');
+    icon.className = 'mn-flash__need-icon';
+    icon.dataset.severity = severity;
+    icon.innerHTML = `<i class="fas ${config.icon}"></i>`;
+    needEl.appendChild(icon);
+
+    const track = document.createElement('div');
+    track.className = 'mn-flash__need-track mn-flash__need-track--vertical';
+
+    const fill = document.createElement('div');
+    fill.className = 'mn-flash__need-fill mn-flash__need-fill--vertical';
+    fill.dataset.severity = severity;
+    fill.style.transform = `scaleY(${decimal})`;
+    track.appendChild(fill);
+    needEl.appendChild(track);
+
+    const pct = document.createElement('span');
+    pct.className = 'mn-flash__need-pct';
+    pct.dataset.severity = severity;
+    pct.textContent = `${percentage}%`;
+    needEl.appendChild(pct);
+
+    return needEl;
+  }
+
+  #buildRadialNeed(config, severity, decimal, tooltip) {
+    const r = 18;
+    const circumference = 2 * Math.PI * r;
+    const dashOffset = circumference * (1 - decimal);
+
+    const needEl = document.createElement('div');
+    needEl.className = 'mn-flash__need mn-flash__need--radial';
+    needEl.title = tooltip;
+
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('class', 'mn-flash__ring');
+    svg.setAttribute('viewBox', '0 0 44 44');
+
+    const trackCircle = document.createElementNS(svgNS, 'circle');
+    trackCircle.setAttribute('class', 'mn-flash__ring-track');
+    trackCircle.setAttribute('cx', '22');
+    trackCircle.setAttribute('cy', '22');
+    trackCircle.setAttribute('r', String(r));
+    svg.appendChild(trackCircle);
+
+    const fillCircle = document.createElementNS(svgNS, 'circle');
+    fillCircle.setAttribute('class', 'mn-flash__ring-fill');
+    fillCircle.dataset.severity = severity;
+    fillCircle.setAttribute('cx', '22');
+    fillCircle.setAttribute('cy', '22');
+    fillCircle.setAttribute('r', String(r));
+    fillCircle.setAttribute('stroke-dasharray', String(circumference));
+    fillCircle.setAttribute('stroke-dashoffset', String(dashOffset));
+    svg.appendChild(fillCircle);
+
+    const ringWrap = document.createElement('div');
+    ringWrap.className = 'mn-flash__ring-wrap';
+    ringWrap.appendChild(svg);
+
+    const iconEl = document.createElement('span');
+    iconEl.className = 'mn-flash__radial-icon';
+    iconEl.innerHTML = `<i class="fas ${config.icon}"></i>`;
+    ringWrap.appendChild(iconEl);
+
+    needEl.appendChild(ringWrap);
+
+    return needEl;
   }
 }

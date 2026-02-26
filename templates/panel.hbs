@@ -33,7 +33,7 @@
 
       <div class="mn-panel__actors">
         {{#each actors}}
-          {{> "modules/mortal-needs/templates/components/actor-card.hbs" this isGM=../isGM}}
+          {{> "modules/mortal-needs/templates/components/actor-card.hbs" this isGM=../isGM barOrientation=../barOrientation}}
         {{/each}}
       </div>
     {{else}}

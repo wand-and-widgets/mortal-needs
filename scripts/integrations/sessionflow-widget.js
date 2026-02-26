@@ -18,7 +18,7 @@ export function createMortalNeedsWidgetClass() {
   class MortalNeedsWidget extends Widget {
     static TYPE = 'mortal-needs';
     static LABEL = 'MORTAL_NEEDS.SessionFlow.WidgetLabel';
-    static ICON = 'fas fa-heartbeat';
+    static ICON = 'fas fa-skull';
     static MIN_WIDTH = 220;
     static MIN_HEIGHT = 120;
     static DEFAULT_WIDTH = 340;
@@ -88,6 +88,18 @@ export function createMortalNeedsWidgetClass() {
         () => this.#openNeedsToggle(api),
       ));
 
+      // Stress All (opens multi-stress dialog)
+      toolbar.appendChild(this.#createToolbarBtn(
+        'fa-arrow-up', 'MORTAL_NEEDS.Toolbar.StressAll',
+        () => this.#openMultiStress('stress'),
+      ));
+
+      // Relieve All (opens multi-stress dialog)
+      toolbar.appendChild(this.#createToolbarBtn(
+        'fa-arrow-down', 'MORTAL_NEEDS.Toolbar.RelieveAll',
+        () => this.#openMultiStress('relieve'),
+      ));
+
       // Reset All
       toolbar.appendChild(this.#createToolbarBtn(
         'fa-undo-alt', 'MORTAL_NEEDS.SessionFlow.ResetAll',
@@ -132,6 +144,7 @@ export function createMortalNeedsWidgetClass() {
     // ─── Actor Card ───────────────────────────────────────────
 
     #buildActorCard(entity, enabledNeeds, api) {
+      const orientation = game.settings.get(MODULE_ID, 'barOrientation') ?? 'horizontal';
       const actorEl = document.createElement('div');
       actorEl.className = 'mn-sf-widget__actor';
 
@@ -172,9 +185,11 @@ export function createMortalNeedsWidgetClass() {
       // Needs
       const needsCol = document.createElement('div');
       needsCol.className = 'mn-sf-widget__needs';
+      if (orientation === 'vertical') needsCol.classList.add('mn-sf-widget__needs--vertical');
+      else if (orientation === 'radial') needsCol.classList.add('mn-sf-widget__needs--radial');
 
       for (const config of enabledNeeds) {
-        needsCol.appendChild(this.#buildNeedRow(entity, config, api));
+        needsCol.appendChild(this.#buildNeedRow(entity, config, api, orientation));
       }
 
       infoCol.appendChild(needsCol);
@@ -185,17 +200,24 @@ export function createMortalNeedsWidgetClass() {
 
     // ─── Need Row (with per-need +/- controls) ───────────────
 
-    #buildNeedRow(entity, config, api) {
+    #buildNeedRow(entity, config, api, orientation = 'horizontal') {
       const state = entity.needs[config.id];
       const value = state?.value ?? 0;
       const max = state?.max ?? config.max ?? 100;
       const percentage = NeedsEngine.getPercentage(value, max);
       const severity = NeedsEngine.getSeverity(percentage);
       const decimal = max > 0 ? value / max : 0;
+      const tooltip = `${game.i18n.localize(config.label)}: ${value}/${max} (${percentage}%)`;
 
+      if (orientation === 'radial') return this.#buildNeedRadial(entity, config, api, severity, decimal, tooltip);
+      if (orientation === 'vertical') return this.#buildNeedVertical(entity, config, api, severity, decimal, percentage, tooltip);
+      return this.#buildNeedHorizontal(entity, config, api, severity, decimal, tooltip);
+    }
+
+    #buildNeedHorizontal(entity, config, api, severity, decimal, tooltip) {
       const needEl = document.createElement('div');
       needEl.className = 'mn-sf-widget__need';
-      needEl.title = `${game.i18n.localize(config.label)}: ${value}/${max} (${percentage}%)`;
+      needEl.title = tooltip;
 
       // Icon
       const icon = document.createElement('span');
@@ -247,7 +269,165 @@ export function createMortalNeedsWidgetClass() {
       return needEl;
     }
 
+    #buildNeedVertical(entity, config, api, severity, decimal, percentage, tooltip) {
+      const needEl = document.createElement('div');
+      needEl.className = 'mn-sf-widget__need mn-sf-widget__need--vertical';
+      needEl.title = tooltip;
+
+      // Icon
+      const icon = document.createElement('span');
+      icon.className = 'mn-sf-widget__need-icon';
+      icon.dataset.severity = severity;
+      icon.innerHTML = `<i class="fas ${config.icon}"></i>`;
+      needEl.appendChild(icon);
+
+      // Vertical track + fill
+      const track = document.createElement('div');
+      track.className = 'mn-sf-widget__need-track mn-sf-widget__need-track--vertical';
+
+      const fill = document.createElement('div');
+      fill.className = 'mn-sf-widget__need-fill mn-sf-widget__need-fill--vertical';
+      fill.dataset.severity = severity;
+      fill.style.transform = `scaleY(${decimal})`;
+      track.appendChild(fill);
+      needEl.appendChild(track);
+
+      // Percentage
+      const pct = document.createElement('span');
+      pct.className = 'mn-sf-widget__need-pct';
+      pct.dataset.severity = severity;
+      pct.textContent = percentage;
+      needEl.appendChild(pct);
+
+      // +/- controls (GM only)
+      if (game.user.isGM) {
+        const controls = document.createElement('div');
+        controls.className = 'mn-sf-widget__need-controls';
+
+        const relieveBtn = document.createElement('button');
+        relieveBtn.className = 'mn-sf-widget__need-btn';
+        relieveBtn.innerHTML = '<i class="fas fa-minus"></i>';
+        relieveBtn.title = game.i18n.localize('MORTAL_NEEDS.Actions.Relieve');
+        relieveBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const amt = game.settings.get(MODULE_ID, 'defaultStressAmount');
+          await api.needs.relieve(entity.id, config.id, amt);
+        });
+
+        const stressBtn = document.createElement('button');
+        stressBtn.className = 'mn-sf-widget__need-btn';
+        stressBtn.innerHTML = '<i class="fas fa-plus"></i>';
+        stressBtn.title = game.i18n.localize('MORTAL_NEEDS.Actions.Stress');
+        stressBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const amt = game.settings.get(MODULE_ID, 'defaultStressAmount');
+          await api.needs.stress(entity.id, config.id, amt);
+        });
+
+        controls.appendChild(relieveBtn);
+        controls.appendChild(stressBtn);
+        needEl.appendChild(controls);
+      }
+
+      return needEl;
+    }
+
+    #buildNeedRadial(entity, config, api, severity, decimal, tooltip) {
+      const r = 14;
+      const circumference = 2 * Math.PI * r;
+      const dashOffset = circumference * (1 - decimal);
+
+      const needEl = document.createElement('div');
+      needEl.className = 'mn-sf-widget__need mn-sf-widget__need--radial';
+      needEl.title = tooltip;
+
+      // SVG ring
+      const svgNS = 'http://www.w3.org/2000/svg';
+      const svg = document.createElementNS(svgNS, 'svg');
+      svg.setAttribute('class', 'mn-sf-widget__ring');
+      svg.setAttribute('viewBox', '0 0 32 32');
+
+      const trackCircle = document.createElementNS(svgNS, 'circle');
+      trackCircle.setAttribute('class', 'mn-sf-widget__ring-track');
+      trackCircle.setAttribute('cx', '16');
+      trackCircle.setAttribute('cy', '16');
+      trackCircle.setAttribute('r', String(r));
+      svg.appendChild(trackCircle);
+
+      const fillCircle = document.createElementNS(svgNS, 'circle');
+      fillCircle.setAttribute('class', 'mn-sf-widget__ring-fill');
+      fillCircle.dataset.severity = severity;
+      fillCircle.setAttribute('cx', '16');
+      fillCircle.setAttribute('cy', '16');
+      fillCircle.setAttribute('r', String(r));
+      fillCircle.setAttribute('stroke-dasharray', String(circumference));
+      fillCircle.setAttribute('stroke-dashoffset', String(dashOffset));
+      svg.appendChild(fillCircle);
+
+      // Wrap SVG + icon in a positioned container
+      const ringWrap = document.createElement('div');
+      ringWrap.className = 'mn-sf-widget__ring-wrap';
+      ringWrap.appendChild(svg);
+
+      const iconEl = document.createElement('span');
+      iconEl.className = 'mn-sf-widget__radial-icon';
+      iconEl.innerHTML = `<i class="fas ${config.icon}"></i>`;
+      ringWrap.appendChild(iconEl);
+
+      needEl.appendChild(ringWrap);
+
+      // +/- controls (GM only)
+      if (game.user.isGM) {
+        const controls = document.createElement('div');
+        controls.className = 'mn-sf-widget__need-controls';
+
+        const relieveBtn = document.createElement('button');
+        relieveBtn.className = 'mn-sf-widget__need-btn';
+        relieveBtn.innerHTML = '<i class="fas fa-minus"></i>';
+        relieveBtn.title = game.i18n.localize('MORTAL_NEEDS.Actions.Relieve');
+        relieveBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const amt = game.settings.get(MODULE_ID, 'defaultStressAmount');
+          await api.needs.relieve(entity.id, config.id, amt);
+        });
+
+        const stressBtn = document.createElement('button');
+        stressBtn.className = 'mn-sf-widget__need-btn';
+        stressBtn.innerHTML = '<i class="fas fa-plus"></i>';
+        stressBtn.title = game.i18n.localize('MORTAL_NEEDS.Actions.Stress');
+        stressBtn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const amt = game.settings.get(MODULE_ID, 'defaultStressAmount');
+          await api.needs.stress(entity.id, config.id, amt);
+        });
+
+        controls.appendChild(relieveBtn);
+        controls.appendChild(stressBtn);
+        needEl.appendChild(controls);
+      }
+
+      return needEl;
+    }
+
     // ─── Toolbar Actions ──────────────────────────────────────
+
+    async #openMultiStress(mode) {
+      const api = game.modules.get(MODULE_ID)?.api;
+      if (!api) return;
+
+      // Duck-typed proxies matching what MultiStressDialog expects
+      const storeProxy = {
+        getAllTrackedActors: () => api.actors.getTracked(),
+        getEnabledNeedConfigs: () => api.config.getEnabledNeeds(),
+      };
+      const engineProxy = {
+        stressMultiple: (ids, amounts) => api.batch.stressMultiple(ids, amounts),
+        relieveMultiple: (ids, amounts) => api.batch.relieveMultiple(ids, amounts),
+      };
+
+      const { MultiStressDialog } = await import('../ui/dialogs/multi-stress-dialog.js');
+      new MultiStressDialog(storeProxy, engineProxy, mode).render(true);
+    }
 
     async #openActorSelection() {
       const { ActorSelectionDialog } = await import('../ui/dialogs/actor-selection-dialog.js');

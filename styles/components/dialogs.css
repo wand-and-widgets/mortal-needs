@@ -68,10 +68,66 @@
   background: var(--mn-surface-hover);
 }
 
-.mn-dialog__checkbox input[type="checkbox"] {
-  accent-color: var(--mn-accent);
-  width: 16px;
-  height: 16px;
+/* Kill Foundry v13's native checkbox styling completely */
+.mortal-needs-panel input[type="checkbox"],
+.mn-dialog input[type="checkbox"] {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  width: 16px !important;
+  height: 16px !important;
+  min-width: 16px !important;
+  min-height: 16px !important;
+  border: 2px solid var(--mn-border-default) !important;
+  border-radius: 3px !important;
+  background: var(--mn-surface-base) !important;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: all var(--mn-transition-fast);
+  margin: 0 !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Strip any pseudo-elements Foundry injects */
+.mortal-needs-panel input[type="checkbox"]::before,
+.mn-dialog input[type="checkbox"]::before {
+  content: none !important;
+  display: none !important;
+}
+
+.mortal-needs-panel input[type="checkbox"]::after,
+.mn-dialog input[type="checkbox"]::after {
+  content: none !important;
+  display: none !important;
+}
+
+.mortal-needs-panel input[type="checkbox"]:hover,
+.mn-dialog input[type="checkbox"]:hover {
+  border-color: var(--mn-text-muted) !important;
+}
+
+.mortal-needs-panel input[type="checkbox"]:checked,
+.mn-dialog input[type="checkbox"]:checked {
+  background: var(--mn-accent) !important;
+  border-color: var(--mn-accent) !important;
+}
+
+/* Re-enable only our checkmark pseudo-element */
+.mortal-needs-panel input[type="checkbox"]:checked::after,
+.mn-dialog input[type="checkbox"]:checked::after {
+  content: '' !important;
+  display: block !important;
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 4px;
+  height: 8px;
+  border: solid #fff !important;
+  border-width: 0 2px 2px 0 !important;
+  transform: rotate(45deg);
 }
 
 /* Footer with action buttons */
@@ -188,4 +244,190 @@
 .mn-dialog__grid-card.is-selected {
   border-color: var(--mn-accent);
   background: var(--mn-accent-muted);
+}
+
+/* === Consequence Item (rich consequence list in NeedEditDialog) === */
+.mn-consequence-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mn-consequence-item {
+  display: flex;
+  align-items: center;
+  gap: var(--mn-space-sm);
+  padding: var(--mn-space-sm);
+  border-radius: var(--mn-radius-sm);
+  transition: background var(--mn-transition-fast);
+}
+
+.mn-consequence-item:hover {
+  background: var(--mn-surface-hover);
+}
+
+.mn-consequence-item__icon {
+  width: 20px;
+  text-align: center;
+  font-size: var(--mn-font-size-sm);
+  color: var(--mn-text-muted);
+  flex-shrink: 0;
+}
+
+.mn-consequence-item__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.mn-consequence-item__label {
+  font-size: var(--mn-font-size-sm);
+  font-weight: var(--mn-font-weight-medium);
+  color: var(--mn-text-primary);
+}
+
+.mn-consequence-item__desc {
+  font-size: var(--mn-font-size-xs);
+  color: var(--mn-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mn-consequence-item__badge {
+  font-size: var(--mn-font-size-xs);
+  font-weight: var(--mn-font-weight-semibold);
+  color: var(--mn-accent);
+  background: var(--mn-accent-muted);
+  padding: 2px 8px;
+  border-radius: var(--mn-radius-pill);
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.mn-consequence-item__actions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity var(--mn-transition-fast);
+}
+
+.mn-consequence-item:hover .mn-consequence-item__actions {
+  opacity: 1;
+}
+
+.mn-consequence-item__btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--mn-radius-sm);
+  font-size: 10px;
+  color: var(--mn-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--mn-transition-fast);
+}
+
+.mn-consequence-item__btn:hover {
+  background: var(--mn-surface-active);
+  color: var(--mn-text-primary);
+}
+
+.mn-consequence-item__btn--danger:hover {
+  color: var(--mn-severity-critical);
+  background: var(--mn-severity-critical-bg, rgba(220, 38, 38, 0.1));
+}
+
+/* === Hint text (subtle field explanations) === */
+.mn-hint {
+  font-size: var(--mn-font-size-xs);
+  font-style: italic;
+  color: var(--mn-text-muted);
+  line-height: 1.3;
+  opacity: 0.8;
+}
+
+/* === Consequence Suggestions Banner === */
+.mn-consequence-suggestions {
+  background: var(--mn-surface-elevated);
+  border: 1px solid var(--mn-border-subtle);
+  border-radius: var(--mn-radius-md);
+  padding: var(--mn-space-sm);
+  margin-top: var(--mn-space-xs);
+}
+
+.mn-consequence-suggestions__header {
+  display: flex;
+  align-items: center;
+  gap: var(--mn-space-xs);
+  font-size: var(--mn-font-size-xs);
+  font-weight: var(--mn-font-weight-semibold);
+  color: var(--mn-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: var(--mn-space-xs);
+}
+
+.mn-consequence-suggestions__header i {
+  color: var(--mn-severity-medium);
+}
+
+.mn-consequence-suggestions__item {
+  display: flex;
+  align-items: center;
+  gap: var(--mn-space-sm);
+  padding: var(--mn-space-xs) var(--mn-space-sm);
+  border-radius: var(--mn-radius-sm);
+  transition: background var(--mn-transition-fast);
+}
+
+.mn-consequence-suggestions__item:hover {
+  background: var(--mn-surface-hover);
+}
+
+.mn-consequence-suggestions__icon {
+  font-size: var(--mn-font-size-xs);
+  color: var(--mn-text-muted);
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.mn-consequence-suggestions__desc {
+  flex: 1;
+  font-size: var(--mn-font-size-xs);
+  color: var(--mn-text-secondary);
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Ghost button (subtle + button) */
+.mn-btn--ghost {
+  background: transparent;
+  border: 1px solid var(--mn-border-subtle);
+  color: var(--mn-text-muted);
+  cursor: pointer;
+  border-radius: var(--mn-radius-sm);
+  transition: all var(--mn-transition-fast);
+}
+
+.mn-btn--ghost:hover {
+  background: var(--mn-surface-active);
+  color: var(--mn-text-primary);
+  border-color: var(--mn-border-default);
+}
+
+.mn-btn--xs {
+  padding: 2px 6px;
+  font-size: var(--mn-font-size-xs);
 }

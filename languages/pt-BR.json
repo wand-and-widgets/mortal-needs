@@ -115,6 +115,8 @@
       "Consequences": "Consequências",
       "NoConsequences": "Nenhuma consequência configurada.",
       "AddConsequence": "Adicionar Consequência",
+      "EditConsequence": "Editar",
+      "DeleteConsequence": "Remover",
       "Delete": "Excluir Necessidade",
       "DeleteTitle": "Excluir Necessidade Personalizada",
       "DeleteConfirm": "Tem certeza? Isso removerá a necessidade e todos os dados associados."
@@ -127,7 +129,15 @@
       "Behavior": "Comportamento de Disparo",
       "Threshold": "Limite",
       "Ticks": "Ticks antes de repetir",
-      "Reversible": "Reversível quando necessidade se recupera"
+      "Reversible": "Reversível quando necessidade se recupera",
+      "ThresholdHint": "Quando esta necessidade atinge esta porcentagem, a consequência dispara. Exemplo: 80 significa que dispara quando a necessidade está 80% estressada.",
+      "TicksHint": "Quantas verificações de estresse sustentado acontecem antes de reaplicar. Valores menores são mais punitivos.",
+      "ReversibleHint": "Se marcado, a consequência é removida automaticamente quando a necessidade se recupera abaixo do limite.",
+      "EditTitle": "Editar Consequência",
+      "DeleteConfirm": "Remover esta consequência?",
+      "SuggestionsTitle": "Sugestões para este sistema",
+      "NoSuggestions": "Nenhuma sugestão do sistema disponível para esta necessidade.",
+      "AttributePathHint": "Caminho para a propriedade do ator. Use o dropdown para escolher entre atributos conhecidos do sistema, ou digite um caminho personalizado."
     },
 
     "Consequences": {
@@ -146,7 +156,18 @@
       "Message": "Mensagem",
       "WhisperGM": "Sussurrar apenas para o Mestre",
       "MacroExecute": "Executar Macro",
-      "MacroSelect": "Macro"
+      "MacroSelect": "Macro",
+      "OpSubtract": "Subtrair",
+      "OpAdd": "Somar",
+      "OpSet": "Definir como",
+      "OpMultiply": "Multiplicar por",
+      "ChangeKey": "Chave de Mudança",
+      "ChangeMode": "Modo de Mudança",
+      "ChangeValue": "Valor de Mudança",
+      "ModeAdd": "Somar (soma com o atual)",
+      "ModeDowngrade": "Reduzir (usar menor)",
+      "ModeUpgrade": "Aumentar (usar maior)",
+      "ModeOverride": "Substituir (sobrescrever)"
     },
 
     "History": {

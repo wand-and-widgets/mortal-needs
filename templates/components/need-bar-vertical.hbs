@@ -11,4 +11,21 @@
   </div>
 
   <span class="mn-need-bar__value" data-severity="{{severity}}">{{percentage}}</span>
+
+  <div class="mn-need-bar__controls">
+    <button class="mn-need-bar__btn mn-need-bar__btn--relieve"
+            data-action="relieve"
+            data-entity-id="{{entityId}}"
+            data-need-id="{{id}}"
+            data-tooltip="{{localize 'MORTAL_NEEDS.Actions.Relieve'}}">
+      <i class="fas fa-minus"></i>
+    </button>
+    <button class="mn-need-bar__btn mn-need-bar__btn--stress"
+            data-action="stress"
+            data-entity-id="{{entityId}}"
+            data-need-id="{{id}}"
+            data-tooltip="{{localize 'MORTAL_NEEDS.Actions.Stress'}}">
+      <i class="fas fa-plus"></i>
+    </button>
+  </div>
 </div>

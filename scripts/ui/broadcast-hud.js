@@ -163,8 +163,11 @@ export class BroadcastHUD {
       info.appendChild(name);
 
       // Need bars
+      const orientation = game.settings.get(MODULE_ID, 'barOrientation') ?? 'horizontal';
       const needsEl = document.createElement('div');
       needsEl.className = 'mn-broadcast__needs';
+      if (orientation === 'vertical') needsEl.classList.add('mn-broadcast__needs--vertical');
+      else if (orientation === 'radial') needsEl.classList.add('mn-broadcast__needs--radial');
 
       for (const config of needs) {
         const state = actor.needs[config.id];
@@ -175,33 +178,121 @@ export class BroadcastHUD {
         const percentage = NeedsEngine.getPercentage(value, max);
         const severity = NeedsEngine.getSeverity(percentage);
         const decimal = max > 0 ? value / max : 0;
+        const tooltip = `${game.i18n.localize(config.label)}: ${value}/${max} (${percentage}%)`;
 
-        const needEl = document.createElement('div');
-        needEl.className = 'mn-broadcast__need';
-        needEl.title = `${game.i18n.localize(config.label)}: ${value}/${max} (${percentage}%)`;
-
-        const icon = document.createElement('span');
-        icon.className = 'mn-broadcast__need-icon';
-        icon.innerHTML = `<i class="fas ${config.icon}"></i>`;
-        needEl.appendChild(icon);
-
-        const track = document.createElement('div');
-        track.className = 'mn-broadcast__need-track';
-
-        const fill = document.createElement('div');
-        fill.className = 'mn-broadcast__need-fill';
-        fill.dataset.severity = severity;
-        fill.style.transform = `scaleX(${decimal})`;
-        track.appendChild(fill);
-        needEl.appendChild(track);
-
-        needsEl.appendChild(needEl);
+        if (orientation === 'radial') {
+          needsEl.appendChild(this.#buildRadialNeed(config, severity, decimal, tooltip));
+        } else if (orientation === 'vertical') {
+          needsEl.appendChild(this.#buildVerticalNeed(config, severity, decimal, percentage, tooltip));
+        } else {
+          needsEl.appendChild(this.#buildHorizontalNeed(config, severity, decimal, tooltip));
+        }
       }
 
       info.appendChild(needsEl);
       actorEl.appendChild(info);
       body.appendChild(actorEl);
     }
+  }
+
+  // ─── Need Bar Builders ─────────────────────────────────
+
+  #buildHorizontalNeed(config, severity, decimal, tooltip) {
+    const needEl = document.createElement('div');
+    needEl.className = 'mn-broadcast__need';
+    needEl.title = tooltip;
+
+    const icon = document.createElement('span');
+    icon.className = 'mn-broadcast__need-icon';
+    icon.innerHTML = `<i class="fas ${config.icon}"></i>`;
+    needEl.appendChild(icon);
+
+    const track = document.createElement('div');
+    track.className = 'mn-broadcast__need-track';
+
+    const fill = document.createElement('div');
+    fill.className = 'mn-broadcast__need-fill';
+    fill.dataset.severity = severity;
+    fill.style.transform = `scaleX(${decimal})`;
+    track.appendChild(fill);
+    needEl.appendChild(track);
+
+    return needEl;
+  }
+
+  #buildVerticalNeed(config, severity, decimal, percentage, tooltip) {
+    const needEl = document.createElement('div');
+    needEl.className = 'mn-broadcast__need mn-broadcast__need--vertical';
+    needEl.title = tooltip;
+
+    const icon = document.createElement('span');
+    icon.className = 'mn-broadcast__need-icon';
+    icon.dataset.severity = severity;
+    icon.innerHTML = `<i class="fas ${config.icon}"></i>`;
+    needEl.appendChild(icon);
+
+    const track = document.createElement('div');
+    track.className = 'mn-broadcast__need-track mn-broadcast__need-track--vertical';
+
+    const fill = document.createElement('div');
+    fill.className = 'mn-broadcast__need-fill mn-broadcast__need-fill--vertical';
+    fill.dataset.severity = severity;
+    fill.style.transform = `scaleY(${decimal})`;
+    track.appendChild(fill);
+    needEl.appendChild(track);
+
+    const pct = document.createElement('span');
+    pct.className = 'mn-broadcast__need-pct';
+    pct.dataset.severity = severity;
+    pct.textContent = percentage;
+    needEl.appendChild(pct);
+
+    return needEl;
+  }
+
+  #buildRadialNeed(config, severity, decimal, tooltip) {
+    const r = 16;
+    const circumference = 2 * Math.PI * r;
+    const dashOffset = circumference * (1 - decimal);
+
+    const needEl = document.createElement('div');
+    needEl.className = 'mn-broadcast__need mn-broadcast__need--radial';
+    needEl.title = tooltip;
+
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNS, 'svg');
+    svg.setAttribute('class', 'mn-broadcast__ring');
+    svg.setAttribute('viewBox', '0 0 36 36');
+
+    const trackCircle = document.createElementNS(svgNS, 'circle');
+    trackCircle.setAttribute('class', 'mn-broadcast__ring-track');
+    trackCircle.setAttribute('cx', '18');
+    trackCircle.setAttribute('cy', '18');
+    trackCircle.setAttribute('r', String(r));
+    svg.appendChild(trackCircle);
+
+    const fillCircle = document.createElementNS(svgNS, 'circle');
+    fillCircle.setAttribute('class', 'mn-broadcast__ring-fill');
+    fillCircle.dataset.severity = severity;
+    fillCircle.setAttribute('cx', '18');
+    fillCircle.setAttribute('cy', '18');
+    fillCircle.setAttribute('r', String(r));
+    fillCircle.setAttribute('stroke-dasharray', String(circumference));
+    fillCircle.setAttribute('stroke-dashoffset', String(dashOffset));
+    svg.appendChild(fillCircle);
+
+    const ringWrap = document.createElement('div');
+    ringWrap.className = 'mn-broadcast__ring-wrap';
+    ringWrap.appendChild(svg);
+
+    const iconEl = document.createElement('span');
+    iconEl.className = 'mn-broadcast__radial-icon';
+    iconEl.innerHTML = `<i class="fas ${config.icon}"></i>`;
+    ringWrap.appendChild(iconEl);
+
+    needEl.appendChild(ringWrap);
+
+    return needEl;
   }
 
   // ─── Drag ───────────────────────────────────────────────

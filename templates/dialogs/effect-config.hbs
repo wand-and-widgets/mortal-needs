@@ -4,7 +4,9 @@
     <div class="mn-dialog__form-group">
       <select name="consequenceType">
         {{#each types}}
-          <option value="{{type}}" {{#if (eq type ../selectedType)}}selected{{/if}}>{{label}}</option>
+          <option value="{{type}}" {{#if (eq type ../selectedType)}}selected{{/if}}>
+            {{localize label}}
+          </option>
         {{/each}}
       </select>
     </div>
@@ -17,13 +19,17 @@
       <div class="mn-dialog__form-group">
         <label>{{localize label}}</label>
         {{#if (eq type "text")}}
-          <input type="text" name="config.{{key}}" value="{{value}}">
+          {{#if useAttributeDatalist}}
+            <input type="text" name="config.{{key}}" value="{{value}}" list="mn-attribute-list" placeholder="{{localize 'MORTAL_NEEDS.EffectConfig.AttributePathHint'}}">
+          {{else}}
+            <input type="text" name="config.{{key}}" value="{{value}}" placeholder="{{placeholder}}">
+          {{/if}}
         {{else if (eq type "number")}}
           <input type="number" name="config.{{key}}" value="{{value}}" min="{{min}}" max="{{max}}" step="{{step}}">
         {{else if (eq type "select")}}
           <select name="config.{{key}}">
             {{#each options}}
-              <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+              <option value="{{value}}" {{#if selected}}selected{{/if}}>{{localize label}}</option>
             {{/each}}
           </select>
         {{else if (eq type "checkbox")}}
@@ -41,16 +47,28 @@
     <div class="mn-dialog__form-group">
       <label>{{localize "MORTAL_NEEDS.EffectConfig.Threshold"}} (%)</label>
       <input type="number" name="threshold" value="{{threshold}}" min="0" max="100" step="5">
+      <span class="mn-hint">{{localize "MORTAL_NEEDS.EffectConfig.ThresholdHint"}}</span>
     </div>
     <div class="mn-dialog__form-group">
       <label>{{localize "MORTAL_NEEDS.EffectConfig.Ticks"}}</label>
       <input type="number" name="ticks" value="{{ticks}}" min="1" max="20">
+      <span class="mn-hint">{{localize "MORTAL_NEEDS.EffectConfig.TicksHint"}}</span>
     </div>
     <label class="mn-dialog__checkbox">
       <input type="checkbox" name="reversible" {{#if reversible}}checked{{/if}}>
       <span>{{localize "MORTAL_NEEDS.EffectConfig.Reversible"}}</span>
     </label>
+    <span class="mn-hint">{{localize "MORTAL_NEEDS.EffectConfig.ReversibleHint"}}</span>
   </div>
+
+  {{!-- Attribute path datalist for autocomplete --}}
+  {{#if availableAttributes.length}}
+    <datalist id="mn-attribute-list">
+      {{#each availableAttributes}}
+        <option value="{{key}}" label="{{label}}">
+      {{/each}}
+    </datalist>
+  {{/if}}
 
   <div class="mn-dialog__footer">
     <button class="mn-btn mn-btn--primary" data-action="save-consequence">

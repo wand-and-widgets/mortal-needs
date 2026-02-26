@@ -19,10 +19,16 @@
     </button>
   </header>
 
-  <div class="mn-actor-card__needs">
+  <div class="mn-actor-card__needs {{#if (eq barOrientation 'vertical')}}mn-actor-card__needs--vertical{{/if}} {{#if (eq barOrientation 'radial')}}mn-actor-card__needs--radial{{/if}}">
     {{#each needs}}
       {{#if this.enabled}}
-        {{> "modules/mortal-needs/templates/components/need-bar-horizontal.hbs" this entityId=../id}}
+        {{#if (eq ../barOrientation "vertical")}}
+          {{> "modules/mortal-needs/templates/components/need-bar-vertical.hbs" this entityId=../id}}
+        {{else if (eq ../barOrientation "radial")}}
+          {{> "modules/mortal-needs/templates/components/need-bar-radial.hbs" this entityId=../id}}
+        {{else}}
+          {{> "modules/mortal-needs/templates/components/need-bar-horizontal.hbs" this entityId=../id}}
+        {{/if}}
       {{/if}}
     {{/each}}
   </div>

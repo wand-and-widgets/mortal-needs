@@ -53,5 +53,11 @@ docs/drafts/
 .env.production
 *.local
 
+# Claude Code working files
+.claude/
+
+# Release drafts
+RELEASE-POST-v2.md
+
 # Foundry VTT specific
 packs/*.db.lock

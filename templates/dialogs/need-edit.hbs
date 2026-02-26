@@ -79,22 +79,54 @@
 
   <div class="mn-dialog__section">
     <div class="mn-dialog__section-title">{{localize "MORTAL_NEEDS.NeedEdit.Consequences"}}</div>
-    {{#if config.consequences.length}}
-      <div class="mn-dialog__list">
-        {{#each config.consequences}}
-          <div class="mn-dialog__list-item">
-            <span class="mn-text-sm">{{type}}</span>
-            <span class="mn-text-xs" style="color: var(--mn-text-muted);">@ {{threshold}}%</span>
+
+    {{#if enrichedConsequences.length}}
+      <div class="mn-consequence-list">
+        {{#each enrichedConsequences}}
+          <div class="mn-consequence-item" data-index="{{index}}">
+            <i class="mn-consequence-item__icon {{iconClass}}"></i>
+            <div class="mn-consequence-item__info">
+              <span class="mn-consequence-item__label">{{localizedLabel}}</span>
+              <span class="mn-consequence-item__desc">{{description}}</span>
+            </div>
+            <span class="mn-consequence-item__badge">{{threshold}}%</span>
+            <div class="mn-consequence-item__actions">
+              <button type="button" class="mn-consequence-item__btn" data-action="edit-consequence" title="{{localize 'MORTAL_NEEDS.NeedEdit.EditConsequence'}}">
+                <i class="fas fa-pencil"></i>
+              </button>
+              <button type="button" class="mn-consequence-item__btn mn-consequence-item__btn--danger" data-action="delete-consequence" title="{{localize 'MORTAL_NEEDS.NeedEdit.DeleteConsequence'}}">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
           </div>
         {{/each}}
       </div>
     {{else}}
       <p class="mn-text-xs" style="color: var(--mn-text-muted);">{{localize "MORTAL_NEEDS.NeedEdit.NoConsequences"}}</p>
     {{/if}}
+
     <button class="mn-btn mn-btn--secondary mn-btn--sm" data-action="add-consequence">
       <i class="fas fa-plus"></i>
       <span>{{localize "MORTAL_NEEDS.NeedEdit.AddConsequence"}}</span>
     </button>
+
+    {{#if hasSuggestions}}
+      <div class="mn-consequence-suggestions">
+        <div class="mn-consequence-suggestions__header">
+          <i class="fas fa-lightbulb"></i>
+          <span>{{localize "MORTAL_NEEDS.EffectConfig.SuggestionsTitle"}}</span>
+        </div>
+        {{#each suggestions}}
+          <div class="mn-consequence-suggestions__item" data-suggestion-index="{{index}}">
+            <i class="{{iconClass}} mn-consequence-suggestions__icon"></i>
+            <span class="mn-consequence-suggestions__desc">{{description}}</span>
+            <button type="button" class="mn-btn mn-btn--ghost mn-btn--xs" data-action="apply-suggestion" title="{{localize 'MORTAL_NEEDS.NeedEdit.AddConsequence'}}">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        {{/each}}
+      </div>
+    {{/if}}
   </div>
 
   <div class="mn-dialog__footer">

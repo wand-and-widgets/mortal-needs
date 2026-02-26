@@ -148,6 +148,10 @@ export class ConfigManager {
         vertical: 'MORTAL_NEEDS.Settings.OrientationVertical',
         radial: 'MORTAL_NEEDS.Settings.OrientationRadial',
       },
+      onChange: () => {
+        const app = game.modules.get(MODULE_ID)?.api;
+        app?.ui?.refresh();
+      },
     });
 
     game.settings.register(MODULE_ID, 'panelPosition', {

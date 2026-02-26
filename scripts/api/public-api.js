@@ -281,6 +281,9 @@ export function createPublicAPI(store, engine, consequenceEngine, eventBus, conf
       get availableDamageTypes() {
         return adapter.getAvailableDamageTypes?.() || [];
       },
+      get effectSuggestions() {
+        return adapter.getEffectSuggestions();
+      },
     },
 
     // --- Macro Helpers ---

@@ -60,8 +60,19 @@ export class AttributeModifyConsequence extends ConsequenceType {
   }
 
   getDescription(config) {
-    const opLabel = config.operation || 'modify';
-    return `${opLabel} ${config.amount} on ${config.path}`;
+    const opKey = {
+      subtract: 'MORTAL_NEEDS.Consequences.OpSubtract',
+      add: 'MORTAL_NEEDS.Consequences.OpAdd',
+      set: 'MORTAL_NEEDS.Consequences.OpSet',
+      multiply: 'MORTAL_NEEDS.Consequences.OpMultiply',
+    }[config.operation];
+    const opLabel = opKey ? game.i18n.localize(opKey) : (config.operation || 'modify');
+
+    const attrs = this.adapter?.getAvailableAttributes?.() || [];
+    const attr = attrs.find(a => a.key === config.path || `system.${a.key}` === config.path);
+    const pathLabel = attr?.label ? game.i18n.localize(attr.label) : (config.path || '?');
+
+    return `${opLabel} ${config.amount ?? 0} → ${pathLabel}`;
   }
 }
 

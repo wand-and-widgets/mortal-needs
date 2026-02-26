@@ -115,6 +115,8 @@
       "Consequences": "Consequences",
       "NoConsequences": "No consequences configured.",
       "AddConsequence": "Add Consequence",
+      "EditConsequence": "Edit",
+      "DeleteConsequence": "Remove",
       "Delete": "Delete Need",
       "DeleteTitle": "Delete Custom Need",
       "DeleteConfirm": "Are you sure? This will remove the need and all associated data."
@@ -127,7 +129,15 @@
       "Behavior": "Trigger Behavior",
       "Threshold": "Threshold",
       "Ticks": "Ticks before repeat",
-      "Reversible": "Reversible when need recovers"
+      "Reversible": "Reversible when need recovers",
+      "ThresholdHint": "When this need reaches this percentage, the consequence triggers. Example: 80 means it fires when the need is 80% stressed.",
+      "TicksHint": "How many sustained stress checks happen before the consequence re-applies. Lower values are more punishing.",
+      "ReversibleHint": "If checked, this consequence is automatically removed when the need recovers below the threshold.",
+      "EditTitle": "Edit Consequence",
+      "DeleteConfirm": "Remove this consequence?",
+      "SuggestionsTitle": "Suggested for this system",
+      "NoSuggestions": "No system suggestions available for this need.",
+      "AttributePathHint": "Path to the actor property. Use the dropdown to pick from your system's known attributes, or type a custom path."
     },
 
     "Consequences": {
@@ -146,7 +156,18 @@
       "Message": "Message",
       "WhisperGM": "Whisper to GM only",
       "MacroExecute": "Execute Macro",
-      "MacroSelect": "Macro"
+      "MacroSelect": "Macro",
+      "OpSubtract": "Subtract",
+      "OpAdd": "Add",
+      "OpSet": "Set to",
+      "OpMultiply": "Multiply by",
+      "ChangeKey": "Change Key",
+      "ChangeMode": "Change Mode",
+      "ChangeValue": "Change Value",
+      "ModeAdd": "Add (sum with current)",
+      "ModeDowngrade": "Downgrade (use lower)",
+      "ModeUpgrade": "Upgrade (use higher)",
+      "ModeOverride": "Override (replace)"
     },
 
     "History": {

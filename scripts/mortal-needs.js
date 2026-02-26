@@ -254,6 +254,8 @@ Hooks.once('init', () => {
   loadTemplates([
     `modules/${MODULE_ID}/templates/components/actor-card.hbs`,
     `modules/${MODULE_ID}/templates/components/need-bar-horizontal.hbs`,
+    `modules/${MODULE_ID}/templates/components/need-bar-vertical.hbs`,
+    `modules/${MODULE_ID}/templates/components/need-bar-radial.hbs`,
     `modules/${MODULE_ID}/templates/components/empty-state.hbs`,
   ]);
 

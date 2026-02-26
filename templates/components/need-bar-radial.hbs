@@ -1,13 +1,32 @@
 <div class="mn-need-bar mn-need-bar--radial" data-need-id="{{id}}" data-entity-id="{{entityId}}" data-tooltip="{{localize label}}: {{percentage}}%">
-  <svg class="mn-need-bar__ring" viewBox="0 0 44 44">
-    <circle class="mn-need-bar__ring-track" cx="22" cy="22" r="18" />
-    <circle class="mn-need-bar__ring-fill"
-            data-severity="{{severity}}"
-            cx="22" cy="22" r="18"
-            stroke-dasharray="{{circumference}}"
-            stroke-dashoffset="{{dashOffset}}" />
-  </svg>
-  <span class="mn-need-bar__radial-icon">
-    <i class="fas {{icon}}"></i>
-  </span>
+  <div class="mn-need-bar__ring-wrap">
+    <svg class="mn-need-bar__ring" viewBox="0 0 44 44">
+      <circle class="mn-need-bar__ring-track" cx="22" cy="22" r="18" />
+      <circle class="mn-need-bar__ring-fill"
+              data-severity="{{severity}}"
+              cx="22" cy="22" r="18"
+              stroke-dasharray="{{circumference}}"
+              stroke-dashoffset="{{dashOffset}}" />
+    </svg>
+    <span class="mn-need-bar__radial-icon">
+      <i class="fas {{icon}}"></i>
+    </span>
+  </div>
+
+  <div class="mn-need-bar__controls">
+    <button class="mn-need-bar__btn mn-need-bar__btn--relieve"
+            data-action="relieve"
+            data-entity-id="{{entityId}}"
+            data-need-id="{{id}}"
+            data-tooltip="{{localize 'MORTAL_NEEDS.Actions.Relieve'}}">
+      <i class="fas fa-minus"></i>
+    </button>
+    <button class="mn-need-bar__btn mn-need-bar__btn--stress"
+            data-action="stress"
+            data-entity-id="{{entityId}}"
+            data-need-id="{{id}}"
+            data-tooltip="{{localize 'MORTAL_NEEDS.Actions.Stress'}}">
+      <i class="fas fa-plus"></i>
+    </button>
+  </div>
 </div>

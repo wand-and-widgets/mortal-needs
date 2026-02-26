@@ -3,7 +3,7 @@ import { ConsequenceType, registerConsequenceType } from './consequence-type.js'
 
 export class ActiveEffectApplyConsequence extends ConsequenceType {
   static TYPE = 'active-effect';
-  static LABEL = 'MORTAL_NEEDS.Consequences.ActiveEffect';
+  static LABEL = 'MORTAL_NEEDS.Consequences.ActiveEffectApply';
   static ICON = 'fas fa-magic';
   static CONFIG_SCHEMA = [
     { key: 'effectName', type: 'text', label: 'MORTAL_NEEDS.Consequences.EffectName' },
@@ -75,7 +75,15 @@ export class ActiveEffectApplyConsequence extends ConsequenceType {
   }
 
   getDescription(config) {
-    return `${config.effectName || 'Active Effect'}: ${config.changeKey} ${config.changeValue}`;
+    const modeKey = {
+      '2': 'MORTAL_NEEDS.Consequences.ModeAdd',
+      '3': 'MORTAL_NEEDS.Consequences.ModeDowngrade',
+      '4': 'MORTAL_NEEDS.Consequences.ModeUpgrade',
+      '5': 'MORTAL_NEEDS.Consequences.ModeOverride',
+    }[String(config.changeMode)];
+    const modeLabel = modeKey ? game.i18n.localize(modeKey) : `Mode ${config.changeMode}`;
+    const name = config.effectName || 'Active Effect';
+    return `${name}: ${modeLabel} ${config.changeValue ?? ''} → ${config.changeKey || '?'}`;
   }
 }
 

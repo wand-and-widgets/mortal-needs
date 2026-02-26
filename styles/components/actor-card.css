@@ -113,6 +113,14 @@
   gap: var(--mn-space-xs);
 }
 
+.mn-actor-card__needs--vertical,
+.mn-actor-card__needs--radial {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--mn-space-sm);
+  justify-content: center;
+}
+
 /* Quick Actions row */
 .mn-actor-card__actions {
   display: flex;
