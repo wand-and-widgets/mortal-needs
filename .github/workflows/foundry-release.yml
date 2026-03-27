@@ -1,0 +1,54 @@
+name: Publish to Foundry VTT
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout module.json for compatibility info
+        uses: actions/checkout@v4
+
+      - name: Read compatibility from module.json
+        id: compat
+        run: |
+          echo "minimum=$(jq -r '.compatibility.minimum' module.json)" >> "$GITHUB_OUTPUT"
+          echo "verified=$(jq -r '.compatibility.verified' module.json)" >> "$GITHUB_OUTPUT"
+          echo "maximum=$(jq -r '.compatibility.maximum' module.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Publish to Foundry VTT
+        run: |
+          RESPONSE=$(curl -s -w "\n%{http_code}" \
+            -X POST "https://foundryvtt.com/_api/packages/release_version/" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: ${{ secrets.FOUNDRY_PACKAGE_RELEASE_TOKEN }}" \
+            -d '{
+              "id": "mortal-needs",
+              "release": {
+                "version": "${{ steps.version.outputs.version }}",
+                "manifest": "https://github.com/wand-and-widgets/mortal-needs/releases/download/${{ github.ref_name }}/module.json",
+                "notes": "https://github.com/wand-and-widgets/mortal-needs/releases/tag/${{ github.ref_name }}",
+                "compatibility": {
+                  "minimum": "${{ steps.compat.outputs.minimum }}",
+                  "verified": "${{ steps.compat.outputs.verified }}",
+                  "maximum": "${{ steps.compat.outputs.maximum }}"
+                }
+              }
+            }')
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -1)
+          BODY=$(echo "$RESPONSE" | head -n -1)
+
+          echo "HTTP Status: $HTTP_CODE"
+          echo "Response: $BODY"
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::error::Foundry API returned HTTP $HTTP_CODE"
+            exit 1
+          fi
