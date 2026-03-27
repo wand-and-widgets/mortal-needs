@@ -1,4 +1,4 @@
-import { Events, Severity } from '../constants.js';
+import { MODULE_ID, Events, Severity } from '../constants.js';
 
 export class NeedsEngine {
   #store;
@@ -17,7 +17,8 @@ export class NeedsEngine {
     const config = this.#store.getNeedConfig(needId);
     if (!config || !config.enabled) return null;
 
-    const finalAmount = amount ?? config.stressAmount ?? 10;
+    const globalDefault = game.settings?.get?.(MODULE_ID, 'defaultStressAmount') ?? 10;
+    const finalAmount = amount ?? config.stressAmount ?? globalDefault;
     let adjustedAmount = finalAmount;
 
     // Apply attribute modifier if configured
@@ -56,7 +57,8 @@ export class NeedsEngine {
     const config = this.#store.getNeedConfig(needId);
     if (!config || !config.enabled) return null;
 
-    const finalAmount = amount ?? config.stressAmount ?? 10;
+    const globalDefault = game.settings?.get?.(MODULE_ID, 'defaultStressAmount') ?? 10;
+    const finalAmount = amount ?? config.stressAmount ?? globalDefault;
     const result = this.#store.adjustNeedValue(entityId, needId, -finalAmount, 'relieve');
     if (!result) return null;
 
@@ -218,7 +220,7 @@ export class NeedsEngine {
     }
 
     // Recovered from critical
-    const criticalThreshold = game.settings?.get?.('mortal-needs', 'criticalThreshold') ?? 80;
+    const criticalThreshold = game.settings?.get?.(MODULE_ID, 'criticalThreshold') ?? 80;
     if (oldPct >= criticalThreshold && newPct < criticalThreshold) {
       this.#eventBus.emit(Events.THRESHOLD_RECOVERED, {
         entityId, needId,

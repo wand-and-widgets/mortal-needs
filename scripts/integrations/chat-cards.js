@@ -1,4 +1,4 @@
-import { MODULE_ID, Events, mnRenderTemplate } from '../constants.js';
+import { MODULE_ID, MODULE_TITLE, Events, mnRenderTemplate } from '../constants.js';
 import { NeedsEngine } from '../core/needs-engine.js';
 
 /**
@@ -52,7 +52,7 @@ export class ChatCards {
 
     await ChatMessage.create({
       content,
-      speaker: { alias: MODULE_ID },
+      speaker: { alias: MODULE_TITLE },
       whisper: game.users.filter(u => u.isGM).map(u => u.id),
       flags: { [MODULE_ID]: { type: 'consequence', entityId, needId } },
     });
@@ -89,7 +89,7 @@ export class ChatCards {
 
     await ChatMessage.create({
       content,
-      speaker: { alias: MODULE_ID },
+      speaker: { alias: MODULE_TITLE },
       flags: { [MODULE_ID]: { type: 'threshold-critical', entityId, needId } },
     });
   }
@@ -130,7 +130,7 @@ export class ChatCards {
 
     await ChatMessage.create({
       content,
-      speaker: { alias: MODULE_ID },
+      speaker: { alias: MODULE_TITLE },
       flags: { [MODULE_ID]: { type: 'summary', entityId } },
     });
   }

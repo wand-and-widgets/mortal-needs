@@ -15,6 +15,8 @@ export class BroadcastHUD {
   #data = null;
   #updateTimer = null;
   #dragState = null;
+  #onDragMove = null;
+  #onDragUp = null;
 
   constructor() {
     // Listen for broadcast events
@@ -68,6 +70,13 @@ export class BroadcastHUD {
   hide() {
     if (!this.#element || !this.#visible) return;
     this.#visible = false;
+
+    // Cancel any active drag to prevent orphaned listeners
+    if (this.#dragState) {
+      document.removeEventListener('mousemove', this.#onDragMove);
+      document.removeEventListener('mouseup', this.#onDragUp);
+      this.#dragState = null;
+    }
 
     this.#element.classList.remove('mn-broadcast--visible');
     this.#element.classList.add('mn-broadcast--exit');
@@ -313,7 +322,7 @@ export class BroadcastHUD {
         startBottom: window.innerHeight - rect.bottom,
       };
 
-      const onMove = (ev) => {
+      this.#onDragMove = (ev) => {
         if (!this.#dragState) return;
         const dx = ev.clientX - this.#dragState.startX;
         const dy = ev.clientY - this.#dragState.startY;
@@ -321,10 +330,10 @@ export class BroadcastHUD {
         el.style.bottom = `${this.#dragState.startBottom - dy}px`;
       };
 
-      const onUp = () => {
+      this.#onDragUp = () => {
         handle.style.cursor = 'grab';
-        document.removeEventListener('mousemove', onMove);
-        document.removeEventListener('mouseup', onUp);
+        document.removeEventListener('mousemove', this.#onDragMove);
+        document.removeEventListener('mouseup', this.#onDragUp);
 
         if (this.#dragState) {
           const rect2 = el.getBoundingClientRect();
@@ -333,8 +342,8 @@ export class BroadcastHUD {
         }
       };
 
-      document.addEventListener('mousemove', onMove);
-      document.addEventListener('mouseup', onUp);
+      document.addEventListener('mousemove', this.#onDragMove);
+      document.addEventListener('mouseup', this.#onDragUp);
     });
   }
 

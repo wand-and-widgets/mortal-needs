@@ -10,6 +10,7 @@ export class EffectConfigDialog extends HandlebarsApplicationMixin(ApplicationV2
   #eventBus;
   #selectedType = 'attribute-modify';
   #editIndex = null;
+  #typeChangeHandler = null;
 
   static DEFAULT_OPTIONS = {
     id: 'mortal-needs-effect-config',
@@ -139,10 +140,11 @@ export class EffectConfigDialog extends HandlebarsApplicationMixin(ApplicationV2
     // When consequence type changes, re-render config fields
     const typeSelect = this.element.querySelector('select[name="consequenceType"]');
     if (typeSelect) {
-      typeSelect.addEventListener('change', (e) => {
+      this.#typeChangeHandler = (e) => {
         this.#selectedType = e.target.value;
         this.render(false);
-      });
+      };
+      typeSelect.addEventListener('change', this.#typeChangeHandler);
     }
   }
 

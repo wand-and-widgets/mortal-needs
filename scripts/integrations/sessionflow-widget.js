@@ -247,8 +247,7 @@ export function createMortalNeedsWidgetClass() {
         relieveBtn.title = game.i18n.localize('MORTAL_NEEDS.Actions.Relieve');
         relieveBtn.addEventListener('click', async (e) => {
           e.stopPropagation();
-          const amt = game.settings.get(MODULE_ID, 'defaultStressAmount');
-          await api.needs.relieve(entity.id, config.id, amt);
+          await api.needs.relieve(entity.id, config.id);
         });
 
         const stressBtn = document.createElement('button');
@@ -257,8 +256,7 @@ export function createMortalNeedsWidgetClass() {
         stressBtn.title = game.i18n.localize('MORTAL_NEEDS.Actions.Stress');
         stressBtn.addEventListener('click', async (e) => {
           e.stopPropagation();
-          const amt = game.settings.get(MODULE_ID, 'defaultStressAmount');
-          await api.needs.stress(entity.id, config.id, amt);
+          await api.needs.stress(entity.id, config.id);
         });
 
         controls.appendChild(relieveBtn);
@@ -310,8 +308,7 @@ export function createMortalNeedsWidgetClass() {
         relieveBtn.title = game.i18n.localize('MORTAL_NEEDS.Actions.Relieve');
         relieveBtn.addEventListener('click', async (e) => {
           e.stopPropagation();
-          const amt = game.settings.get(MODULE_ID, 'defaultStressAmount');
-          await api.needs.relieve(entity.id, config.id, amt);
+          await api.needs.relieve(entity.id, config.id);
         });
 
         const stressBtn = document.createElement('button');
@@ -320,8 +317,7 @@ export function createMortalNeedsWidgetClass() {
         stressBtn.title = game.i18n.localize('MORTAL_NEEDS.Actions.Stress');
         stressBtn.addEventListener('click', async (e) => {
           e.stopPropagation();
-          const amt = game.settings.get(MODULE_ID, 'defaultStressAmount');
-          await api.needs.stress(entity.id, config.id, amt);
+          await api.needs.stress(entity.id, config.id);
         });
 
         controls.appendChild(relieveBtn);
@@ -387,8 +383,7 @@ export function createMortalNeedsWidgetClass() {
         relieveBtn.title = game.i18n.localize('MORTAL_NEEDS.Actions.Relieve');
         relieveBtn.addEventListener('click', async (e) => {
           e.stopPropagation();
-          const amt = game.settings.get(MODULE_ID, 'defaultStressAmount');
-          await api.needs.relieve(entity.id, config.id, amt);
+          await api.needs.relieve(entity.id, config.id);
         });
 
         const stressBtn = document.createElement('button');
@@ -397,8 +392,7 @@ export function createMortalNeedsWidgetClass() {
         stressBtn.title = game.i18n.localize('MORTAL_NEEDS.Actions.Stress');
         stressBtn.addEventListener('click', async (e) => {
           e.stopPropagation();
-          const amt = game.settings.get(MODULE_ID, 'defaultStressAmount');
-          await api.needs.stress(entity.id, config.id, amt);
+          await api.needs.stress(entity.id, config.id);
         });
 
         controls.appendChild(relieveBtn);
@@ -507,8 +501,6 @@ export function createMortalNeedsWidgetClass() {
         api.broadcast.show();
         this.updateConfig({ broadcasting: true });
       }
-      this.engine?.scheduleSave?.();
-
       // Update button visual immediately
       const btn = this.element?.querySelector('[data-role="broadcast"]');
       if (btn) btn.classList.toggle('is-active', this.config.broadcasting);

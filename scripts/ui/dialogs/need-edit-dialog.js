@@ -128,7 +128,7 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       default: parseInt(form.querySelector('[name="default"]')?.value) || 0,
       stressAmount: parseInt(form.querySelector('[name="stressAmount"]')?.value) || 10,
       enabled: form.querySelector('[name="enabled"]')?.checked ?? true,
-      custom: true,
+      custom: existingConfig?.custom ?? true,
       consequences: existingConfig?.consequences || [],
       decay: {
         enabled: form.querySelector('[name="decayEnabled"]')?.checked ?? false,

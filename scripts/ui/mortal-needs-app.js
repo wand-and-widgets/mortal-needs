@@ -173,15 +173,13 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
   static async #onStress(event, target) {
     const entityId = target.dataset.entityId;
     const needId = target.dataset.needId;
-    const amount = game.settings.get(MODULE_ID, 'defaultStressAmount');
-    await this.#engine.stressNeed(entityId, needId, amount);
+    await this.#engine.stressNeed(entityId, needId);
   }
 
   static async #onRelieve(event, target) {
     const entityId = target.dataset.entityId;
     const needId = target.dataset.needId;
-    const amount = game.settings.get(MODULE_ID, 'defaultStressAmount');
-    await this.#engine.relieveNeed(entityId, needId, amount);
+    await this.#engine.relieveNeed(entityId, needId);
   }
 
   static #onToggleExpand(event, target) {

@@ -1,4 +1,4 @@
-import { MODULE_ID, Events, SEVERITY_ORDER, mnRenderTemplate } from '../constants.js';
+import { MODULE_ID, MODULE_TITLE, Events, SEVERITY_ORDER, mnRenderTemplate } from '../constants.js';
 import { NeedsEngine } from '../core/needs-engine.js';
 
 /**
@@ -279,7 +279,7 @@ export class FlavorEngine {
     const visibility = game.settings.get(MODULE_ID, 'flavorVisibility');
     const messageData = {
       content,
-      speaker: { alias: 'Mortal Needs' },
+      speaker: { alias: MODULE_TITLE },
       flags: { [MODULE_ID]: { type: 'flavor', entityId: entry.entityId, needId: entry.needId } },
     };
 
@@ -334,7 +334,7 @@ export class FlavorEngine {
     const visibility = game.settings.get(MODULE_ID, 'flavorVisibility');
     const messageData = {
       content,
-      speaker: { alias: 'Mortal Needs' },
+      speaker: { alias: MODULE_TITLE },
       flags: { [MODULE_ID]: { type: 'flavor-batch', needId: first.needId } },
     };
 

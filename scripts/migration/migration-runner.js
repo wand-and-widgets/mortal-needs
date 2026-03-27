@@ -166,7 +166,7 @@ export class MigrationRunner {
         ticks: punishment.conditionTicks ?? 3,
         reversible: true,
         config: {
-          conditionId: punishment.conditionId,
+          statusId: punishment.conditionId,
         },
       });
     }
