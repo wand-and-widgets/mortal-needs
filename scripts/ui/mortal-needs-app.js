@@ -12,6 +12,7 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
   #app;
   #unsubscribers = [];
   #expandedActors = new Set();
+  static #RING_RADIUS = 18;
 
   static DEFAULT_OPTIONS = {
     id: 'mortal-needs-panel',
@@ -118,12 +119,13 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
       const needs = enabledConfigs.map(config => {
         const state = entity.needs[config.id];
-        const value = NeedsEngine.normalizeNumber(state?.value, 0);
-        const max = NeedsEngine.normalizeNumber(state?.max ?? config.max, 100);
-        const percentage = NeedsEngine.getPercentage(value, max);
+        const value = NeedsEngine.normalizeNumber(state?.value, config.default ?? 0);
+        const max = MortalNeedsApp.#normalizeMax(state?.max ?? config.max, config.min ?? 0);
+        const percentage = MortalNeedsApp.#normalizePercentage(NeedsEngine.getPercentage(value, max));
         const severity = NeedsEngine.getSeverity(percentage);
-        const decimal = NeedsEngine.getRatio(value, max);
-        const circumference = 2 * Math.PI * 18; // for radial bars (r=18)
+        const decimal = MortalNeedsApp.#normalizeRatio(NeedsEngine.getRatio(value, max));
+        const circumference = 2 * Math.PI * MortalNeedsApp.#RING_RADIUS;
+        const dashOffset = MortalNeedsApp.#normalizeNumber(circumference * (1 - decimal), circumference);
         const localizedLabel = game.i18n.localize(config.label);
         const severityLabel = this.#getSeverityLabel(severity);
         const lastChangeTime = state?.lastChange ?? 0;
@@ -148,7 +150,7 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
           consequenceCount: config.consequences?.length ?? 0,
           decayEnabled: !!config.decay?.enabled,
           circumference,
-          dashOffset: circumference * (1 - decimal),
+          dashOffset,
           entityId: entity.id,
         };
 
@@ -257,6 +259,32 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
     return order[worst];
   }
 
+  static #normalizeNumber(value, fallback = 0) {
+    const number = Number(value);
+    return Number.isFinite(number) ? number : fallback;
+  }
+
+  static #normalizeMax(value, min = 0) {
+    const safeMin = MortalNeedsApp.#normalizeNumber(min, 0);
+    const safeMax = MortalNeedsApp.#normalizeNumber(value, 100);
+    return safeMax > safeMin ? safeMax : Math.max(safeMin + 1, 100);
+  }
+
+  static #normalizePercentage(value) {
+    const number = MortalNeedsApp.#normalizeNumber(value, 0);
+    return Math.max(0, Math.min(100, number));
+  }
+
+  static #normalizeRatio(value) {
+    const number = MortalNeedsApp.#normalizeNumber(value, 0);
+    return Math.max(0, Math.min(1, number));
+  }
+
+  static #getActionTarget(event, target, action) {
+    const candidate = target instanceof HTMLElement ? target : event?.target;
+    return candidate?.closest?.(`[data-action="${action}"]`) ?? candidate;
+  }
+
   #getSeverityLabel(severity) {
     return `MORTAL_NEEDS.Severity.${severity.charAt(0).toUpperCase()}${severity.slice(1)}`;
   }
@@ -280,19 +308,29 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
   // --- Action Handlers ---
 
   static async #onStress(event, target) {
-    const entityId = target.dataset.entityId;
-    const needId = target.dataset.needId;
+    const actionTarget = MortalNeedsApp.#getActionTarget(event, target, 'stress');
+    const entityId = actionTarget?.dataset.entityId;
+    const needId = actionTarget?.dataset.needId;
+    if (!entityId || !needId) return;
     await this.#engine.stressNeed(entityId, needId);
   }
 
   static async #onRelieve(event, target) {
-    const entityId = target.dataset.entityId;
-    const needId = target.dataset.needId;
+    const actionTarget = MortalNeedsApp.#getActionTarget(event, target, 'relieve');
+    const entityId = actionTarget?.dataset.entityId;
+    const needId = actionTarget?.dataset.needId;
+    if (!entityId || !needId) return;
     await this.#engine.relieveNeed(entityId, needId);
   }
 
   static #onToggleExpand(event, target) {
-    const entityId = target.dataset.entityId;
+    event.preventDefault();
+    event.stopPropagation();
+
+    const actionTarget = MortalNeedsApp.#getActionTarget(event, target, 'toggle-expand');
+    const entityId = actionTarget?.dataset.entityId;
+    if (!entityId) return;
+
     if (this.#expandedActors.has(entityId)) {
       this.#expandedActors.delete(entityId);
     } else {
@@ -302,7 +340,10 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static async #onResetAll(event, target) {
-    const entityId = target.dataset.entityId;
+    const actionTarget = MortalNeedsApp.#getActionTarget(event, target, 'reset-all');
+    const entityId = actionTarget?.dataset.entityId;
+    if (!entityId) return;
+
     const confirmed = await foundry.applications.api.DialogV2.confirm({
       window: { title: game.i18n.localize('MORTAL_NEEDS.Dialogs.ResetAllTitle') },
       content: `<p>${game.i18n.localize('MORTAL_NEEDS.Dialogs.ResetAllContent')}</p>`,
@@ -313,7 +354,10 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   static async #onUntrack(event, target) {
-    const entityId = target.dataset.entityId;
+    const actionTarget = MortalNeedsApp.#getActionTarget(event, target, 'untrack');
+    const entityId = actionTarget?.dataset.entityId;
+    if (!entityId) return;
+
     const api = game.modules.get(MODULE_ID).api;
     await api.actors.untrack(entityId);
   }

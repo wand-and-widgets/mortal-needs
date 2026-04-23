@@ -35,10 +35,12 @@
           <span class="mn-badge mn-badge--source mn-badge--source-es" data-tooltip="Exalted Scenes">ES</span>
         {{/if}}
 
-        <button class="mn-icon-btn mn-actor-card__expand {{#if expanded}}is-expanded{{/if}}"
-                 data-action="toggle-expand"
-                 data-entity-id="{{id}}"
-                 data-tooltip="{{localize 'MORTAL_NEEDS.Actions.ToggleDetails'}}">
+        <button type="button"
+                class="mn-icon-btn mn-actor-card__expand {{#if expanded}}is-expanded{{/if}}"
+                data-action="toggle-expand"
+                data-entity-id="{{id}}"
+                data-tooltip="{{localize 'MORTAL_NEEDS.Actions.ToggleDetails'}}"
+                aria-expanded="{{#if expanded}}true{{else}}false{{/if}}">
           <i class="fas fa-chevron-down"></i>
         </button>
       </div>
@@ -61,12 +63,12 @@
 
   {{#if expanded}}
     <div class="mn-actor-card__actions">
-      <button class="mn-actor-card__action-btn" data-action="reset-all" data-entity-id="{{id}}">
+      <button type="button" class="mn-actor-card__action-btn" data-action="reset-all" data-entity-id="{{id}}">
         <i class="fas fa-undo"></i>
         <span>{{localize "MORTAL_NEEDS.Actions.ResetAll"}}</span>
       </button>
       {{#if isGM}}
-        <button class="mn-actor-card__action-btn mn-actor-card__action-btn--danger" data-action="untrack" data-entity-id="{{id}}">
+        <button type="button" class="mn-actor-card__action-btn mn-actor-card__action-btn--danger" data-action="untrack" data-entity-id="{{id}}">
           <i class="fas fa-times"></i>
           <span>{{localize "MORTAL_NEEDS.Actions.Untrack"}}</span>
         </button>

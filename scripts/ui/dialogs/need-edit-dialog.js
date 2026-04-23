@@ -271,6 +271,7 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     return {
+      ...(existingConfig || {}),
       id,
       label: form.querySelector('[name="label"]')?.value?.trim() || 'Custom Need',
       icon: form.querySelector('[name="icon"]')?.value?.trim() || 'fa-question',
@@ -342,6 +343,7 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 
       const configs = this.#store.getAllNeedConfigs();
       await this.#configManager.saveNeedsConfig(configs);
+      await this.#store.persistAllDirty?.();
       this.#draftConfig = null;
       this.#eventBus.emit(Events.CONFIG_CHANGED, { source: 'need-edit', needId: data.id });
       return true;
@@ -423,6 +425,7 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     if (!suggestion) return;
 
     const consequence = {
+      id: this.#createConsequenceId(),
       type: suggestion.type,
       threshold: suggestion.threshold ?? 100,
       ticks: suggestion.ticks ?? 3,
@@ -443,5 +446,10 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     return this.#store.getAllNeedConfigs().map(config => (
       config.id === this.#needId ? { ...config, consequences } : config
     ));
+  }
+
+  #createConsequenceId() {
+    return foundry.utils?.randomID?.(16)
+      ?? `mn-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
   }
 }

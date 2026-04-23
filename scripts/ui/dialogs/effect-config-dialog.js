@@ -304,6 +304,11 @@ export class EffectConfigDialog extends HandlebarsApplicationMixin(ApplicationV2
     ));
   }
 
+  #createConsequenceId() {
+    return foundry.utils?.randomID?.(16)
+      ?? `mn-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+  }
+
   static async #onSave() {
     if (this.#isSaving) return;
     const form = this.element;
@@ -314,8 +319,6 @@ export class EffectConfigDialog extends HandlebarsApplicationMixin(ApplicationV2
 
     const config = this.#collectConfigFields();
 
-    const consequence = { type, threshold, ticks, reversible, config };
-
     // Add or update the consequence
     const needConfig = this.#store.getNeedConfig(this.#needId);
     if (!needConfig) {
@@ -325,6 +328,15 @@ export class EffectConfigDialog extends HandlebarsApplicationMixin(ApplicationV2
 
     const consequences = [...(needConfig.consequences || [])];
     if (!this.#validateConsequence(type, config, consequences)) return;
+    const existing = this.#editIndex != null ? consequences[this.#editIndex] : null;
+    const consequence = {
+      id: existing?.id || this.#createConsequenceId(),
+      type,
+      threshold,
+      ticks,
+      reversible,
+      config,
+    };
 
     this.#setSavingState(true);
     try {

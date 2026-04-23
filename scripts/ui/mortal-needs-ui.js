@@ -5,7 +5,8 @@
  * @module mortal-needs/ui/mortal-needs-ui
  */
 
-import { MODULE_ID, MODULE_NAME } from '../constants.js';
+import { MODULE_ID } from '../constants.js';
+import { NeedsEngine } from '../core/needs-engine.js';
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -135,8 +136,10 @@ export class MortalNeedsUI extends HandlebarsApplicationMixin(ApplicationV2) {
 
             for (const need of enabledNeeds) {
                 const actorNeed = actor.needs[need.id];
-                if (actorNeed) {
-                    const percentage = Math.round((actorNeed.value / actorNeed.max) * 100);
+                if (actorNeed !== undefined && actorNeed !== null) {
+                    const value = NeedsEngine.normalizeNumber(actorNeed?.value ?? actorNeed, need.default ?? 0);
+                    const max = this._normalizeMax(actorNeed?.max ?? need.max, need.min ?? 0);
+                    const percentage = this._normalizePercentage(NeedsEngine.getPercentage(value, max));
                     const attrKey = need.attribute;
                     const hasResistance = attrKey && attrKey !== 'none';
                     const attrLabel = hasResistance ? (attrLookup[attrKey] || attrKey.toUpperCase()) : null;
@@ -183,8 +186,8 @@ export class MortalNeedsUI extends HandlebarsApplicationMixin(ApplicationV2) {
                         id: need.id,
                         name: game.i18n.localize(`MORTAL_NEEDS.Needs.${need.id}`),
                         icon: need.icon,
-                        value: actorNeed.value,
-                        max: actorNeed.max,
+                        value,
+                        max,
                         percentage,
                         severity,
                         attribute: attrKey,
@@ -231,11 +234,35 @@ export class MortalNeedsUI extends HandlebarsApplicationMixin(ApplicationV2) {
      * @private
      */
     _getSeverityClass(percentage) {
+        percentage = this._normalizePercentage(percentage);
         if (percentage >= 80) return 'critical';
         if (percentage >= 60) return 'high';
         if (percentage >= 40) return 'medium';
         if (percentage >= 20) return 'low';
         return 'minimal';
+    }
+
+    _normalizeMax(value, min = 0) {
+        const safeMin = NeedsEngine.normalizeNumber(min, 0);
+        const safeMax = NeedsEngine.normalizeNumber(value, 100);
+        return safeMax > safeMin ? safeMax : Math.max(safeMin + 1, 100);
+    }
+
+    _normalizePercentage(value) {
+        const number = NeedsEngine.normalizeNumber(value, 0);
+        return Math.max(0, Math.min(100, number));
+    }
+
+    _getPercentageFromDimension(offset, size) {
+        const safeSize = NeedsEngine.normalizeNumber(size, 0);
+        if (safeSize <= 0) return 0;
+        return this._normalizePercentage(Math.round((offset / safeSize) * 100));
+    }
+
+    _getValueFromPercentage(percentage, max) {
+        const safePercentage = this._normalizePercentage(percentage);
+        const safeMax = this._normalizeMax(max);
+        return Math.round((safePercentage / 100) * safeMax);
     }
 
     /**
@@ -268,16 +295,20 @@ export class MortalNeedsUI extends HandlebarsApplicationMixin(ApplicationV2) {
         const actorNeeds = this.manager.actorNeeds.get(actorId);
         if (!actorNeeds) return false;
 
-        const needData = actorNeeds[needId];
-        if (!needData) return false;
+        const rawNeedData = actorNeeds instanceof Map ? actorNeeds.get(needId) : actorNeeds[needId];
+        if (rawNeedData === undefined || rawNeedData === null) return false;
+
+        // Get need config for bounds/punishment/ticks
+        const needConfig = this.manager.getNeedConfig(needId);
+        const value = NeedsEngine.normalizeNumber(rawNeedData?.value ?? rawNeedData, needConfig?.default ?? 0);
+        const max = this._normalizeMax(rawNeedData?.max ?? needConfig?.max, needConfig?.min ?? 0);
+        const needData = { value, max };
 
         // Calculate new values
-        const percentage = Math.round((needData.value / needData.max) * 100);
+        const percentage = this._normalizePercentage(NeedsEngine.getPercentage(value, max));
         const severity = this._getSeverityClass(percentage);
         const isAtMax = percentage >= 100;
 
-        // Get need config for punishment/ticks
-        const needConfig = this.manager.getNeedConfig(needId);
         const hasPunishment = needConfig?.punishment && needConfig.punishment.type && needConfig.punishment.type !== 'none';
         const punishmentTicks = needConfig?.punishment?.ticks ?? 3;
         const tickProgress = this.manager.getExhaustionTickProgress?.(actorId, needId) || { current: 0, max: punishmentTicks };
@@ -353,8 +384,15 @@ export class MortalNeedsUI extends HandlebarsApplicationMixin(ApplicationV2) {
         }
 
         // Update critical state on actor unit (only if changed to avoid animation restart)
-        const allNeeds = Object.values(actorNeeds);
-        const hasCritical = allNeeds.some(n => Math.round((n.value / n.max) * 100) >= 80);
+        const allNeeds = actorNeeds instanceof Map
+            ? Array.from(actorNeeds.entries()).map(([id, raw]) => ({ id, raw }))
+            : Object.entries(actorNeeds).map(([id, raw]) => ({ id, raw }));
+        const hasCritical = allNeeds.some(({ id, raw }) => {
+            const config = this.manager.getNeedConfig(id);
+            const rawValue = NeedsEngine.normalizeNumber(raw?.value ?? raw, config?.default ?? 0);
+            const rawMax = this._normalizeMax(raw?.max ?? config?.max, config?.min ?? 0);
+            return this._normalizePercentage(NeedsEngine.getPercentage(rawValue, rawMax)) >= 80;
+        });
         const currentlyHasCritical = actorUnit.classList.contains('has-critical');
 
         // Only toggle if state actually changed
@@ -1051,11 +1089,11 @@ export class MortalNeedsUI extends HandlebarsApplicationMixin(ApplicationV2) {
         const rect = bar.getBoundingClientRect();
         // For vertical bars, we calculate from bottom (0) to top (100)
         const clickY = rect.bottom - event.clientY;
-        const percentage = Math.round((clickY / rect.height) * 100);
+        const percentage = this._getPercentageFromDimension(clickY, rect.height);
 
         const config = this.manager.getNeedConfig(needId);
         if (config) {
-            const newValue = Math.round((percentage / 100) * config.max);
+            const newValue = this._getValueFromPercentage(percentage, config.max);
             await this.manager.setNeed(actorId, needId, newValue);
 
             // Smooth update without full re-render
@@ -1100,11 +1138,11 @@ export class MortalNeedsUI extends HandlebarsApplicationMixin(ApplicationV2) {
 
         const rect = bar.getBoundingClientRect();
         const clickX = event.clientX - rect.left;
-        const percentage = Math.round((clickX / rect.width) * 100);
+        const percentage = this._getPercentageFromDimension(clickX, rect.width);
 
         const config = this.manager.getNeedConfig(needId);
         if (config) {
-            const newValue = Math.round((percentage / 100) * config.max);
+            const newValue = this._getValueFromPercentage(percentage, config.max);
             await this.manager.setNeed(actorId, needId, newValue);
 
             // Smooth update without full re-render
@@ -1149,7 +1187,7 @@ export class MortalNeedsUI extends HandlebarsApplicationMixin(ApplicationV2) {
         if (this._dragData.type === 'vertical') {
             // Vertical: bottom to top
             const dragY = rect.bottom - event.clientY;
-            percentage = Math.max(0, Math.min(100, Math.round((dragY / rect.height) * 100)));
+            percentage = this._getPercentageFromDimension(dragY, rect.height);
 
             const fill = this._dragData.bar.querySelector('.mn-vbar-fill');
             if (fill) {
@@ -1158,7 +1196,7 @@ export class MortalNeedsUI extends HandlebarsApplicationMixin(ApplicationV2) {
         } else {
             // Horizontal: left to right
             const dragX = event.clientX - rect.left;
-            percentage = Math.max(0, Math.min(100, Math.round((dragX / rect.width) * 100)));
+            percentage = this._getPercentageFromDimension(dragX, rect.width);
 
             const fill = this._dragData.bar.querySelector('.mn-hbar-fill');
             if (fill) {
@@ -1170,7 +1208,7 @@ export class MortalNeedsUI extends HandlebarsApplicationMixin(ApplicationV2) {
             if (text) {
                 const config = this.manager.getNeedConfig(this._dragData.needId);
                 if (config) {
-                    const value = Math.round((percentage / 100) * config.max);
+                    const value = this._getValueFromPercentage(percentage, config.max);
                     text.textContent = value;
                 }
             }
@@ -1190,15 +1228,15 @@ export class MortalNeedsUI extends HandlebarsApplicationMixin(ApplicationV2) {
 
         if (this._dragData.type === 'vertical') {
             const dragY = rect.bottom - event.clientY;
-            percentage = Math.max(0, Math.min(100, Math.round((dragY / rect.height) * 100)));
+            percentage = this._getPercentageFromDimension(dragY, rect.height);
         } else {
             const dragX = event.clientX - rect.left;
-            percentage = Math.max(0, Math.min(100, Math.round((dragX / rect.width) * 100)));
+            percentage = this._getPercentageFromDimension(dragX, rect.width);
         }
 
         const config = this.manager.getNeedConfig(needId);
         if (config) {
-            const newValue = Math.round((percentage / 100) * config.max);
+            const newValue = this._getValueFromPercentage(percentage, config.max);
             await this.manager.setNeed(actorId, needId, newValue);
         }
 

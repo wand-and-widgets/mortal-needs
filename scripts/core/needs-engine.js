@@ -17,8 +17,7 @@ export class NeedsEngine {
     const config = this.#store.getNeedConfig(needId);
     if (!config || !config.enabled) return null;
 
-    const globalDefault = game.settings?.get?.(MODULE_ID, 'defaultStressAmount') ?? 10;
-    const finalAmount = amount ?? config.stressAmount ?? globalDefault;
+    const finalAmount = this.#resolveStressAmount(config, amount);
     const source = options.source || 'stress';
     let adjustedAmount = finalAmount;
 
@@ -59,8 +58,7 @@ export class NeedsEngine {
     const config = this.#store.getNeedConfig(needId);
     if (!config || !config.enabled) return null;
 
-    const globalDefault = game.settings?.get?.(MODULE_ID, 'defaultStressAmount') ?? 10;
-    const finalAmount = amount ?? config.stressAmount ?? globalDefault;
+    const finalAmount = this.#resolveStressAmount(config, amount);
     const source = options.source || 'relieve';
     const result = this.#store.adjustNeedValue(entityId, needId, -finalAmount, source);
     if (!result) return null;
@@ -158,6 +156,21 @@ export class NeedsEngine {
   }
 
   // --- Attribute Modifier ---
+
+  #resolveStressAmount(config, requestedAmount) {
+    if (requestedAmount !== undefined && requestedAmount !== null) {
+      return Math.max(0, NeedsEngine.normalizeNumber(requestedAmount, 0));
+    }
+
+    const configuredAmount = NeedsEngine.normalizeNumber(config?.stressAmount, null);
+    if (configuredAmount !== null) return Math.max(0, configuredAmount);
+
+    const defaultAmount = NeedsEngine.normalizeNumber(
+      game.settings?.get?.(MODULE_ID, 'defaultStressAmount'),
+      10,
+    );
+    return Math.max(0, defaultAmount);
+  }
 
   getAttributeModifier(entityId, attributePath) {
     const entityInfo = this.#store.getTrackedEntityInfo(entityId);
@@ -257,14 +270,17 @@ export class NeedsEngine {
     const safeValue = NeedsEngine.normalizeNumber(value, 0);
     const safeMax = NeedsEngine.normalizeNumber(max, 100);
     if (safeMax <= 0) return 0;
-    return Math.round((safeValue / safeMax) * 100);
+    const percentage = Math.round((safeValue / safeMax) * 100);
+    return Number.isFinite(percentage) ? percentage : 0;
   }
 
   static getRatio(value, max) {
     const safeValue = NeedsEngine.normalizeNumber(value, 0);
     const safeMax = NeedsEngine.normalizeNumber(max, 100);
     if (safeMax <= 0) return 0;
-    return Math.max(0, Math.min(1, safeValue / safeMax));
+    const ratio = safeValue / safeMax;
+    if (!Number.isFinite(ratio)) return 0;
+    return Math.max(0, Math.min(1, ratio));
   }
 
   static normalizeNumber(value, fallback = 0) {

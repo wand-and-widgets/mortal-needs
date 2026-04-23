@@ -5,6 +5,22 @@ All notable changes to Mortal Needs will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2026-04-23
+
+### Changed
+- Removed the "Default Stress Amount" setting from the world config UI to reduce confusion; the default remains configurable programmatically for integrations
+
+### Fixed
+- Consequences with identical thresholds now track independently instead of interfering with each other, and their state properly resets when removed
+- Radial and gauge need bars render smooth fills at all percentage values (previously had visual glitches in certain ranges)
+- Clicks on icons inside buttons (stress, relieve, expand, reset) now reliably trigger the intended action
+- Last actor card no longer gets clipped when the panel is constrained by the Foundry window
+- Need configurations with missing or malformed fields (min, max, default, decay) are now reconciled to safe defaults across all tracked actors
+- Percentage labels on horizontal and vertical need bars show formatted values instead of raw numbers
+- Stress and relieve amount resolution follows a consistent fallback chain (request → need config → global default)
+- Hardened rendering against NaN and Infinity values from malformed actor data
+- Buttons and collapsible controls now use proper semantic markup for keyboard and screen reader users
+
 ## [2.1.0] - 2026-04-23
 
 ### Added

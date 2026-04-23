@@ -4,7 +4,7 @@
  * @module mortal-needs/punishment-system
  */
 
-import { MODULE_ID, MODULE_NAME } from './constants.js';
+import { MODULE_ID, MODULE_TITLE as MODULE_NAME } from './constants.js';
 
 
 /**

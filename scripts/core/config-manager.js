@@ -38,7 +38,7 @@ export class ConfigManager {
     game.settings.register(MODULE_ID, 'defaultStressAmount', {
       name: 'MORTAL_NEEDS.Settings.DefaultStress',
       hint: 'MORTAL_NEEDS.Settings.DefaultStressHint',
-      scope: 'world', config: true, type: Number,
+      scope: 'world', config: false, type: Number,
       default: 20, range: { min: 1, max: 50, step: 1 },
     });
 

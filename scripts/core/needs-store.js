@@ -113,13 +113,15 @@ export class NeedsStore {
   // --- Configuration Mutations ---
 
   setNeedConfigs(configs) {
-    this.#needConfigs = configs.map(c => ({ ...c }));
+    this.#needConfigs = configs.map(c => this.#normalizeNeedConfig(c));
+    this.#reconcileStateWithConfigs();
   }
 
   updateNeedConfig(needId, changes) {
     const idx = this.#needConfigs.findIndex(c => c.id === needId);
     if (idx === -1) return null;
-    this.#needConfigs[idx] = { ...this.#needConfigs[idx], ...changes };
+    this.#needConfigs[idx] = this.#normalizeNeedConfig({ ...this.#needConfigs[idx], ...changes });
+    this.#reconcileStateWithConfigs();
     this.#eventBus.emit(Events.CONFIG_CHANGED, { needId, changes });
     return { ...this.#needConfigs[idx] };
   }
@@ -129,14 +131,14 @@ export class NeedsStore {
       console.warn(`Mortal Needs | Need "${config.id}" already registered`);
       return null;
     }
-    const fullConfig = {
+    const fullConfig = this.#normalizeNeedConfig({
       min: 0, max: 100, default: 0, enabled: true, custom: true,
       iconType: 'fa', category: 'custom', order: this.#needConfigs.length,
       stressAmount: 10, attribute: null, consequences: [],
       decay: { enabled: false, rate: 5, interval: 3600 },
       flavor: { apply: [], remove: [] },
       ...config,
-    };
+    });
     this.#needConfigs.push(fullConfig);
 
     // Initialize for all tracked entities
@@ -457,6 +459,62 @@ export class NeedsStore {
   }
 
   // --- Serialization helpers ---
+
+  #reconcileStateWithConfigs() {
+    const validNeedIds = new Set(this.#needConfigs.map(config => config.id));
+
+    for (const [entityId, entityNeeds] of this.#state) {
+      let changed = false;
+
+      for (const needId of [...entityNeeds.keys()]) {
+        if (!validNeedIds.has(needId)) {
+          entityNeeds.delete(needId);
+          changed = true;
+        }
+      }
+
+      for (const config of this.#needConfigs) {
+        const previous = entityNeeds.get(config.id);
+        const next = this.#buildNeedState(config, previous, previous?.source || 'config');
+        if (
+          !previous
+          || previous.value !== next.value
+          || previous.min !== next.min
+          || previous.max !== next.max
+        ) {
+          entityNeeds.set(config.id, next);
+          changed = true;
+        }
+      }
+
+      if (changed) this.#dirty.add(entityId);
+    }
+  }
+
+  #normalizeNeedConfig(config = {}) {
+    const min = this.#normalizeNumber(config.min, 0);
+    const max = this.#normalizeMax(config.max, min);
+    const fallbackDefault = this.#normalizeNumber(config.default, min);
+    const defaultValue = Math.max(min, Math.min(max, fallbackDefault));
+    const stressAmount = Math.max(1, this.#normalizeNumber(config.stressAmount, 10));
+    const decay = config.decay || {};
+
+    return {
+      ...config,
+      min,
+      max,
+      default: defaultValue,
+      stressAmount,
+      enabled: config.enabled !== false,
+      consequences: Array.isArray(config.consequences) ? config.consequences : [],
+      decay: {
+        ...decay,
+        enabled: !!decay.enabled,
+        rate: Math.max(0, this.#normalizeNumber(decay.rate, 0)),
+        interval: Math.max(1, this.#normalizeNumber(decay.interval, 3600)),
+      },
+    };
+  }
 
   getSerializableState() {
     const result = {};

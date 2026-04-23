@@ -20,7 +20,7 @@ export class ActiveEffectApplyConsequence extends ConsequenceType {
   async apply(actor, needId, config) {
     if (!actor) return { success: false, reason: 'no-actor' };
 
-    const sourceKey = `${needId}_${this.constructor.TYPE}`;
+    const sourceKey = `${needId}_${this.constructor.TYPE}_${config.consequenceId || 'default'}`;
 
     // Check for existing stackable effect
     const existing = actor.effects.find(e =>
@@ -55,7 +55,7 @@ export class ActiveEffectApplyConsequence extends ConsequenceType {
   async remove(actor, needId, config) {
     if (!actor) return false;
 
-    const sourceKey = `${needId}_${this.constructor.TYPE}`;
+    const sourceKey = `${needId}_${this.constructor.TYPE}_${config.consequenceId || 'default'}`;
     const effect = actor.effects.find(e =>
       e.flags?.[MODULE_ID]?.consequenceSource === sourceKey
     );
@@ -68,7 +68,7 @@ export class ActiveEffectApplyConsequence extends ConsequenceType {
 
   async isActive(actor, needId, config) {
     if (!actor) return false;
-    const sourceKey = `${needId}_${this.constructor.TYPE}`;
+    const sourceKey = `${needId}_${this.constructor.TYPE}_${config.consequenceId || 'default'}`;
     return actor.effects.some(e =>
       e.flags?.[MODULE_ID]?.consequenceSource === sourceKey
     );

@@ -33,7 +33,7 @@ export class ConsequenceEngine {
     const newPct = NeedsEngine.getPercentage(value, max);
 
     for (const consequenceConfig of config.consequences) {
-      const threshold = consequenceConfig.threshold ?? 100;
+      const threshold = this.#normalizeThreshold(consequenceConfig.threshold);
 
       if (oldPct < threshold && newPct >= threshold) {
         // First time crossing this consequence's threshold — apply immediately
@@ -64,21 +64,21 @@ export class ConsequenceEngine {
 
     // Only reset ticks if the consequence was actually removed
     if (removed && actor) {
-      const tickKey = `consequenceTicks_${needId}_${consequenceConfig.type}`;
+      const tickKey = this.#getTickKey(needId, consequenceConfig);
       await actor.setFlag(MODULE_ID, tickKey, 0);
     }
   }
 
   async #handleConsequenceTick(actor, entityId, entityInfo, needId, consequenceConfig, percentage, previousPercentage, sustained) {
-    const threshold = consequenceConfig.threshold ?? 100;
+    const threshold = this.#normalizeThreshold(consequenceConfig.threshold);
     if (percentage < threshold) return;
 
-    const maxTicks = consequenceConfig.ticks ?? 3;
+    const maxTicks = this.#normalizeTicks(consequenceConfig.ticks);
 
     // Get tick count
     let currentTicks = 0;
     if (actor) {
-      const tickKey = `consequenceTicks_${needId}_${consequenceConfig.type}`;
+      const tickKey = this.#getTickKey(needId, consequenceConfig);
       currentTicks = actor.getFlag(MODULE_ID, tickKey) ?? 0;
     }
 
@@ -86,7 +86,7 @@ export class ConsequenceEngine {
       // First time crossing threshold: apply immediately
       await this.applyConsequence(actor, entityId, needId, consequenceConfig);
       if (actor) {
-        const tickKey = `consequenceTicks_${needId}_${consequenceConfig.type}`;
+        const tickKey = this.#getTickKey(needId, consequenceConfig);
         await actor.setFlag(MODULE_ID, tickKey, 0);
       }
     } else {
@@ -95,12 +95,12 @@ export class ConsequenceEngine {
       if (next >= maxTicks) {
         await this.applyConsequence(actor, entityId, needId, consequenceConfig);
         if (actor) {
-          const tickKey = `consequenceTicks_${needId}_${consequenceConfig.type}`;
+          const tickKey = this.#getTickKey(needId, consequenceConfig);
           await actor.setFlag(MODULE_ID, tickKey, 0);
         }
       } else {
         if (actor) {
-          const tickKey = `consequenceTicks_${needId}_${consequenceConfig.type}`;
+          const tickKey = this.#getTickKey(needId, consequenceConfig);
           await actor.setFlag(MODULE_ID, tickKey, next);
         }
         this.#eventBus.emit(Events.CONSEQUENCE_TICK, {
@@ -128,7 +128,7 @@ export class ConsequenceEngine {
 
     const instance = new ConsequenceClass(this.#adapter);
     try {
-      const result = await instance.apply(actor, needId, consequenceConfig.config || consequenceConfig);
+      const result = await instance.apply(actor, needId, this.#getRuntimeConfig(needId, consequenceConfig));
       if (result?.success) {
         this.#eventBus.emit(Events.CONSEQUENCE_APPLIED, {
           entityId, needId,
@@ -148,7 +148,7 @@ export class ConsequenceEngine {
 
     const instance = new ConsequenceClass(this.#adapter);
     try {
-      const removed = await instance.remove(actor, needId, consequenceConfig.config || consequenceConfig);
+      const removed = await instance.remove(actor, needId, this.#getRuntimeConfig(needId, consequenceConfig));
       if (removed) {
         this.#eventBus.emit(Events.CONSEQUENCE_REMOVED, {
           entityId, needId,
@@ -163,14 +163,14 @@ export class ConsequenceEngine {
 
   getTickProgress(entityId, needId, consequenceConfig) {
     const entityInfo = this.#store.getTrackedEntityInfo(entityId);
-    if (!entityInfo) return { current: 0, max: consequenceConfig.ticks ?? 3 };
+    if (!entityInfo) return { current: 0, max: this.#normalizeTicks(consequenceConfig.ticks) };
 
     const actor = this.#resolveActor(entityId, entityInfo);
-    if (!actor) return { current: 0, max: consequenceConfig.ticks ?? 3 };
+    if (!actor) return { current: 0, max: this.#normalizeTicks(consequenceConfig.ticks) };
 
-    const tickKey = `consequenceTicks_${needId}_${consequenceConfig.type}`;
+    const tickKey = this.#getTickKey(needId, consequenceConfig);
     const current = actor.getFlag(MODULE_ID, tickKey) ?? 0;
-    return { current, max: consequenceConfig.ticks ?? 3 };
+    return { current, max: this.#normalizeTicks(consequenceConfig.ticks) };
   }
 
   // --- Helpers ---
@@ -189,14 +189,14 @@ export class ConsequenceEngine {
     if (!ConsequenceClass) return false;
 
     const instance = new ConsequenceClass(this.#adapter);
-    const isActive = actor ? await instance.isActive(actor, needId, consequenceConfig.config || consequenceConfig) : false;
+    const isActive = actor ? await instance.isActive(actor, needId, this.#getRuntimeConfig(needId, consequenceConfig)) : false;
     if (!isActive) return false;
 
     const entityInfo = this.#store.getTrackedEntityInfo(entityId);
     const entityName = entityInfo?.name || 'Unknown';
     const needConfig = this.#store.getNeedConfig(needId);
     const needName = needConfig ? game.i18n.localize(needConfig.label) : needId;
-    const description = instance.getDescription(consequenceConfig.config || consequenceConfig);
+    const description = instance.getDescription(this.#getRuntimeConfig(needId, consequenceConfig));
 
     const confirmed = await foundry.applications.api.DialogV2.confirm({
       window: { title: game.i18n.localize('MORTAL_NEEDS.Dialogs.RemoveConsequenceTitle') },
@@ -214,5 +214,59 @@ export class ConsequenceEngine {
       return true;
     }
     return false;
+  }
+
+  #getRuntimeConfig(needId, consequenceConfig) {
+    return {
+      ...(consequenceConfig.config || {}),
+      consequenceId: this.#getConsequenceKey(needId, consequenceConfig),
+      threshold: this.#normalizeThreshold(consequenceConfig.threshold),
+      ticks: this.#normalizeTicks(consequenceConfig.ticks),
+      reversible: consequenceConfig.reversible ?? true,
+    };
+  }
+
+  #getTickKey(needId, consequenceConfig) {
+    return `consequenceTicks_${this.#getConsequenceKey(needId, consequenceConfig)}`;
+  }
+
+  #getConsequenceKey(needId, consequenceConfig) {
+    const threshold = this.#normalizeThreshold(consequenceConfig.threshold);
+    const fingerprint = this.#hashString(this.#stableStringify(consequenceConfig.config || {}));
+    const rawKey = consequenceConfig.id
+      ? String(consequenceConfig.id)
+      : `${needId}_${consequenceConfig.type}_${threshold}_${fingerprint}`;
+    return rawKey.replace(/[^A-Za-z0-9_-]/g, '_');
+  }
+
+  #stableStringify(value) {
+    if (!value || typeof value !== 'object') return String(value ?? '');
+    if (Array.isArray(value)) return `[${value.map(item => this.#stableStringify(item)).join(',')}]`;
+    const ordered = {};
+    for (const key of Object.keys(value).sort()) {
+      ordered[key] = this.#stableStringify(value[key]);
+    }
+    return JSON.stringify(ordered);
+  }
+
+  #hashString(value) {
+    let hash = 2166136261;
+    for (let i = 0; i < value.length; i += 1) {
+      hash ^= value.charCodeAt(i);
+      hash = Math.imul(hash, 16777619);
+    }
+    return (hash >>> 0).toString(36);
+  }
+
+  #normalizeThreshold(value) {
+    const threshold = Number(value);
+    if (!Number.isFinite(threshold)) return 100;
+    return Math.min(100, Math.max(0, threshold));
+  }
+
+  #normalizeTicks(value) {
+    const ticks = Number.parseInt(value, 10);
+    if (!Number.isFinite(ticks)) return 3;
+    return Math.max(1, ticks);
   }
 }

@@ -3,7 +3,7 @@
  * @module mortal-needs/settings
  */
 
-import { MODULE_ID, MODULE_NAME } from './constants.js';
+import { MODULE_ID, MODULE_TITLE as MODULE_NAME } from './constants.js';
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -36,7 +36,7 @@ export function registerSettings() {
         name: 'MORTAL_NEEDS.Settings.DefaultStressAmount',
         hint: 'MORTAL_NEEDS.Settings.DefaultStressAmountHint',
         scope: 'world',
-        config: true,
+        config: false,
         type: Number,
         default: 20,
         range: {
