@@ -1,4 +1,5 @@
 import { MODULE_ID, Events, Severity, NeedCategory, EntitySource } from '../constants.js';
+import { NeedsEngine } from '../core/needs-engine.js';
 import { registerConsequenceType, getAllConsequenceTypes, getConsequenceType } from '../consequences/consequence-type.js';
 import { CustomCallbackConsequence } from '../consequences/custom-callback.js';
 
@@ -203,7 +204,7 @@ export function createPublicAPI(store, engine, consequenceEngine, eventBus, conf
         return tracked.filter(entity => {
           const need = entity.needs[needId];
           if (!need) return false;
-          const pct = need.max > 0 ? Math.round((need.value / need.max) * 100) : 0;
+          const pct = NeedsEngine.getPercentage(need.value, need.max);
           return pct >= threshold;
         });
       },
@@ -212,7 +213,7 @@ export function createPublicAPI(store, engine, consequenceEngine, eventBus, conf
         return tracked.filter(entity => {
           const need = entity.needs[needId];
           if (!need) return false;
-          const pct = need.max > 0 ? Math.round((need.value / need.max) * 100) : 0;
+          const pct = NeedsEngine.getPercentage(need.value, need.max);
           const sev = api.query._getSeverity(pct);
           return sev === severity;
         });
@@ -222,7 +223,7 @@ export function createPublicAPI(store, engine, consequenceEngine, eventBus, conf
         const tracked = store.getAllTrackedActors();
         return tracked.filter(entity => {
           return Object.values(entity.needs).some(need => {
-            const pct = need.max > 0 ? Math.round((need.value / need.max) * 100) : 0;
+            const pct = NeedsEngine.getPercentage(need.value, need.max);
             return pct >= critThreshold;
           });
         });

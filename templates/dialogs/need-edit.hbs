@@ -1,144 +1,227 @@
-<div class="mn-dialog__body">
-  <div class="mn-dialog__section">
-    <div class="mn-dialog__section-title">{{localize "MORTAL_NEEDS.NeedEdit.General"}}</div>
+<div class="mn-dialog__body mn-need-edit-shell" data-preview-percentage="{{previewPercentage}}">
+  <main class="mn-need-edit-main">
+    <section class="mn-need-editor-hero mn-form-card">
+      <div class="mn-need-editor-hero__summary">
+        <span class="mn-need-editor-hero__icon">
+          <i class="fas {{config.icon}}" data-live-hero-icon></i>
+        </span>
 
-    {{#if isNew}}
-      <div class="mn-dialog__form-group">
-        <label>{{localize "MORTAL_NEEDS.NeedEdit.Id"}}</label>
-        <input type="text" name="needId" value="{{config.id}}" placeholder="custom-need-id">
-      </div>
-    {{else}}
-      <input type="hidden" name="needId" value="{{config.id}}">
-    {{/if}}
-
-    <div class="mn-dialog__form-group">
-      <label>{{localize "MORTAL_NEEDS.NeedEdit.Label"}}</label>
-      <input type="text" name="label" value="{{config.label}}">
-    </div>
-
-    <div class="mn-dialog__form-row">
-      <div class="mn-dialog__form-group" style="flex: 1;">
-        <label>{{localize "MORTAL_NEEDS.NeedEdit.Icon"}}</label>
-        <input type="text" name="icon" value="{{config.icon}}" placeholder="fa-utensils">
-      </div>
-      <div class="mn-dialog__form-group" style="flex: 1;">
-        <label>{{localize "MORTAL_NEEDS.NeedEdit.Category"}}</label>
-        <select name="category">
-          {{#each categories}}
-            <option value="{{this}}" {{#if (eq this ../config.category)}}selected{{/if}}>{{this}}</option>
-          {{/each}}
-        </select>
-      </div>
-    </div>
-
-    <label class="mn-dialog__checkbox">
-      <input type="checkbox" name="enabled" {{#if config.enabled}}checked{{/if}}>
-      <span>{{localize "MORTAL_NEEDS.NeedEdit.Enabled"}}</span>
-    </label>
-  </div>
-
-  <div class="mn-dialog__section">
-    <div class="mn-dialog__section-title">{{localize "MORTAL_NEEDS.NeedEdit.Values"}}</div>
-    <div class="mn-dialog__form-row">
-      <div class="mn-dialog__form-group" style="flex: 1;">
-        <label>{{localize "MORTAL_NEEDS.NeedEdit.Min"}}</label>
-        <input type="number" name="min" value="{{config.min}}" min="0">
-      </div>
-      <div class="mn-dialog__form-group" style="flex: 1;">
-        <label>{{localize "MORTAL_NEEDS.NeedEdit.Max"}}</label>
-        <input type="number" name="max" value="{{config.max}}" min="1">
-      </div>
-      <div class="mn-dialog__form-group" style="flex: 1;">
-        <label>{{localize "MORTAL_NEEDS.NeedEdit.Default"}}</label>
-        <input type="number" name="default" value="{{config.default}}" min="0">
-      </div>
-    </div>
-    <div class="mn-dialog__form-group">
-      <label>{{localize "MORTAL_NEEDS.NeedEdit.StressAmount"}}</label>
-      <input type="number" name="stressAmount" value="{{config.stressAmount}}" min="1" max="100">
-    </div>
-  </div>
-
-  <div class="mn-dialog__section">
-    <div class="mn-dialog__section-title">{{localize "MORTAL_NEEDS.NeedEdit.Decay"}}</div>
-    <label class="mn-dialog__checkbox">
-      <input type="checkbox" name="decayEnabled" {{#if config.decay.enabled}}checked{{/if}}>
-      <span>{{localize "MORTAL_NEEDS.NeedEdit.DecayEnabled"}}</span>
-    </label>
-    <div class="mn-dialog__form-row">
-      <div class="mn-dialog__form-group" style="flex: 1;">
-        <label>{{localize "MORTAL_NEEDS.NeedEdit.DecayRate"}}</label>
-        <input type="number" name="decayRate" value="{{config.decay.rate}}" min="1">
-      </div>
-      <div class="mn-dialog__form-group" style="flex: 1;">
-        <label>{{localize "MORTAL_NEEDS.NeedEdit.DecayInterval"}} (s)</label>
-        <input type="number" name="decayInterval" value="{{config.decay.interval}}" min="60" step="60">
-      </div>
-    </div>
-  </div>
-
-  <div class="mn-dialog__section">
-    <div class="mn-dialog__section-title">{{localize "MORTAL_NEEDS.NeedEdit.Consequences"}}</div>
-
-    {{#if enrichedConsequences.length}}
-      <div class="mn-consequence-list">
-        {{#each enrichedConsequences}}
-          <div class="mn-consequence-item" data-index="{{index}}">
-            <i class="mn-consequence-item__icon {{iconClass}}"></i>
-            <div class="mn-consequence-item__info">
-              <span class="mn-consequence-item__label">{{localizedLabel}}</span>
-              <span class="mn-consequence-item__desc">{{description}}</span>
-            </div>
-            <span class="mn-consequence-item__badge">{{threshold}}%</span>
-            <div class="mn-consequence-item__actions">
-              <button type="button" class="mn-consequence-item__btn" data-action="edit-consequence" title="{{localize 'MORTAL_NEEDS.NeedEdit.EditConsequence'}}">
-                <i class="fas fa-pencil"></i>
-              </button>
-              <button type="button" class="mn-consequence-item__btn mn-consequence-item__btn--danger" data-action="delete-consequence" title="{{localize 'MORTAL_NEEDS.NeedEdit.DeleteConsequence'}}">
-                <i class="fas fa-trash"></i>
-              </button>
-            </div>
+        <div class="mn-need-editor-hero__title">
+          <span>{{localize "MORTAL_NEEDS.NeedEdit.General"}}</span>
+          <strong data-live-need-title>{{#if localizedLabel}}{{localizedLabel}}{{else}}{{#if config.id}}{{config.id}}{{else}}{{localize "MORTAL_NEEDS.NeedEdit.Label"}}{{/if}}{{/if}}</strong>
+          <div class="mn-need-editor-hero__meta">
+            <span class="mn-config-pill mn-config-pill--{{config.category}}" data-live-category>{{config.category}}</span>
+            <span class="mn-need-editor-status {{#if config.enabled}}is-enabled{{else}}is-disabled{{/if}}" data-live-status>
+              {{#if config.enabled}}{{localize "MORTAL_NEEDS.NeedEdit.Enabled"}}{{else}}{{localize "MORTAL_NEEDS.Config.Disabled"}}{{/if}}
+            </span>
           </div>
-        {{/each}}
-      </div>
-    {{else}}
-      <p class="mn-text-xs" style="color: var(--mn-text-muted);">{{localize "MORTAL_NEEDS.NeedEdit.NoConsequences"}}</p>
-    {{/if}}
-
-    <button class="mn-btn mn-btn--secondary mn-btn--sm" data-action="add-consequence">
-      <i class="fas fa-plus"></i>
-      <span>{{localize "MORTAL_NEEDS.NeedEdit.AddConsequence"}}</span>
-    </button>
-
-    {{#if hasSuggestions}}
-      <div class="mn-consequence-suggestions">
-        <div class="mn-consequence-suggestions__header">
-          <i class="fas fa-lightbulb"></i>
-          <span>{{localize "MORTAL_NEEDS.EffectConfig.SuggestionsTitle"}}</span>
         </div>
-        {{#each suggestions}}
-          <div class="mn-consequence-suggestions__item" data-suggestion-index="{{index}}">
-            <i class="{{iconClass}} mn-consequence-suggestions__icon"></i>
-            <span class="mn-consequence-suggestions__desc">{{description}}</span>
-            <button type="button" class="mn-btn mn-btn--ghost mn-btn--xs" data-action="apply-suggestion" title="{{localize 'MORTAL_NEEDS.NeedEdit.AddConsequence'}}">
-              <i class="fas fa-plus"></i>
-            </button>
-          </div>
-        {{/each}}
-      </div>
-    {{/if}}
-  </div>
 
-  <div class="mn-dialog__footer">
+        <label class="mn-switch mn-switch--labeled mn-need-editor-hero__toggle">
+          <input type="checkbox" name="enabled" {{#if config.enabled}}checked{{/if}}>
+          <span class="mn-switch__track"><span class="mn-switch__thumb"></span></span>
+          <span>{{localize "MORTAL_NEEDS.NeedEdit.Enabled"}}</span>
+        </label>
+      </div>
+
+      <div class="mn-need-editor-grid mn-need-editor-grid--identity">
+        {{#if isNew}}
+          <div class="mn-field">
+            <label>{{localize "MORTAL_NEEDS.NeedEdit.Id"}}</label>
+            <input type="text" name="needId" value="{{config.id}}" placeholder="custom-need-id">
+          </div>
+        {{else}}
+          <input type="hidden" name="needId" value="{{config.id}}">
+        {{/if}}
+
+        <div class="mn-field mn-field--wide">
+          <label>{{localize "MORTAL_NEEDS.NeedEdit.Label"}}</label>
+          <input type="text" name="label" value="{{config.label}}">
+        </div>
+
+        <div class="mn-field">
+          <label>{{localize "MORTAL_NEEDS.NeedEdit.Icon"}}</label>
+          <input type="text" name="icon" value="{{config.icon}}" placeholder="fa-utensils">
+        </div>
+
+        <div class="mn-field">
+          <label>{{localize "MORTAL_NEEDS.NeedEdit.Category"}}</label>
+          <select name="category">
+            {{#each categories}}
+              <option value="{{this}}" {{#if (eq this ../config.category)}}selected{{/if}}>{{this}}</option>
+            {{/each}}
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="mn-need-editor-grid mn-need-editor-grid--panels">
+      <article class="mn-form-card mn-need-editor-panel mn-need-editor-panel--values">
+        <header class="mn-need-editor-panel__header">
+          <h3>{{localize "MORTAL_NEEDS.NeedEdit.Values"}}</h3>
+        </header>
+
+        <div class="mn-need-editor-grid mn-need-editor-grid--values">
+          <div class="mn-field">
+            <label>{{localize "MORTAL_NEEDS.NeedEdit.Min"}}</label>
+            <input type="number" name="min" value="{{config.min}}" min="0">
+          </div>
+
+          <div class="mn-field">
+            <label>{{localize "MORTAL_NEEDS.NeedEdit.Max"}}</label>
+            <input type="number" name="max" value="{{config.max}}" min="1">
+          </div>
+
+          <div class="mn-field">
+            <label>{{localize "MORTAL_NEEDS.NeedEdit.Default"}}</label>
+            <input type="number" name="default" value="{{config.default}}" min="0">
+          </div>
+
+          <div class="mn-field">
+            <label>{{localize "MORTAL_NEEDS.NeedEdit.StressAmount"}}</label>
+            <input type="number" name="stressAmount" value="{{config.stressAmount}}" min="1" max="100">
+          </div>
+        </div>
+      </article>
+
+      <article class="mn-form-card mn-need-editor-panel mn-need-editor-panel--decay">
+        <header class="mn-need-editor-panel__header">
+          <h3>{{localize "MORTAL_NEEDS.NeedEdit.Decay"}}</h3>
+        </header>
+
+        <label class="mn-switch-row">
+          <span>
+            <strong>{{localize "MORTAL_NEEDS.NeedEdit.Decay"}}</strong>
+            <small>{{localize "MORTAL_NEEDS.NeedEdit.DecayEnabled"}}</small>
+          </span>
+          <span class="mn-switch">
+            <input type="checkbox" name="decayEnabled" {{#if config.decay.enabled}}checked{{/if}}>
+            <span class="mn-switch__track"><span class="mn-switch__thumb"></span></span>
+          </span>
+        </label>
+
+        <div class="mn-need-editor-grid mn-need-editor-grid--decay-fields">
+          <div class="mn-field">
+            <label>{{localize "MORTAL_NEEDS.NeedEdit.DecayRate"}}</label>
+            <input type="number" name="decayRate" value="{{config.decay.rate}}" min="1">
+          </div>
+
+          <div class="mn-field">
+            <label>{{localize "MORTAL_NEEDS.NeedEdit.DecayInterval"}} (s)</label>
+            <input type="number" name="decayInterval" value="{{config.decay.interval}}" min="60" step="60">
+          </div>
+        </div>
+      </article>
+
+      <article class="mn-form-card mn-need-editor-panel mn-need-editor-panel--consequences">
+        <header class="mn-need-editor-panel__header">
+          <h3>{{localize "MORTAL_NEEDS.NeedEdit.Consequences"}}</h3>
+          <span>{{enrichedConsequences.length}}</span>
+        </header>
+
+        {{#if isNew}}
+          <div class="mn-need-editor-empty">
+            <i class="fas fa-save"></i>
+            <span>{{localize "MORTAL_NEEDS.NeedEdit.SaveBeforeConsequences"}}</span>
+          </div>
+        {{else if enrichedConsequences.length}}
+          <div class="mn-consequence-list">
+            {{#each enrichedConsequences}}
+              <div class="mn-consequence-item" data-index="{{index}}">
+                <i class="mn-consequence-item__icon {{iconClass}}"></i>
+                <div class="mn-consequence-item__info">
+                  <span class="mn-consequence-item__label">{{localizedLabel}}</span>
+                  <span class="mn-consequence-item__desc">{{description}}</span>
+                </div>
+                <span class="mn-consequence-item__badge">{{threshold}}%</span>
+                <div class="mn-consequence-item__actions">
+                  <button type="button" class="mn-consequence-item__btn" data-action="edit-consequence" title="{{localize 'MORTAL_NEEDS.NeedEdit.EditConsequence'}}">
+                    <i class="fas fa-pencil"></i>
+                  </button>
+                  <button type="button" class="mn-consequence-item__btn mn-consequence-item__btn--danger" data-action="delete-consequence" title="{{localize 'MORTAL_NEEDS.NeedEdit.DeleteConsequence'}}">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            {{/each}}
+          </div>
+        {{else}}
+          <div class="mn-need-editor-empty">
+            <i class="fas fa-balance-scale"></i>
+            <span>{{localize "MORTAL_NEEDS.NeedEdit.NoConsequences"}}</span>
+          </div>
+        {{/if}}
+
+        <button class="mn-btn mn-btn--secondary mn-btn--sm mn-need-editor-add" data-action="add-consequence" {{#if isNew}}disabled data-tooltip="{{localize 'MORTAL_NEEDS.NeedEdit.SaveBeforeConsequences'}}"{{/if}}>
+          <i class="fas fa-plus"></i>
+          <span>{{localize "MORTAL_NEEDS.NeedEdit.AddConsequence"}}</span>
+        </button>
+
+        {{#if hasSuggestions}}
+          <div class="mn-consequence-suggestions">
+            <div class="mn-consequence-suggestions__header">
+              <i class="fas fa-lightbulb"></i>
+              <span>{{localize "MORTAL_NEEDS.EffectConfig.SuggestionsTitle"}}</span>
+            </div>
+            {{#each suggestions}}
+              <div class="mn-consequence-suggestions__item" data-suggestion-index="{{index}}">
+                <i class="{{iconClass}} mn-consequence-suggestions__icon"></i>
+                <span class="mn-consequence-suggestions__desc">{{description}}</span>
+                <button type="button" class="mn-btn mn-btn--ghost mn-btn--xs" data-action="apply-suggestion" title="{{localize 'MORTAL_NEEDS.NeedEdit.AddConsequence'}}">
+                  <i class="fas fa-plus"></i>
+                </button>
+              </div>
+            {{/each}}
+          </div>
+        {{/if}}
+      </article>
+    </section>
+  </main>
+
+  <aside class="mn-need-preview">
+    <header class="mn-need-preview__header">
+      <span>{{localize "MORTAL_NEEDS.NeedEdit.LivePreview"}}</span>
+      <span class="mn-badge mn-need-preview__enabled-badge {{#if config.enabled}}mn-badge--safe{{else}}mn-badge--source{{/if}}" data-live-preview-status>
+        {{#if config.enabled}}{{localize "MORTAL_NEEDS.NeedEdit.Enabled"}}{{else}}{{localize "MORTAL_NEEDS.Config.Disabled"}}{{/if}}
+      </span>
+    </header>
+
+    <div class="mn-need-preview__ring" data-severity="{{previewSeverity}}" style="--mn-preview-percent: {{previewPercentage}}%;">
+      <div class="mn-need-preview__ring-core">
+        <i class="fas {{config.icon}}" data-live-icon></i>
+        <strong data-live-percent>{{previewPercentage}}%</strong>
+      </div>
+    </div>
+
+    <div class="mn-need-preview__copy">
+      <strong data-live-preview-name>{{#if localizedLabel}}{{localizedLabel}}{{else}}{{config.id}}{{/if}}</strong>
+      <span data-live-meta>{{previewValue}}/{{config.max}} &middot; {{config.category}}</span>
+      <span data-live-stress>{{config.stressAmount}} {{localize "MORTAL_NEEDS.NeedEdit.StressAmount"}}</span>
+    </div>
+
+    <div class="mn-need-preview__status">
+      <div>
+        <span>{{localize "MORTAL_NEEDS.NeedEdit.Decay"}}</span>
+        <strong data-live-decay>{{#if config.decay.enabled}}+{{config.decay.rate}} / {{config.decay.interval}}s{{else}}-{{/if}}</strong>
+      </div>
+      <div>
+        <span>{{localize "MORTAL_NEEDS.NeedEdit.Consequences"}}</span>
+        <strong>{{enrichedConsequences.length}}</strong>
+      </div>
+    </div>
+  </aside>
+
+  <footer class="mn-dialog__footer mn-need-edit-footer">
     {{#if canDelete}}
-      <button class="mn-btn mn-btn--danger mn-btn--sm" data-action="delete-need" style="margin-right: auto;">
+      <button class="mn-btn mn-btn--danger mn-btn--sm" data-action="delete-need">
         <i class="fas fa-trash"></i>
         <span>{{localize "MORTAL_NEEDS.NeedEdit.Delete"}}</span>
       </button>
     {{/if}}
+    <span class="mn-flex-spacer"></span>
     <button class="mn-btn mn-btn--primary" data-action="save-need">
       <i class="fas fa-save"></i>
       <span>{{localize "Save"}}</span>
     </button>
-  </div>
+  </footer>
 </div>

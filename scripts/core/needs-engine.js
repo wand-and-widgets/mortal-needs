@@ -19,6 +19,7 @@ export class NeedsEngine {
 
     const globalDefault = game.settings?.get?.(MODULE_ID, 'defaultStressAmount') ?? 10;
     const finalAmount = amount ?? config.stressAmount ?? globalDefault;
+    const source = options.source || 'stress';
     let adjustedAmount = finalAmount;
 
     // Apply attribute modifier if configured
@@ -33,7 +34,7 @@ export class NeedsEngine {
       adjustedAmount = Math.round(adjustedAmount * sceneMod);
     }
 
-    const result = this.#store.adjustNeedValue(entityId, needId, adjustedAmount, 'stress');
+    const result = this.#store.adjustNeedValue(entityId, needId, adjustedAmount, source);
     if (!result) return null;
 
     this.#eventBus.emit(Events.NEED_STRESSED, {
@@ -42,10 +43,11 @@ export class NeedsEngine {
       value: result.value,
       previousValue: result.previousValue,
       max: result.max,
+      source,
     });
 
     // Evaluate thresholds
-    this.#evaluateThresholds(entityId, needId, result.previousValue, result.value, result.max, 'stress');
+    this.#evaluateThresholds(entityId, needId, result.previousValue, result.value, result.max, source);
 
     // Persist
     await this.#store.persistActor(entityId);
@@ -59,7 +61,8 @@ export class NeedsEngine {
 
     const globalDefault = game.settings?.get?.(MODULE_ID, 'defaultStressAmount') ?? 10;
     const finalAmount = amount ?? config.stressAmount ?? globalDefault;
-    const result = this.#store.adjustNeedValue(entityId, needId, -finalAmount, 'relieve');
+    const source = options.source || 'relieve';
+    const result = this.#store.adjustNeedValue(entityId, needId, -finalAmount, source);
     if (!result) return null;
 
     this.#eventBus.emit(Events.NEED_RELIEVED, {
@@ -68,10 +71,11 @@ export class NeedsEngine {
       value: result.value,
       previousValue: result.previousValue,
       max: result.max,
+      source,
     });
 
     // Evaluate thresholds (recovery check)
-    this.#evaluateThresholds(entityId, needId, result.previousValue, result.value, result.max, 'relieve');
+    this.#evaluateThresholds(entityId, needId, result.previousValue, result.value, result.max, source);
 
     // Persist
     await this.#store.persistActor(entityId);
@@ -250,8 +254,25 @@ export class NeedsEngine {
   // --- Static Helpers ---
 
   static getPercentage(value, max) {
-    if (max <= 0) return 0;
-    return Math.round((value / max) * 100);
+    const safeValue = NeedsEngine.normalizeNumber(value, 0);
+    const safeMax = NeedsEngine.normalizeNumber(max, 100);
+    if (safeMax <= 0) return 0;
+    return Math.round((safeValue / safeMax) * 100);
+  }
+
+  static getRatio(value, max) {
+    const safeValue = NeedsEngine.normalizeNumber(value, 0);
+    const safeMax = NeedsEngine.normalizeNumber(max, 100);
+    if (safeMax <= 0) return 0;
+    return Math.max(0, Math.min(1, safeValue / safeMax));
+  }
+
+  static normalizeNumber(value, fallback = 0) {
+    const candidate = value && typeof value === 'object' && !Array.isArray(value)
+      ? value.value
+      : value;
+    const number = Number(candidate);
+    return Number.isFinite(number) ? number : fallback;
   }
 
   static getSeverity(percentage) {

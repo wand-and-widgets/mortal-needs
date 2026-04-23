@@ -7,10 +7,13 @@ export class NeedsStore {
   #eventBus;
   #dirty = new Set();
   #history = new Map();
-  #maxHistoryPerEntity = 100;
+  #maxHistoryPerEntity = 120;
+  #maxHistoryTotal = 500;
+  #historyPersistQueued = false;
 
   constructor(eventBus) {
     this.#eventBus = eventBus;
+    this.#loadPersistedHistory();
   }
 
   // --- State Access (read-only copies) ---
@@ -76,12 +79,14 @@ export class NeedsStore {
     }
 
     const config = this.getNeedConfig(needId);
-    const min = config?.min ?? 0;
-    const max = config?.max ?? 100;
-    const clamped = Math.max(min, Math.min(max, Math.round(value)));
+    const min = this.#normalizeNumber(config?.min, 0);
+    const max = this.#normalizeMax(config?.max, min);
+    const fallback = this.#normalizeNumber(config?.default, min);
+    const numericValue = this.#normalizeNeedValue(value, fallback);
+    const clamped = Math.max(min, Math.min(max, Math.round(numericValue)));
 
     const previous = entityNeeds.get(needId);
-    const previousValue = previous?.value ?? 0;
+    const previousValue = this.#normalizeNeedValue(previous?.value, 0);
 
     const newState = {
       value: clamped,
@@ -93,15 +98,16 @@ export class NeedsStore {
     this.#dirty.add(entityId);
 
     // Record history
-    this.#recordHistory(entityId, needId, previousValue, clamped, source);
+    this.#recordHistory(entityId, needId, previousValue, clamped, source, { min, max });
 
     return { ...newState, previousValue };
   }
 
   adjustNeedValue(entityId, needId, delta, source = 'manual') {
     const current = this.getActorNeedState(entityId, needId);
-    const currentValue = current?.value ?? 0;
-    return this.setNeedValue(entityId, needId, currentValue + delta, source);
+    const currentValue = this.#normalizeNeedValue(current?.value, 0);
+    const safeDelta = this.#normalizeNumber(delta, 0);
+    return this.setNeedValue(entityId, needId, currentValue + safeDelta, source);
   }
 
   // --- Configuration Mutations ---
@@ -182,13 +188,7 @@ export class NeedsStore {
     if (!this.#state.has(entityId)) {
       const entityNeeds = new Map();
       for (const config of this.#needConfigs) {
-        entityNeeds.set(config.id, {
-          value: config.default ?? 0,
-          min: config.min ?? 0,
-          max: config.max ?? 100,
-          lastChange: Date.now(),
-          source: 'initialization',
-        });
+        entityNeeds.set(config.id, this.#buildNeedState(config, config.default, 'initialization'));
       }
       this.#state.set(entityId, entityNeeds);
       this.#dirty.add(entityId);
@@ -202,6 +202,7 @@ export class NeedsStore {
     this.#state.delete(entityId);
     this.#history.delete(entityId);
     this.#dirty.delete(entityId);
+    this.#persistHistorySoon();
     this.#eventBus.emit(Events.ACTOR_UNTRACKED, { entityId });
   }
 
@@ -227,13 +228,7 @@ export class NeedsStore {
 
     for (const config of this.#needConfigs) {
       const savedValue = saved[config.id];
-      entityNeeds.set(config.id, {
-        value: savedValue ?? config.default ?? 0,
-        min: config.min ?? 0,
-        max: config.max ?? 100,
-        lastChange: Date.now(),
-        source: 'load',
-      });
+      entityNeeds.set(config.id, this.#buildNeedState(config, savedValue, 'load'));
     }
 
     this.#state.set(actor.id, entityNeeds);
@@ -287,13 +282,7 @@ export class NeedsStore {
 
     for (const config of this.#needConfigs) {
       const savedValue = saved[config.id];
-      entityNeeds.set(config.id, {
-        value: savedValue ?? config.default ?? 0,
-        min: config.min ?? 0,
-        max: config.max ?? 100,
-        lastChange: Date.now(),
-        source: 'load',
-      });
+      entityNeeds.set(config.id, this.#buildNeedState(config, savedValue, 'load'));
     }
 
     this.#state.set(characterId, entityNeeds);
@@ -310,13 +299,7 @@ export class NeedsStore {
       }
       for (const [needId, value] of Object.entries(needs)) {
         const config = this.getNeedConfig(needId);
-        entityNeeds.set(needId, {
-          value,
-          min: config?.min ?? 0,
-          max: config?.max ?? 100,
-          lastChange: Date.now(),
-          source: 'socket',
-        });
+        entityNeeds.set(needId, this.#buildNeedState(config, value, 'socket'));
       }
     }
     this.#eventBus.emit(Events.ACTORS_REFRESHED, {});
@@ -324,32 +307,39 @@ export class NeedsStore {
 
   // --- History ---
 
-  #recordHistory(entityId, needId, previousValue, newValue, source) {
+  #recordHistory(entityId, needId, previousValue, newValue, source, bounds = {}) {
     if (previousValue === newValue) return;
 
     if (!this.#history.has(entityId)) {
       this.#history.set(entityId, []);
     }
     const entries = this.#history.get(entityId);
-    entries.push({
-      timestamp: Date.now(),
+    const timestamp = Date.now();
+    const entry = {
+      id: `${timestamp}-${entityId}-${needId}-${Math.random().toString(36).slice(2, 8)}`,
+      timestamp,
       needId,
       previousValue,
       newValue,
+      min: bounds.min ?? 0,
+      max: bounds.max ?? 100,
       source,
       entityId,
-    });
+    };
+    entries.push(entry);
 
-    // Trim history
-    if (entries.length > this.#maxHistoryPerEntity) {
-      entries.splice(0, entries.length - this.#maxHistoryPerEntity);
-    }
+    this.#trimHistory();
+    this.#persistHistorySoon();
+    this.#eventBus.emit(Events.HISTORY_UPDATED, {
+      entry: { ...entry },
+      total: this.getAllHistory(0).length,
+    });
   }
 
   getHistory(entityId, needId, limit = 50) {
     const entries = this.#history.get(entityId) || [];
     let filtered = needId ? entries.filter(e => e.needId === needId) : entries;
-    if (limit) filtered = filtered.slice(-limit);
+    if (limit && limit > 0) filtered = filtered.slice(-limit);
     return filtered.map(e => ({ ...e }));
   }
 
@@ -359,7 +349,111 @@ export class NeedsStore {
       all.push(...entries);
     }
     all.sort((a, b) => a.timestamp - b.timestamp);
-    return all.slice(-limit).map(e => ({ ...e }));
+    const filtered = limit && limit > 0 ? all.slice(-limit) : all;
+    return filtered.map(e => ({ ...e }));
+  }
+
+  clearHistory(entityId = null) {
+    if (entityId) {
+      this.#history.delete(entityId);
+    } else {
+      this.#history.clear();
+    }
+
+    this.#persistHistorySoon();
+    this.#eventBus.emit(Events.HISTORY_CLEARED, { entityId });
+    this.#eventBus.emit(Events.HISTORY_UPDATED, {
+      cleared: true,
+      entityId,
+      total: this.getAllHistory(0).length,
+    });
+  }
+
+  #loadPersistedHistory() {
+    try {
+      if (typeof game === 'undefined' || !game.settings?.get) return;
+      const saved = game.settings?.get?.(MODULE_ID, 'needsHistory');
+      const rawEntries = Array.isArray(saved) ? saved : saved?.entries;
+      if (!Array.isArray(rawEntries)) return;
+
+      for (const raw of rawEntries) {
+        const entry = this.#normalizeHistoryEntry(raw);
+        if (!entry) continue;
+
+        if (!this.#history.has(entry.entityId)) {
+          this.#history.set(entry.entityId, []);
+        }
+        this.#history.get(entry.entityId).push(entry);
+      }
+
+      this.#trimHistory();
+    } catch (err) {
+      console.warn('Mortal Needs | Failed to load persisted history:', err);
+    }
+  }
+
+  #normalizeHistoryEntry(raw) {
+    if (!raw || !raw.entityId || !raw.needId) return null;
+
+    const timestamp = Number(raw.timestamp);
+    const previousValue = Number(raw.previousValue);
+    const newValue = Number(raw.newValue);
+    if (!Number.isFinite(timestamp) || !Number.isFinite(previousValue) || !Number.isFinite(newValue)) {
+      return null;
+    }
+
+    return {
+      id: raw.id || `${timestamp}-${raw.entityId}-${raw.needId}`,
+      timestamp,
+      entityId: String(raw.entityId),
+      needId: String(raw.needId),
+      previousValue,
+      newValue,
+      min: Number.isFinite(Number(raw.min)) ? Number(raw.min) : 0,
+      max: Number.isFinite(Number(raw.max)) ? Number(raw.max) : 100,
+      source: raw.source || 'manual',
+    };
+  }
+
+  #trimHistory() {
+    for (const entries of this.#history.values()) {
+      entries.sort((a, b) => a.timestamp - b.timestamp);
+      if (entries.length > this.#maxHistoryPerEntity) {
+        entries.splice(0, entries.length - this.#maxHistoryPerEntity);
+      }
+    }
+
+    const all = this.getAllHistory(0);
+    if (all.length <= this.#maxHistoryTotal) return;
+
+    const keepIds = new Set(all.slice(-this.#maxHistoryTotal).map(entry => entry.id));
+    for (const [entityId, entries] of this.#history) {
+      const kept = entries.filter(entry => keepIds.has(entry.id));
+      if (kept.length) {
+        this.#history.set(entityId, kept);
+      } else {
+        this.#history.delete(entityId);
+      }
+    }
+  }
+
+  #persistHistorySoon() {
+    if (typeof game === 'undefined') return;
+    if (!game.user?.isGM) return;
+    if (this.#historyPersistQueued) return;
+
+    this.#historyPersistQueued = true;
+    setTimeout(async () => {
+      this.#historyPersistQueued = false;
+      try {
+        await game.settings.set(MODULE_ID, 'needsHistory', {
+          version: 1,
+          entries: this.getAllHistory(this.#maxHistoryTotal),
+        });
+      } catch (err) {
+        console.warn('Mortal Needs | Failed to persist history:', err);
+      }
+    }, 75);
   }
 
   // --- Serialization helpers ---
@@ -373,5 +467,42 @@ export class NeedsStore {
       }
     }
     return result;
+  }
+
+  #buildNeedState(config, rawValue, source) {
+    const min = this.#normalizeNumber(config?.min ?? rawValue?.min, 0);
+    const max = this.#normalizeMax(config?.max ?? rawValue?.max, min);
+    const fallback = this.#normalizeNumber(config?.default, min);
+    const value = Math.max(min, Math.min(max, Math.round(this.#normalizeNeedValue(rawValue, fallback))));
+
+    return {
+      value,
+      min,
+      max,
+      lastChange: this.#normalizeTimestamp(rawValue?.lastChange, Date.now()),
+      source,
+    };
+  }
+
+  #normalizeNeedValue(value, fallback = 0) {
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      return this.#normalizeNumber(value.value, fallback);
+    }
+    return this.#normalizeNumber(value, fallback);
+  }
+
+  #normalizeNumber(value, fallback = 0) {
+    const number = Number(value);
+    return Number.isFinite(number) ? number : fallback;
+  }
+
+  #normalizeMax(value, min = 0) {
+    const max = this.#normalizeNumber(value, 100);
+    return max > min ? max : Math.max(min + 1, 100);
+  }
+
+  #normalizeTimestamp(value, fallback) {
+    const timestamp = Number(value);
+    return Number.isFinite(timestamp) && timestamp > 0 ? timestamp : fallback;
   }
 }

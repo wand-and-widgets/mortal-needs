@@ -16,7 +16,7 @@ export class ActorSelectionDialog extends HandlebarsApplicationMixin(Application
       resizable: true,
     },
     position: {
-      width: 380,
+      width: 640,
       height: 'auto',
     },
     actions: {
@@ -73,34 +73,92 @@ export class ActorSelectionDialog extends HandlebarsApplicationMixin(Application
       }));
     }
 
-    return { actors, esCharacters, hasES };
+    const actorStats = ActorSelectionDialog.#getSelectionStats(actors);
+    const esStats = ActorSelectionDialog.#getSelectionStats(esCharacters);
+    const totalStats = {
+      total: actorStats.total + esStats.total,
+      tracked: actorStats.tracked + esStats.tracked,
+      available: actorStats.available + esStats.available,
+    };
+
+    return { actors, esCharacters, hasES, actorStats, esStats, totalStats };
   }
 
   _onRender(context, options) {
     super._onRender(context, options);
 
-    // Tab switching
-    this.element.querySelectorAll('.mn-dialog__tab').forEach(tab => {
+    this.#activateTabs();
+    this.#activateSearch();
+    this.#activateSelectionState();
+  }
+
+  static #getSelectionStats(entries) {
+    const tracked = entries.filter(entry => entry.tracked).length;
+
+    return {
+      total: entries.length,
+      tracked,
+      available: entries.length - tracked,
+    };
+  }
+
+  #activateTabs() {
+    this.element.querySelectorAll('.mn-actor-select__tab').forEach(tab => {
       tab.addEventListener('click', (e) => {
         const tabName = e.currentTarget.dataset.tab;
-        this.element.querySelectorAll('.mn-dialog__tab').forEach(t => t.classList.remove('is-active'));
-        e.currentTarget.classList.add('is-active');
-        this.element.querySelectorAll('.mn-dialog__tab-content').forEach(c => c.style.display = 'none');
-        this.element.querySelector(`[data-tab-content="${tabName}"]`).style.display = '';
-      });
-    });
 
-    // Search filter
-    const search = this.element.querySelector('input[name="actorSearch"]');
-    if (search) {
-      search.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase();
-        this.element.querySelectorAll('[data-list="actors"] .mn-dialog__list-item').forEach(item => {
-          const name = item.querySelector('.mn-dialog__list-item-name')?.textContent?.toLowerCase() || '';
-          item.style.display = name.includes(query) ? '' : 'none';
+        this.element.querySelectorAll('.mn-actor-select__tab').forEach(t => {
+          t.classList.remove('is-active');
+          t.setAttribute('aria-selected', 'false');
+        });
+
+        e.currentTarget.classList.add('is-active');
+        e.currentTarget.setAttribute('aria-selected', 'true');
+
+        this.element.querySelectorAll('.mn-actor-select__tab-content').forEach(content => {
+          content.hidden = content.dataset.tabContent !== tabName;
         });
       });
-    }
+    });
+  }
+
+  #activateSearch() {
+    const search = this.element.querySelector('input[name="actorSearch"]');
+    if (!search) return;
+
+    search.addEventListener('input', (e) => {
+      const query = e.target.value.trim().toLocaleLowerCase();
+      this.element.querySelectorAll('.mn-actor-select__row').forEach(item => {
+        const text = item.textContent?.toLocaleLowerCase() || '';
+        item.hidden = query.length > 0 && !text.includes(query);
+      });
+    });
+  }
+
+  #activateSelectionState() {
+    this.element
+      .querySelectorAll('input[name="selectedActors"], input[name="selectedESChars"]')
+      .forEach(checkbox => checkbox.addEventListener('change', () => this.#syncSelectionState()));
+
+    this.#syncSelectionState();
+  }
+
+  #syncSelectionState() {
+    const selected = this.element.querySelectorAll(
+      'input[name="selectedActors"]:checked:not(:disabled), input[name="selectedESChars"]:checked:not(:disabled)'
+    );
+
+    this.element.querySelectorAll('.mn-actor-select__row').forEach(row => {
+      const checkbox = row.querySelector('input[type="checkbox"]');
+      row.classList.toggle('is-selected', !!checkbox?.checked && !checkbox.disabled);
+    });
+
+    const selectedCount = selected.length;
+    const count = this.element.querySelector('[data-selected-count]');
+    const confirm = this.element.querySelector('[data-action="confirm"]');
+
+    if (count) count.textContent = String(selectedCount);
+    if (confirm) confirm.disabled = selectedCount === 0;
   }
 
   static async #onConfirm() {

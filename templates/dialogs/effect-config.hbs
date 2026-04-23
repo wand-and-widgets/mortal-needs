@@ -1,67 +1,148 @@
-<div class="mn-dialog__body">
-  <div class="mn-dialog__section">
-    <div class="mn-dialog__section-title">{{localize "MORTAL_NEEDS.EffectConfig.Type"}}</div>
-    <div class="mn-dialog__form-group">
-      <select name="consequenceType">
-        {{#each types}}
-          <option value="{{type}}" {{#if (eq type ../selectedType)}}selected{{/if}}>
-            {{localize label}}
-          </option>
+<div class="mn-dialog__body mn-effect-config-shell">
+  <main class="mn-effect-config-main">
+    <section class="mn-effect-type-panel">
+      <header class="mn-effect-section-header">
+        <span>{{localize "MORTAL_NEEDS.EffectConfig.Type"}}</span>
+      </header>
+
+      <label class="mn-effect-type-select">
+        <span class="mn-effect-type-select__icon">
+          <i class="{{selectedTypeIcon}}"></i>
+        </span>
+        <span class="mn-effect-type-select__copy">
+          <strong>{{selectedTypeLabel}}</strong>
+          <small>{{selectedType}}</small>
+        </span>
+        <select name="consequenceType" aria-label="{{localize 'MORTAL_NEEDS.EffectConfig.Type'}}">
+          {{#each types}}
+            <option value="{{type}}" {{#if (eq type ../selectedType)}}selected{{/if}}>
+              {{localize label}}
+            </option>
+          {{/each}}
+        </select>
+        <i class="fas fa-chevron-down mn-effect-type-select__chevron" aria-hidden="true"></i>
+      </label>
+
+      <div class="mn-effect-type-chips" aria-hidden="true">
+        {{#each typeChips}}
+          <span class="mn-effect-type-chip {{#if selected}}is-selected{{/if}}">
+            <i class="{{icon}}"></i>
+            <span>{{label}}</span>
+          </span>
         {{/each}}
-      </select>
-    </div>
-  </div>
-
-  <div class="mn-dialog__section" data-section="config-fields">
-    <div class="mn-dialog__section-title">{{localize "MORTAL_NEEDS.EffectConfig.Configuration"}}</div>
-
-    {{#each configSchema}}
-      <div class="mn-dialog__form-group">
-        <label>{{localize label}}</label>
-        {{#if (eq type "text")}}
-          {{#if useAttributeDatalist}}
-            <input type="text" name="config.{{key}}" value="{{value}}" list="mn-attribute-list" placeholder="{{localize 'MORTAL_NEEDS.EffectConfig.AttributePathHint'}}">
-          {{else}}
-            <input type="text" name="config.{{key}}" value="{{value}}" placeholder="{{placeholder}}">
-          {{/if}}
-        {{else if (eq type "number")}}
-          <input type="number" name="config.{{key}}" value="{{value}}" min="{{min}}" max="{{max}}" step="{{step}}">
-        {{else if (eq type "select")}}
-          <select name="config.{{key}}">
-            {{#each options}}
-              <option value="{{value}}" {{#if selected}}selected{{/if}}>{{localize label}}</option>
-            {{/each}}
-          </select>
-        {{else if (eq type "checkbox")}}
-          <label class="mn-dialog__checkbox">
-            <input type="checkbox" name="config.{{key}}" {{#if value}}checked{{/if}}>
-            <span>{{localize hint}}</span>
-          </label>
-        {{/if}}
       </div>
-    {{/each}}
-  </div>
+    </section>
 
-  <div class="mn-dialog__section">
-    <div class="mn-dialog__section-title">{{localize "MORTAL_NEEDS.EffectConfig.Behavior"}}</div>
-    <div class="mn-dialog__form-group">
-      <label>{{localize "MORTAL_NEEDS.EffectConfig.Threshold"}} (%)</label>
-      <input type="number" name="threshold" value="{{threshold}}" min="0" max="100" step="5">
-      <span class="mn-hint">{{localize "MORTAL_NEEDS.EffectConfig.ThresholdHint"}}</span>
-    </div>
-    <div class="mn-dialog__form-group">
-      <label>{{localize "MORTAL_NEEDS.EffectConfig.Ticks"}}</label>
-      <input type="number" name="ticks" value="{{ticks}}" min="1" max="20">
-      <span class="mn-hint">{{localize "MORTAL_NEEDS.EffectConfig.TicksHint"}}</span>
-    </div>
-    <label class="mn-dialog__checkbox">
-      <input type="checkbox" name="reversible" {{#if reversible}}checked{{/if}}>
-      <span>{{localize "MORTAL_NEEDS.EffectConfig.Reversible"}}</span>
-    </label>
-    <span class="mn-hint">{{localize "MORTAL_NEEDS.EffectConfig.ReversibleHint"}}</span>
-  </div>
+    <section class="mn-effect-config-panel" data-section="config-fields">
+      <header class="mn-effect-section-header">
+        <span>{{localize "MORTAL_NEEDS.EffectConfig.Configuration"}}</span>
+      </header>
 
-  {{!-- Attribute path datalist for autocomplete --}}
+      <div class="mn-effect-field-grid">
+        {{#each configSchema}}
+          <div class="mn-field {{#if useAttributeDatalist}}mn-field--wide{{/if}}">
+            {{#if (eq type "checkbox")}}
+              <label class="mn-switch-row mn-effect-checkbox-row">
+                <span>
+                  <strong>{{localize label}}</strong>
+                  {{#if hint}}<small>{{localize hint}}</small>{{/if}}
+                </span>
+                <span class="mn-switch">
+                  <input type="checkbox" name="config.{{key}}" {{#if value}}checked{{/if}}>
+                  <span class="mn-switch__track"><span class="mn-switch__thumb"></span></span>
+                </span>
+              </label>
+            {{else}}
+              <label>{{localize label}}</label>
+              {{#if (eq type "text")}}
+                {{#if useAttributeDatalist}}
+                  <div class="mn-effect-input-with-icon">
+                    <input type="text" name="config.{{key}}" value="{{value}}" list="mn-attribute-list" placeholder="{{placeholderText}}">
+                    <i class="fas fa-list"></i>
+                  </div>
+                  <span class="mn-field-hint">{{localize "MORTAL_NEEDS.EffectConfig.AttributePathHint"}}</span>
+                {{else}}
+                  <input type="text" name="config.{{key}}" value="{{value}}" placeholder="{{placeholderText}}">
+                {{/if}}
+              {{else if (eq type "number")}}
+                <input type="number" name="config.{{key}}" value="{{value}}" min="{{min}}" max="{{max}}" step="{{step}}">
+              {{else if (eq type "select")}}
+                <select name="config.{{key}}">
+                  {{#each options}}
+                    <option value="{{value}}" {{#if selected}}selected{{/if}}>{{localize label}}</option>
+                  {{/each}}
+                </select>
+              {{/if}}
+            {{/if}}
+          </div>
+        {{/each}}
+      </div>
+    </section>
+  </main>
+
+  <aside class="mn-effect-behavior-panel">
+    <header class="mn-effect-section-header">
+      <span>{{localize "MORTAL_NEEDS.EffectConfig.Behavior"}}</span>
+    </header>
+
+    <div class="mn-effect-threshold">
+      <div class="mn-effect-threshold__top">
+        <label for="mn-effect-threshold-range">{{localize "MORTAL_NEEDS.EffectConfig.Threshold"}}</label>
+        <strong data-effect-threshold-value>{{threshold}}%</strong>
+      </div>
+      <div class="mn-effect-threshold__track">
+        <span></span>
+        <input
+          id="mn-effect-threshold-range"
+          class="mn-effect-threshold__range"
+          type="range"
+          min="0"
+          max="100"
+          step="5"
+          value="{{threshold}}"
+          aria-label="{{localize 'MORTAL_NEEDS.EffectConfig.Threshold'}}"
+        >
+        <input type="number" name="threshold" value="{{threshold}}" min="0" max="100" step="5">
+      </div>
+      <div class="mn-effect-threshold__labels">
+        <span>0</span>
+        <span>50</span>
+        <span>100</span>
+      </div>
+      <p>{{localize "MORTAL_NEEDS.EffectConfig.ThresholdHint"}}</p>
+    </div>
+
+    <div class="mn-effect-behavior-fields">
+      <div class="mn-field">
+        <label>{{localize "MORTAL_NEEDS.EffectConfig.Ticks"}}</label>
+        <input type="number" name="ticks" value="{{ticks}}" min="1" max="20">
+        <span class="mn-field-hint">{{localize "MORTAL_NEEDS.EffectConfig.TicksHint"}}</span>
+      </div>
+
+      <label class="mn-switch-row mn-effect-reversible-row">
+        <span>
+          <strong>{{localize "MORTAL_NEEDS.EffectConfig.Reversible"}}</strong>
+          <small>{{localize "MORTAL_NEEDS.EffectConfig.ReversibleHint"}}</small>
+        </span>
+        <span class="mn-switch">
+          <input type="checkbox" name="reversible" {{#if reversible}}checked{{/if}}>
+          <span class="mn-switch__track"><span class="mn-switch__thumb"></span></span>
+        </span>
+      </label>
+    </div>
+
+    <div class="mn-effect-summary">
+      <div><i class="fas fa-bolt"></i><span data-effect-summary-threshold>{{localize "MORTAL_NEEDS.EffectConfig.FiresAt"}} {{threshold}}%</span></div>
+      <div><i class="fas fa-rotate"></i><span data-effect-summary-ticks>{{localize "MORTAL_NEEDS.EffectConfig.RepeatsAfter"}} {{ticks}} {{localize "MORTAL_NEEDS.EffectConfig.Checks"}}</span></div>
+      <div>
+        <i class="fas fa-undo"></i>
+        <span data-effect-summary-reversible>
+          {{#if reversible}}{{localize "MORTAL_NEEDS.EffectConfig.RemovesOnRecovery"}}{{else}}{{localize "MORTAL_NEEDS.EffectConfig.StaysUntilManual"}}{{/if}}
+        </span>
+      </div>
+    </div>
+  </aside>
+
   {{#if availableAttributes.length}}
     <datalist id="mn-attribute-list">
       {{#each availableAttributes}}
@@ -70,10 +151,15 @@
     </datalist>
   {{/if}}
 
-  <div class="mn-dialog__footer">
-    <button class="mn-btn mn-btn--primary" data-action="save-consequence">
+  <footer class="mn-dialog__footer mn-effect-config-footer">
+    <button class="mn-btn mn-btn--secondary" type="button" data-action="cancel-consequence">
+      <i class="fas fa-times"></i>
+      <span>{{localize "Cancel"}}</span>
+    </button>
+    <span class="mn-flex-spacer"></span>
+    <button class="mn-btn mn-btn--primary" type="button" data-action="save-consequence">
       <i class="fas fa-save"></i>
       <span>{{localize "Save"}}</span>
     </button>
-  </div>
+  </footer>
 </div>

@@ -2,7 +2,7 @@
   "id": "mortal-needs",
   "title": "Mortal Needs",
   "description": "A survival needs management system for Foundry VTT. Track hunger, thirst, exhaustion, temperature, sanity, and other mortal necessities with a modern Spotify-inspired UI. System-agnostic with adapters for D&D 5e, PF2e, SWADE, and WFRP4e. Rich public API for module integration.",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "compatibility": {
     "minimum": "12",
     "verified": "13",

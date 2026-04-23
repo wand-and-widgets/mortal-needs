@@ -1,37 +1,153 @@
-<div class="mn-dialog__body">
-  <div class="mn-dialog__section">
-    <div class="mn-dialog__form-row" style="margin-bottom: 8px;">
-      <select name="filterEntity" style="flex: 1;">
-        <option value="">{{localize "MORTAL_NEEDS.History.AllEntities"}}</option>
-        {{#each entities}}
-          <option value="{{id}}">{{name}}</option>
-        {{/each}}
-      </select>
-      <select name="filterNeed" style="flex: 1;">
-        <option value="">{{localize "MORTAL_NEEDS.History.AllNeeds"}}</option>
-        {{#each needs}}
-          <option value="{{id}}">{{localize label}}</option>
-        {{/each}}
-      </select>
-    </div>
-  </div>
-
-  <div class="mn-dialog__list mn-history-list" style="max-height: 400px;">
-    {{#each entries}}
-      <div class="mn-dialog__list-item mn-history-entry" data-entity-id="{{entityId}}" data-need-id="{{needId}}">
-        <span class="mn-text-xs" style="min-width: 60px; color: var(--mn-text-muted);">{{time}}</span>
-        <span class="mn-badge mn-badge--source">{{entityName}}</span>
-        <span class="mn-need-bar__icon"><i class="fas {{needIcon}}"></i></span>
-        <span class="mn-text-sm" style="flex: 1;">{{needLabel}}</span>
-        <span class="mn-text-xs" style="color: var(--mn-text-muted);">{{previousValue}}</span>
-        <i class="fas fa-arrow-right" style="font-size: 8px; color: var(--mn-text-muted);"></i>
-        <span class="mn-text-xs mn-mono" data-severity="{{newSeverity}}">{{newValue}}</span>
-        <span class="mn-badge mn-badge--source">{{source}}</span>
+<div class="mn-dialog__body mn-history-shell">
+  <header class="mn-history-hero">
+    <div class="mn-history-hero__title">
+      <span class="mn-history-hero__mark"><i class="fas fa-history"></i></span>
+      <div>
+        <h2>{{localize "MORTAL_NEEDS.History.Title"}}</h2>
+        <p>{{localize "MORTAL_NEEDS.History.Subtitle"}}</p>
       </div>
-    {{else}}
-      <p class="mn-text-sm" style="padding: 24px; text-align: center; color: var(--mn-text-muted);">
-        {{localize "MORTAL_NEEDS.History.NoEntries"}}
-      </p>
-    {{/each}}
-  </div>
+    </div>
+
+    <div class="mn-history-hero__metrics">
+      <div>
+        <span>{{localize "MORTAL_NEEDS.History.Total"}}</span>
+        <strong data-history-stat="total">{{summary.total}}</strong>
+      </div>
+      <div>
+        <span>{{localize "MORTAL_NEEDS.Panel.Critical"}}</span>
+        <strong data-history-stat="critical">{{summary.critical}}</strong>
+      </div>
+      <div>
+        <span>{{localize "MORTAL_NEEDS.History.Recoveries"}}</span>
+        <strong data-history-stat="recoveries">{{summary.recoveries}}</strong>
+      </div>
+    </div>
+  </header>
+
+  <section class="mn-history-toolbar">
+    <select name="filterEntity" data-history-filter="entity">
+      <option value="">{{localize "MORTAL_NEEDS.History.AllEntities"}}</option>
+      {{#each entities}}
+        <option value="{{id}}">{{name}}</option>
+      {{/each}}
+    </select>
+
+    <select name="filterNeed" data-history-filter="need">
+      <option value="">{{localize "MORTAL_NEEDS.History.AllNeeds"}}</option>
+      {{#each needs}}
+        <option value="{{id}}">{{label}}</option>
+      {{/each}}
+    </select>
+
+    <label class="mn-history-search">
+      <i class="fas fa-search"></i>
+      <input type="search" data-history-filter="query" placeholder="{{localize 'MORTAL_NEEDS.History.SearchPlaceholder'}}" autocomplete="off">
+    </label>
+
+    <div class="mn-history-actions">
+      <button type="button" class="mn-history-action" data-action="refresh-history" data-tooltip="{{localize 'MORTAL_NEEDS.History.Refresh'}}">
+        <i class="fas fa-rotate"></i>
+        <span>{{localize "MORTAL_NEEDS.History.Refresh"}}</span>
+      </button>
+      <button type="button" class="mn-history-action" data-action="export-history" data-tooltip="{{localize 'MORTAL_NEEDS.History.Export'}}" {{#unless hasEntries}}disabled{{/unless}}>
+        <i class="fas fa-file-export"></i>
+        <span>{{localize "MORTAL_NEEDS.History.Export"}}</span>
+      </button>
+      <button type="button" class="mn-history-action mn-history-action--danger" data-action="clear-history" data-tooltip="{{localize 'MORTAL_NEEDS.History.Clear'}}" {{#unless canClear}}disabled{{/unless}}>
+        <i class="fas fa-trash"></i>
+        <span>{{localize "MORTAL_NEEDS.History.Clear"}}</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="mn-history-layout">
+    <main class="mn-history-ledger">
+      {{#if hasEntries}}
+        <div class="mn-history-list">
+          {{#each entries}}
+            {{#if showDate}}
+              <div class="mn-history-date" data-history-date="{{dateKey}}">{{dateLabel}}</div>
+            {{/if}}
+
+            <article class="mn-history-entry mn-history-entry--{{newSeverity}}"
+              data-date="{{dateKey}}"
+              data-timestamp="{{timestamp}}"
+              data-entity-id="{{entityId}}"
+              data-entity-name="{{entityName}}"
+              data-need-id="{{needId}}"
+              data-need-label="{{needLabel}}"
+              data-source="{{source}}"
+              data-severity="{{newSeverity}}"
+              data-previous-value="{{previousValue}}"
+              data-new-value="{{newValue}}"
+              data-delta="{{delta}}"
+              data-percentage="{{newPercentage}}"
+              data-relative-time="{{relativeTime}}"
+              data-search="{{searchText}}">
+              <time datetime="{{isoTime}}">
+                <strong>{{time}}</strong>
+                <span>{{relativeTime}}</span>
+              </time>
+
+              <img class="mn-history-entry__portrait" src="{{actorImg}}" alt="{{entityName}}">
+
+              <span class="mn-history-entry__need-icon mn-history-entry__need-icon--{{newSeverity}}">
+                <i class="fas {{needIcon}}"></i>
+              </span>
+
+              <div class="mn-history-entry__main">
+                <strong>{{entityName}}</strong>
+                <span>{{needLabel}} &middot; {{previousValue}} &rarr; {{newValue}}</span>
+              </div>
+
+              <span class="mn-history-source mn-history-source--{{sourceClass}}">
+                <i class="fas {{sourceIcon}}"></i>
+                {{sourceLabel}}
+              </span>
+
+              <span class="mn-history-delta mn-history-delta--{{direction}}">{{deltaLabel}}</span>
+
+              <span class="mn-badge mn-badge--{{newSeverity}}">{{severityLabel}}</span>
+            </article>
+          {{/each}}
+        </div>
+
+        <div class="mn-history-empty-state mn-history-empty-state--filter" data-history-filter-empty hidden>
+          <i class="fas fa-filter"></i>
+          <strong>{{localize "MORTAL_NEEDS.History.NoMatches"}}</strong>
+          <span>{{localize "MORTAL_NEEDS.History.NoMatchesHint"}}</span>
+        </div>
+      {{else}}
+        <div class="mn-history-empty-state">
+          <i class="fas fa-hourglass-start"></i>
+          <strong>{{localize "MORTAL_NEEDS.History.EmptyTitle"}}</strong>
+          <span>{{localize "MORTAL_NEEDS.History.EmptyHint"}}</span>
+        </div>
+      {{/if}}
+    </main>
+
+    <aside class="mn-history-side">
+      <header>
+        <div>
+          <strong>{{localize "MORTAL_NEEDS.History.Summary"}}</strong>
+          <span>{{localize "MORTAL_NEEDS.History.FilteredSummary"}}</span>
+        </div>
+      </header>
+
+      <div class="mn-history-activity" data-history-activity aria-hidden="true">
+        {{#each activityBars}}
+          <span class="mn-history-activity__bar mn-history-activity__bar--{{severity}}" style="height: {{height}}%;" title="{{label}}"></span>
+        {{/each}}
+      </div>
+
+      <div class="mn-history-side__stats">
+        <div><span>{{localize "MORTAL_NEEDS.History.Total"}}</span><strong data-history-stat="total">{{summary.total}}</strong></div>
+        <div><span>{{localize "MORTAL_NEEDS.Panel.Critical"}}</span><strong data-history-stat="critical">{{summary.critical}}</strong></div>
+        <div><span>{{localize "MORTAL_NEEDS.Severity.High"}}</span><strong data-history-stat="high">{{summary.high}}</strong></div>
+        <div><span>{{localize "MORTAL_NEEDS.History.Recoveries"}}</span><strong data-history-stat="recoveries">{{summary.recoveries}}</strong></div>
+        <div><span>{{localize "MORTAL_NEEDS.History.MostAffected"}}</span><strong data-history-stat="mostAffected">{{summary.mostAffected}}</strong></div>
+        <div><span>{{localize "MORTAL_NEEDS.History.LastChange"}}</span><strong data-history-stat="lastChange">{{summary.lastChange}}</strong></div>
+      </div>
+    </aside>
+  </section>
 </div>

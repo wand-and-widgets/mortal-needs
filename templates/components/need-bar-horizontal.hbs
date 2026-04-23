@@ -1,18 +1,18 @@
-<div class="mn-need-bar" data-need-id="{{id}}" data-entity-id="{{entityId}}">
-  <span class="mn-need-bar__icon" data-severity="{{severity}}">
+<div class="mn-need-bar mn-need-bar--horizontal" data-need-id="{{id}}" data-entity-id="{{entityId}}" data-severity="{{severity}}">
+  <span class="mn-need-bar__icon" data-severity="{{severity}}" data-tooltip="{{localizedLabel}}">
     <i class="fas {{icon}}"></i>
   </span>
 
-  <span class="mn-need-bar__label">{{localize label}}</span>
+  <span class="mn-need-bar__label">{{localizedLabel}}</span>
 
-  <div class="mn-need-bar__track" data-tooltip="{{localize label}}: {{value}}/{{max}} ({{percentage}}%)">
+  <div class="mn-need-bar__track" data-tooltip="{{localizedLabel}}: {{displayValue}} ({{percentageLabel}})">
     <div class="mn-need-bar__fill"
          data-severity="{{severity}}"
          style="transform: scaleX({{decimal}})">
     </div>
   </div>
 
-  <span class="mn-need-bar__value" data-severity="{{severity}}">{{percentage}}%</span>
+  <span class="mn-need-bar__value" data-severity="{{severity}}">{{percentageLabel}}</span>
 
   <div class="mn-need-bar__controls">
     <button class="mn-need-bar__btn mn-need-bar__btn--relieve"

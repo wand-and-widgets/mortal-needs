@@ -26,3 +26,6 @@
 @import url('./integrations/chat-cards.css');
 @import url('./integrations/broadcast-hud.css');
 @import url('./integrations/flash-popup.css');
+
+/* Approved UX rework overrides */
+@import url('./rework.css');

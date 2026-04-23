@@ -1,56 +1,159 @@
-<div class="mn-panel">
-  <section class="mn-panel__content">
-    {{#if hasTracked}}
-      <div class="mn-toolbar">
-        <div class="mn-toolbar__group">
-          <button class="mn-toolbar__btn" data-action="add-actors" data-tooltip="{{localize 'MORTAL_NEEDS.Toolbar.AddActors'}}">
-            <i class="fas fa-user-plus"></i>
-            <span>{{localize "MORTAL_NEEDS.Toolbar.Add"}}</span>
-          </button>
-          <button class="mn-toolbar__btn" data-action="stress-all" data-tooltip="{{localize 'MORTAL_NEEDS.Toolbar.StressAll'}}">
-            <i class="fas fa-arrow-up"></i>
-            <span>{{localize "MORTAL_NEEDS.Toolbar.StressAll"}}</span>
-          </button>
-          <button class="mn-toolbar__btn" data-action="relieve-all" data-tooltip="{{localize 'MORTAL_NEEDS.Toolbar.RelieveAll'}}">
-            <i class="fas fa-arrow-down"></i>
-            <span>{{localize "MORTAL_NEEDS.Toolbar.RelieveAll"}}</span>
-          </button>
-        </div>
-
-        <div class="mn-toolbar__spacer"></div>
-
-        <div class="mn-toolbar__group">
-          {{#if isGM}}
-          <button class="mn-toolbar__btn mn-toolbar__btn--icon" data-action="configure" data-tooltip="{{localize 'MORTAL_NEEDS.Toolbar.Configure'}}">
-            <i class="fas fa-cog"></i>
-          </button>
-          <button class="mn-toolbar__btn mn-toolbar__btn--icon" data-action="history" data-tooltip="{{localize 'MORTAL_NEEDS.Toolbar.History'}}">
-            <i class="fas fa-history"></i>
-          </button>
-          {{/if}}
+<div class="mn-panel mn-rework {{#if isDense}}mn-rework--dense{{/if}}">
+  {{#if hasTracked}}
+    <header class="mn-panel-hero">
+      <div class="mn-panel-hero__title">
+        <span class="mn-panel-hero__mark"><i class="fas fa-heartbeat"></i></span>
+        <div>
+          <h2>{{localize "MORTAL_NEEDS.Title"}}</h2>
+          <p>{{localize "MORTAL_NEEDS.Panel.Tracked"}} {{trackedCount}} &middot; {{localize "MORTAL_NEEDS.Panel.Crisis"}} {{criticalCount}}</p>
         </div>
       </div>
 
-      <div class="mn-panel__actors">
+      <div class="mn-panel-hero__tools">
+        <button class="mn-tool-btn" data-action="add-actors" data-tooltip="{{localize 'MORTAL_NEEDS.Toolbar.AddActors'}}">
+          <i class="fas fa-user-plus"></i>
+          <span>{{localize "MORTAL_NEEDS.Toolbar.Add"}}</span>
+        </button>
+        <button class="mn-tool-btn" data-action="stress-all" data-tooltip="{{localize 'MORTAL_NEEDS.Toolbar.StressAll'}}">
+          <i class="fas fa-arrow-up"></i>
+          <span>{{localize "MORTAL_NEEDS.Toolbar.StressAll"}}</span>
+        </button>
+        <button class="mn-tool-btn" data-action="relieve-all" data-tooltip="{{localize 'MORTAL_NEEDS.Toolbar.RelieveAll'}}">
+          <i class="fas fa-arrow-down"></i>
+          <span>{{localize "MORTAL_NEEDS.Toolbar.RelieveAll"}}</span>
+        </button>
+        {{#if isGM}}
+          <button class="mn-icon-btn" data-action="configure" data-tooltip="{{localize 'MORTAL_NEEDS.Toolbar.Configure'}}">
+            <i class="fas fa-cog"></i>
+            <span>{{localize "MORTAL_NEEDS.Toolbar.Configure"}}</span>
+          </button>
+          <button class="mn-icon-btn" data-action="history" data-tooltip="{{localize 'MORTAL_NEEDS.Toolbar.History'}}">
+            <i class="fas fa-history"></i>
+            <span>{{localize "MORTAL_NEEDS.Toolbar.History"}}</span>
+          </button>
+        {{/if}}
+      </div>
+
+      <div class="mn-panel-status">
+        <div class="mn-panel-status__item">
+          <i class="fas fa-users"></i>
+          <span>{{localize "MORTAL_NEEDS.Panel.Tracked"}}</span>
+          <strong>{{trackedCount}}</strong>
+        </div>
+        <div class="mn-panel-status__item mn-panel-status__item--critical">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>{{localize "MORTAL_NEEDS.Panel.Crisis"}}</span>
+          <strong>{{criticalCount}}</strong>
+        </div>
+        <div class="mn-panel-status__item">
+          <i class="fas fa-chart-bar"></i>
+          <span>{{localize "MORTAL_NEEDS.Panel.Average"}}</span>
+          <strong>{{averageSeverity}}%</strong>
+        </div>
+        <div class="mn-panel-status__item">
+          <i class="fas fa-hourglass-half"></i>
+          <span>{{localize "MORTAL_NEEDS.Panel.Decay"}}</span>
+          <strong>{{decayActiveCount}}</strong>
+        </div>
+        <div class="mn-panel-status__item">
+          <i class="fas fa-clock"></i>
+          <span>{{localize "MORTAL_NEEDS.Panel.Updated"}}</span>
+          <strong>{{lastChangeLabel}}</strong>
+        </div>
+      </div>
+    </header>
+
+    <section class="mn-panel-workspace">
+      <div class="mn-panel-main">
         {{#each actors}}
           {{> "modules/mortal-needs/templates/components/actor-card.hbs" this isGM=../isGM barOrientation=../barOrientation}}
         {{/each}}
       </div>
-    {{else}}
-      {{> "modules/mortal-needs/templates/components/empty-state.hbs"}}
-    {{/if}}
-  </section>
 
-  <footer class="mn-panel__footer">
-    <span class="mn-panel__footer-stat">
-      <i class="fas fa-users"></i>
-      {{trackedCount}}
-    </span>
-    {{#if criticalCount}}
-      <span class="mn-panel__footer-stat mn-badge--critical">
-        <i class="fas fa-exclamation-triangle"></i>
-        {{criticalCount}}
-      </span>
-    {{/if}}
-  </footer>
+      {{#if isGM}}
+        <aside class="mn-command-rail">
+          <section class="mn-rail-card">
+            <header class="mn-rail-card__header">
+              <span>{{localize "MORTAL_NEEDS.Panel.CrisisQueue"}}</span>
+              {{#if hasCrisis}}<span class="mn-badge mn-badge--critical">{{criticalCount}}</span>{{/if}}
+            </header>
+            <div class="mn-crisis-list">
+              {{#if hasCrisis}}
+                {{#each crisisQueue}}
+                  <div class="mn-crisis-item" data-severity="{{severity}}">
+                    <img src="{{actorImg}}" alt="{{actorName}}">
+                    <div class="mn-crisis-item__body">
+                      <strong>{{actorName}}</strong>
+                      <span><i class="fas {{needIcon}}"></i> {{needLabel}} &middot; {{percentageLabel}}</span>
+                    </div>
+                    {{#if tickLabel}}
+                      <span class="mn-badge mn-badge--source">{{tickLabel}}</span>
+                    {{else}}
+                      <span class="mn-badge mn-badge--{{severity}}">{{localize severityLabel}}</span>
+                    {{/if}}
+                  </div>
+                {{/each}}
+              {{else}}
+                <p class="mn-rail-card__empty">{{localize "MORTAL_NEEDS.Panel.NoCrisis"}}</p>
+              {{/if}}
+            </div>
+          </section>
+
+          <section class="mn-rail-card">
+            <header class="mn-rail-card__header">
+              <span>{{localize "MORTAL_NEEDS.Panel.QuickActions"}}</span>
+            </header>
+            <div class="mn-quick-actions">
+              <button data-action="stress-all">
+                <i class="fas fa-route"></i>
+                <strong>{{localize "MORTAL_NEEDS.Panel.Journey"}}</strong>
+                <span>{{localize "MORTAL_NEEDS.Panel.JourneyDesc"}}</span>
+              </button>
+              <button data-action="relieve-all">
+                <i class="fas fa-campground"></i>
+                <strong>{{localize "MORTAL_NEEDS.Panel.Rest"}}</strong>
+                <span>{{localize "MORTAL_NEEDS.Panel.RestDesc"}}</span>
+              </button>
+              <button data-action="broadcast-show">
+                <i class="fas fa-tv"></i>
+                <strong>{{localize "MORTAL_NEEDS.Panel.Broadcast"}}</strong>
+                <span>{{localize "MORTAL_NEEDS.Panel.BroadcastDesc"}}</span>
+              </button>
+              <button data-action="broadcast-flash">
+                <i class="fas fa-bolt"></i>
+                <strong>{{localize "MORTAL_NEEDS.Panel.Flash"}}</strong>
+                <span>{{localize "MORTAL_NEEDS.Panel.FlashDesc"}}</span>
+              </button>
+            </div>
+          </section>
+
+          <section class="mn-rail-card">
+            <header class="mn-rail-card__header">
+              <span>{{localize "MORTAL_NEEDS.Panel.NextDecay"}}</span>
+              {{#if hasDecay}}<span class="mn-badge mn-badge--source">{{decayActiveCount}}</span>{{/if}}
+            </header>
+            <div class="mn-decay-list">
+              {{#if hasDecay}}
+                {{#each nextDecay}}
+                  <div class="mn-decay-item">
+                    <i class="fas {{icon}}"></i>
+                    <span>{{label}}</span>
+                    <strong>+{{rate}} / {{intervalLabel}}</strong>
+                  </div>
+                {{/each}}
+              {{else}}
+                <div class="mn-decay-empty">
+                  <i class="fas fa-hourglass-half"></i>
+                  <span>{{localize "MORTAL_NEEDS.Panel.NoDecay"}}</span>
+                </div>
+              {{/if}}
+            </div>
+          </section>
+        </aside>
+      {{/if}}
+    </section>
+  {{else}}
+    {{> "modules/mortal-needs/templates/components/empty-state.hbs" isGM=isGM}}
+  {{/if}}
+
 </div>

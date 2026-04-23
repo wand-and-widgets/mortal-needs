@@ -1,40 +1,115 @@
-<div class="mn-dialog__body">
-  <div class="mn-dialog__section">
-    <div class="mn-dialog__section-title">{{localize "MORTAL_NEEDS.MultiStress.SelectNeed"}}</div>
-    <div class="mn-dialog__form-group">
-      <select name="needId">
-        {{#each needs}}
-          <option value="{{id}}">{{localize label}}</option>
+<div class="mn-dialog__body mn-batch-shell {{#if isStress}}mn-batch-shell--stress{{else}}mn-batch-shell--relieve{{/if}}">
+  <header class="mn-batch-summary">
+    <div class="mn-batch-summary__item">
+      <strong class="mn-batch-selected-targets-count">{{targetCount}}</strong>
+      <span>{{localize "MORTAL_NEEDS.MultiStress.TargetsShort"}}</span>
+    </div>
+    <div class="mn-batch-summary__item">
+      <strong class="mn-batch-selected-needs-count">{{selectedNeedCount}}</strong>
+      <span>{{localize "MORTAL_NEEDS.MultiStress.NeedsShort"}}</span>
+    </div>
+    <div class="mn-batch-summary__item">
+      <strong class="mn-batch-total-changes-count">{{initialChangeCount}}</strong>
+      <span>{{localize "MORTAL_NEEDS.MultiStress.Changes"}}</span>
+    </div>
+    <span class="mn-batch-mode">
+      <i class="fas {{#if isStress}}fa-arrow-up{{else}}fa-arrow-down{{/if}}"></i>
+      {{#if isStress}}{{localize "MORTAL_NEEDS.Actions.Stress"}}{{else}}{{localize "MORTAL_NEEDS.Actions.Relieve"}}{{/if}}
+    </span>
+  </header>
+
+  <div class="mn-batch-layout">
+    <section class="mn-batch-column mn-batch-column--targets">
+      <header class="mn-batch-column__header">
+        <span>{{localize "MORTAL_NEEDS.MultiStress.TargetsShort"}}</span>
+        <div class="mn-batch-column__actions">
+          <button type="button" data-target-select="all">{{localize "MORTAL_NEEDS.MultiStress.All"}}</button>
+          <button type="button" data-target-select="none">{{localize "MORTAL_NEEDS.MultiStress.None"}}</button>
+        </div>
+      </header>
+      <div class="mn-batch-targets">
+        {{#each actors}}
+          <label class="mn-batch-target">
+            <input type="checkbox" name="targets" value="{{id}}" checked>
+            <img class="mn-dialog__list-item-img" src="{{img}}" alt="{{name}}">
+            <span>{{name}}</span>
+          </label>
         {{/each}}
-      </select>
-    </div>
+        {{#unless actors.length}}
+          <p class="mn-batch-empty">{{localize "MORTAL_NEEDS.MultiStress.NoTargets"}}</p>
+        {{/unless}}
+      </div>
+    </section>
+
+    <section class="mn-batch-column mn-batch-column--needs">
+      <header class="mn-batch-column__header">
+        <span>{{localize "MORTAL_NEEDS.MultiStress.NeedsShort"}}</span>
+        <div class="mn-batch-column__actions">
+          <button type="button" data-need-select="all">{{localize "MORTAL_NEEDS.MultiStress.All"}}</button>
+          <button type="button" data-need-select="none">{{localize "MORTAL_NEEDS.MultiStress.None"}}</button>
+        </div>
+      </header>
+
+      <div class="mn-batch-needs">
+        {{#each needs}}
+          <div class="mn-batch-need" data-need-amount="{{id}}" data-need-label="{{localizedLabel}}">
+            <div class="mn-batch-need__top">
+              <label class="mn-batch-need__select">
+                <input type="checkbox" name="selectedNeeds" value="{{id}}" {{#if @first}}checked{{/if}}>
+                <span class="mn-batch-need__icon"><i class="fas {{icon}}"></i></span>
+                <strong>{{localizedLabel}}</strong>
+              </label>
+              <span class="mn-batch-category mn-batch-category--{{category}}">{{category}}</span>
+            </div>
+            <div class="mn-batch-need__amount">
+              <input type="range" min="1" max="100" value="{{defaultAmount}}" aria-label="{{localizedLabel}} {{localize 'MORTAL_NEEDS.MultiStress.Amount'}}">
+              <input type="number" name="amount-{{id}}" min="1" max="100" value="{{defaultAmount}}" aria-label="{{localizedLabel}} {{localize 'MORTAL_NEEDS.MultiStress.Amount'}}">
+            </div>
+          </div>
+        {{/each}}
+        {{#unless needs.length}}
+          <p class="mn-batch-empty">{{localize "MORTAL_NEEDS.MultiStress.NoNeeds"}}</p>
+        {{/unless}}
+      </div>
+    </section>
+
+    <aside class="mn-batch-column mn-batch-column--preview">
+      <header class="mn-batch-column__header">
+        <span>{{localize "MORTAL_NEEDS.MultiStress.Preview"}}</span>
+      </header>
+      <div class="mn-batch-preview">
+        <div class="mn-batch-preview__stats">
+          <div>
+            <span>{{localize "MORTAL_NEEDS.MultiStress.TargetsShort"}}</span>
+            <strong class="mn-batch-selected-targets-count">{{targetCount}}</strong>
+          </div>
+          <div>
+            <span>{{localize "MORTAL_NEEDS.MultiStress.NeedsShort"}}</span>
+            <strong class="mn-batch-selected-needs-count">{{selectedNeedCount}}</strong>
+          </div>
+          <div>
+            <span>{{localize "MORTAL_NEEDS.MultiStress.Changes"}}</span>
+            <strong class="mn-batch-total-changes-count">{{initialChangeCount}}</strong>
+          </div>
+        </div>
+        <ul class="mn-batch-preview__list" data-preview-list>
+          <li class="mn-batch-preview__empty">{{localize "MORTAL_NEEDS.MultiStress.EmptyPreview"}}</li>
+        </ul>
+        <p class="mn-batch-preview__note">
+          <i class="fas fa-bolt"></i>
+          <span>{{#if isStress}}{{localize "MORTAL_NEEDS.MultiStress.StressAppliedImmediately"}}{{else}}{{localize "MORTAL_NEEDS.MultiStress.RelieveAppliedImmediately"}}{{/if}}</span>
+        </p>
+      </div>
+    </aside>
   </div>
 
-  <div class="mn-dialog__section">
-    <div class="mn-dialog__section-title">{{localize "MORTAL_NEEDS.MultiStress.Amount"}}</div>
-    <div class="mn-dialog__form-row">
-      <input type="range" name="amount" min="1" max="100" value="{{defaultAmount}}" style="flex-grow: 1;">
-      <input type="number" name="amountDisplay" value="{{defaultAmount}}" min="1" max="100" style="width: 60px;">
-    </div>
-  </div>
-
-  <div class="mn-dialog__section">
-    <div class="mn-dialog__section-title">{{localize "MORTAL_NEEDS.MultiStress.Targets"}}</div>
-    <div class="mn-dialog__list">
-      {{#each actors}}
-        <label class="mn-dialog__checkbox">
-          <input type="checkbox" name="targets" value="{{id}}" checked>
-          <img class="mn-dialog__list-item-img" src="{{img}}" alt="{{name}}" style="width: 24px; height: 24px;">
-          <span class="mn-dialog__list-item-name">{{name}}</span>
-        </label>
-      {{/each}}
-    </div>
-  </div>
-
-  <div class="mn-dialog__footer">
-    <button class="mn-btn mn-btn--primary" data-action="apply">
-      <i class="fas fa-check"></i>
-      <span>{{localize "MORTAL_NEEDS.Dialogs.Apply"}}</span>
+  <footer class="mn-dialog__footer mn-batch-footer">
+    <button type="button" class="mn-btn mn-btn--secondary" data-action="cancel">
+      <span>{{localize "MORTAL_NEEDS.Dialogs.Cancel"}}</span>
     </button>
-  </div>
+    <button type="button" class="mn-btn mn-btn--primary" data-action="apply">
+      <i class="fas fa-check"></i>
+      <span>{{#if isStress}}{{localize "MORTAL_NEEDS.MultiStress.ApplyStress"}}{{else}}{{localize "MORTAL_NEEDS.MultiStress.ApplyRelieve"}}{{/if}}</span>
+    </button>
+  </footer>
 </div>

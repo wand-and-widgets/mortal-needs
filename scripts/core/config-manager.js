@@ -19,6 +19,10 @@ export class ConfigManager {
       scope: 'world', config: false, type: Array, default: [],
     });
 
+    game.settings.register(MODULE_ID, 'needsHistory', {
+      scope: 'world', config: false, type: Object, default: { version: 1, entries: [] },
+    });
+
     game.settings.register(MODULE_ID, 'esCharacterNeeds', {
       scope: 'world', config: false, type: Object, default: {},
     });

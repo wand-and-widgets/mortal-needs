@@ -24,7 +24,7 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
       minimizable: true,
     },
     position: {
-      width: 340,
+      width: 1000,
       height: 'auto',
     },
     actions: {
@@ -38,6 +38,8 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
       'relieve-all': MortalNeedsApp.#onRelieveAll,
       'configure': MortalNeedsApp.#onConfigure,
       'history': MortalNeedsApp.#onHistory,
+      'broadcast-show': MortalNeedsApp.#onBroadcastShow,
+      'broadcast-flash': MortalNeedsApp.#onBroadcastFlash,
     },
   };
 
@@ -64,7 +66,7 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
   _onRender(context, options) {
     super._onRender(context, options);
 
-    // Only subscribe once — avoid stacking listeners on every re-render
+    // Only subscribe once to avoid stacking listeners on every re-render.
     if (this.#unsubscribers.length === 0) {
       this.#unsubscribers.push(
         this.#eventBus.on(Events.NEED_STRESSED, () => this.render(false)),
@@ -104,31 +106,85 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const enabledConfigs = this.#store.getEnabledNeedConfigs();
     const isGM = game.user.isGM;
     const criticalThreshold = game.settings.get(MODULE_ID, 'criticalThreshold');
+    const atRiskThreshold = 60;
+    let totalPercentage = 0;
+    let totalNeeds = 0;
+    let lastChange = 0;
+    const crisisQueue = [];
 
     // Build actor data with need bar info
     const actors = tracked.map(entity => {
+      let worstNeed = null;
+
       const needs = enabledConfigs.map(config => {
         const state = entity.needs[config.id];
-        const value = state?.value ?? 0;
-        const max = state?.max ?? config.max ?? 100;
+        const value = NeedsEngine.normalizeNumber(state?.value, 0);
+        const max = NeedsEngine.normalizeNumber(state?.max ?? config.max, 100);
         const percentage = NeedsEngine.getPercentage(value, max);
         const severity = NeedsEngine.getSeverity(percentage);
-        const decimal = max > 0 ? value / max : 0;
+        const decimal = NeedsEngine.getRatio(value, max);
         const circumference = 2 * Math.PI * 18; // for radial bars (r=18)
+        const localizedLabel = game.i18n.localize(config.label);
+        const severityLabel = this.#getSeverityLabel(severity);
+        const lastChangeTime = state?.lastChange ?? 0;
 
-        return {
+        totalPercentage += percentage;
+        totalNeeds += 1;
+        if (lastChangeTime > lastChange) lastChange = lastChangeTime;
+
+        const needData = {
           id: config.id,
           label: config.label,
+          localizedLabel,
           icon: config.icon,
           enabled: config.enabled,
           value, max, percentage, severity, decimal,
+          percentageLabel: `${percentage}%`,
+          displayValue: `${value}/${max}`,
+          severityLabel,
+          isCritical: percentage >= criticalThreshold,
+          isAtRisk: percentage >= atRiskThreshold,
+          hasConsequences: (config.consequences?.length ?? 0) > 0,
+          consequenceCount: config.consequences?.length ?? 0,
+          decayEnabled: !!config.decay?.enabled,
           circumference,
           dashOffset: circumference * (1 - decimal),
           entityId: entity.id,
         };
+
+        if (!worstNeed || percentage > worstNeed.percentage) {
+          worstNeed = needData;
+        }
+
+        if (percentage >= atRiskThreshold) {
+          const activeConsequence = (config.consequences || [])
+            .find(c => percentage >= (c.threshold ?? 100));
+          const tickProgress = activeConsequence
+            ? this.#app?.consequenceEngine?.getTickProgress?.(entity.id, config.id, activeConsequence)
+            : null;
+
+          crisisQueue.push({
+            entityId: entity.id,
+            actorName: entity.name,
+            actorImg: entity.img,
+            needId: config.id,
+            needLabel: localizedLabel,
+            needIcon: config.icon,
+            percentage,
+            percentageLabel: `${percentage}%`,
+            severity,
+            severityLabel,
+            hasConsequence: !!activeConsequence,
+            tickLabel: tickProgress ? `${tickProgress.current}/${tickProgress.max}` : null,
+          });
+        }
+
+        return needData;
       });
 
       const worstSeverity = this.#getWorstSeverity(needs);
+      const criticalNeedCount = needs.filter(n => n.isCritical).length;
+      const atRiskNeedCount = needs.filter(n => n.isAtRisk).length;
 
       return {
         id: entity.id,
@@ -138,6 +194,11 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
         expanded: this.#expandedActors.has(entity.id),
         needs,
         worstSeverity,
+        worstNeed,
+        worstNeedLabel: worstNeed?.localizedLabel ?? '',
+        worstNeedPercentage: worstNeed?.percentageLabel ?? '0%',
+        criticalNeedCount,
+        atRiskNeedCount,
       };
     });
 
@@ -145,14 +206,42 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const criticalCount = actors.filter(a =>
       a.needs.some(n => n.percentage >= criticalThreshold)
     ).length;
+    const atRiskCount = actors.filter(a =>
+      a.needs.some(n => n.percentage >= atRiskThreshold)
+    ).length;
+    const averageSeverity = totalNeeds > 0 ? Math.round(totalPercentage / totalNeeds) : 0;
+    const decayActiveCount = enabledConfigs.filter(c => c.decay?.enabled).length;
+    const lastChangeLabel = this.#formatRelativeTime(lastChange);
+
+    crisisQueue.sort((a, b) => b.percentage - a.percentage);
+
+    const nextDecay = enabledConfigs
+      .filter(c => c.decay?.enabled)
+      .slice(0, 3)
+      .map(c => ({
+        id: c.id,
+        label: game.i18n.localize(c.label),
+        icon: c.icon,
+        rate: c.decay.rate,
+        intervalLabel: this.#formatDuration(c.decay.interval),
+      }));
 
     const barOrientation = game.settings.get(MODULE_ID, 'barOrientation') ?? 'horizontal';
 
     return {
       actors,
       hasTracked: actors.length > 0,
+      isDense: actors.length >= 4,
       trackedCount: actors.length,
       criticalCount,
+      atRiskCount,
+      averageSeverity,
+      decayActiveCount,
+      lastChangeLabel,
+      crisisQueue: crisisQueue.slice(0, 5),
+      hasCrisis: crisisQueue.length > 0,
+      nextDecay,
+      hasDecay: nextDecay.length > 0,
       isGM,
       barOrientation,
     };
@@ -166,6 +255,26 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
       if (idx > worst) worst = idx;
     }
     return order[worst];
+  }
+
+  #getSeverityLabel(severity) {
+    return `MORTAL_NEEDS.Severity.${severity.charAt(0).toUpperCase()}${severity.slice(1)}`;
+  }
+
+  #formatRelativeTime(timestamp) {
+    if (!timestamp) return game.i18n.localize('MORTAL_NEEDS.Panel.NoRecentChange');
+    const seconds = Math.max(0, Math.floor((Date.now() - timestamp) / 1000));
+    if (seconds < 30) return game.i18n.localize('MORTAL_NEEDS.Panel.Now');
+    if (seconds < 3600) return `${Math.floor(seconds / 60)}m`;
+    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h`;
+    return `${Math.floor(seconds / 86400)}d`;
+  }
+
+  #formatDuration(seconds) {
+    if (!seconds) return '0m';
+    if (seconds >= 3600) return `${Math.round(seconds / 3600)}h`;
+    if (seconds >= 60) return `${Math.round(seconds / 60)}m`;
+    return `${seconds}s`;
   }
 
   // --- Action Handlers ---
@@ -235,7 +344,15 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static async #onHistory() {
     const { HistoryDialog } = await import('./dialogs/history-dialog.js');
-    const dialog = new HistoryDialog(this.#store);
+    const dialog = new HistoryDialog(this.#store, this.#eventBus);
     dialog.render(true);
+  }
+
+  static #onBroadcastShow() {
+    game.modules.get(MODULE_ID)?.api?.broadcast?.show();
+  }
+
+  static #onBroadcastFlash() {
+    game.modules.get(MODULE_ID)?.api?.broadcast?.flash();
   }
 }

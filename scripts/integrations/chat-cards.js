@@ -29,8 +29,8 @@ export class ChatCards {
     if (!needConfig) return;
 
     const needState = this.#store.getActorNeedState(entityId, needId);
-    const value = needState?.value ?? 0;
-    const max = needState?.max ?? 100;
+    const value = NeedsEngine.normalizeNumber(needState?.value, 0);
+    const max = NeedsEngine.normalizeNumber(needState?.max, 100);
     const percentage = NeedsEngine.getPercentage(value, max);
     const severity = NeedsEngine.getSeverity(percentage);
 
@@ -69,14 +69,20 @@ export class ChatCards {
     const needConfig = this.#store.getNeedConfig(needId);
     if (!needConfig) return;
 
-    const severity = NeedsEngine.getSeverity(percentage);
+    const safeValue = NeedsEngine.normalizeNumber(value, 0);
+    const safeMax = NeedsEngine.normalizeNumber(max, 100);
+    const safePercentage = NeedsEngine.getPercentage(safeValue, safeMax);
+    const severity = NeedsEngine.getSeverity(safePercentage);
 
     const templateData = {
       actorName: entityInfo.name,
       actorImg: entityInfo.img,
       needName: game.i18n.localize(needConfig.label),
       needIcon: needConfig.icon,
-      value, max, percentage, severity,
+      value: safeValue,
+      max: safeMax,
+      percentage: safePercentage,
+      severity,
       severityLabel: `MORTAL_NEEDS.Severity.${severity.charAt(0).toUpperCase() + severity.slice(1)}`,
       consequenceDescription: null,
       flavor: null, // FlavorEngine handles flavor messages separately
@@ -104,8 +110,8 @@ export class ChatCards {
     const enabledConfigs = this.#store.getEnabledNeedConfigs();
     const needs = enabledConfigs.map(config => {
       const state = this.#store.getActorNeedState(entityId, config.id);
-      const value = state?.value ?? 0;
-      const max = state?.max ?? config.max ?? 100;
+      const value = NeedsEngine.normalizeNumber(state?.value, 0);
+      const max = NeedsEngine.normalizeNumber(state?.max ?? config.max, 100);
       const percentage = NeedsEngine.getPercentage(value, max);
       const severity = NeedsEngine.getSeverity(percentage);
 

@@ -1,6 +1,6 @@
-<div class="mn-need-bar mn-need-bar--radial" data-need-id="{{id}}" data-entity-id="{{entityId}}" data-tooltip="{{localize label}}: {{percentage}}%">
+<div class="mn-need-bar mn-need-bar--radial" data-need-id="{{id}}" data-entity-id="{{entityId}}" data-severity="{{severity}}" data-tooltip="{{localizedLabel}}: {{percentageLabel}}">
   <div class="mn-need-bar__ring-wrap">
-    <svg class="mn-need-bar__ring" viewBox="0 0 44 44">
+    <svg class="mn-need-bar__ring" viewBox="0 0 44 44" aria-hidden="true">
       <circle class="mn-need-bar__ring-track" cx="22" cy="22" r="18" />
       <circle class="mn-need-bar__ring-fill"
               data-severity="{{severity}}"
@@ -8,10 +8,12 @@
               stroke-dasharray="{{circumference}}"
               stroke-dashoffset="{{dashOffset}}" />
     </svg>
-    <span class="mn-need-bar__radial-icon">
+    <span class="mn-need-bar__radial-icon" data-severity="{{severity}}">
       <i class="fas {{icon}}"></i>
     </span>
   </div>
+
+  <span class="mn-need-bar__value" data-severity="{{severity}}">{{percentage}}</span>
 
   <div class="mn-need-bar__controls">
     <button class="mn-need-bar__btn mn-need-bar__btn--relieve"

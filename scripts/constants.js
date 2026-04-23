@@ -25,6 +25,9 @@ export const Events = Object.freeze({
   ACTOR_UNTRACKED:     'mortalNeeds.actor.untracked',
   ACTORS_REFRESHED:    'mortalNeeds.actors.refreshed',
 
+  HISTORY_UPDATED:     'mortalNeeds.history.updated',
+  HISTORY_CLEARED:     'mortalNeeds.history.cleared',
+
   UI_RENDERED:         'mortalNeeds.ui.rendered',
   UI_TOGGLED:          'mortalNeeds.ui.toggled',
 

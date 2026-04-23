@@ -1,36 +1,62 @@
-<article class="mn-actor-card" data-entity-id="{{id}}" data-worst-severity="{{worstSeverity}}">
-  <header class="mn-actor-card__header">
-    <div class="mn-actor-card__portrait">
-      <img class="mn-actor-card__portrait-img"
-           src="{{img}}"
-           alt="{{name}}"
-           data-severity="{{worstSeverity}}"
-           loading="lazy">
-    </div>
+<article class="mn-actor-card mn-actor-card--rework" data-entity-id="{{id}}" data-worst-severity="{{worstSeverity}}">
+  <div class="mn-actor-card__portrait">
+    <img class="mn-actor-card__portrait-img"
+         src="{{img}}"
+         alt="{{name}}"
+         data-severity="{{worstSeverity}}"
+         loading="lazy">
+  </div>
 
-    <span class="mn-actor-card__name">{{name}}</span>
+  <div class="mn-actor-card__content">
+    <header class="mn-actor-card__header">
+      <div class="mn-actor-card__title">
+        <span class="mn-actor-card__name">{{name}}</span>
+        <span class="mn-actor-card__subtitle">
+          {{#if worstNeed}}
+            {{localize "MORTAL_NEEDS.Panel.WorstNeed"}}: {{worstNeedLabel}} &middot; {{worstNeedPercentage}}
+          {{else}}
+            {{localize "MORTAL_NEEDS.Panel.Stable"}}
+          {{/if}}
+        </span>
+      </div>
 
-    {{#if (eq source "exalted-scenes")}}
-      <span class="mn-badge mn-badge--source mn-badge--source-es" data-tooltip="Exalted Scenes">ES</span>
-    {{/if}}
-
-    <button class="mn-actor-card__expand {{#if expanded}}is-expanded{{/if}}" data-action="toggle-expand" data-entity-id="{{id}}">
-      <i class="fas fa-chevron-down"></i>
-    </button>
-  </header>
-
-  <div class="mn-actor-card__needs {{#if (eq barOrientation 'vertical')}}mn-actor-card__needs--vertical{{/if}} {{#if (eq barOrientation 'radial')}}mn-actor-card__needs--radial{{/if}}">
-    {{#each needs}}
-      {{#if this.enabled}}
-        {{#if (eq ../barOrientation "vertical")}}
-          {{> "modules/mortal-needs/templates/components/need-bar-vertical.hbs" this entityId=../id}}
-        {{else if (eq ../barOrientation "radial")}}
-          {{> "modules/mortal-needs/templates/components/need-bar-radial.hbs" this entityId=../id}}
+      <div class="mn-actor-card__badges">
+        {{#if criticalNeedCount}}
+          <span class="mn-badge mn-badge--critical">{{localize "MORTAL_NEEDS.Severity.Critical"}}</span>
+          <span class="mn-badge mn-badge--critical mn-badge--count">{{criticalNeedCount}}</span>
+        {{else if atRiskNeedCount}}
+          <span class="mn-badge mn-badge--high">{{localize "MORTAL_NEEDS.Severity.High"}}</span>
+          <span class="mn-badge mn-badge--high mn-badge--count">{{atRiskNeedCount}}</span>
         {{else}}
-          {{> "modules/mortal-needs/templates/components/need-bar-horizontal.hbs" this entityId=../id}}
+          <span class="mn-badge mn-badge--safe">{{localize "MORTAL_NEEDS.Panel.Stable"}}</span>
         {{/if}}
-      {{/if}}
-    {{/each}}
+
+        {{#if (eq source "exalted-scenes")}}
+          <span class="mn-badge mn-badge--source mn-badge--source-es" data-tooltip="Exalted Scenes">ES</span>
+        {{/if}}
+
+        <button class="mn-icon-btn mn-actor-card__expand {{#if expanded}}is-expanded{{/if}}"
+                 data-action="toggle-expand"
+                 data-entity-id="{{id}}"
+                 data-tooltip="{{localize 'MORTAL_NEEDS.Actions.ToggleDetails'}}">
+          <i class="fas fa-chevron-down"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="mn-actor-card__needs {{#if (eq barOrientation 'vertical')}}mn-actor-card__needs--vertical{{/if}} {{#if (eq barOrientation 'radial')}}mn-actor-card__needs--radial{{/if}}">
+      {{#each needs}}
+        {{#if this.enabled}}
+          {{#if (eq ../barOrientation "vertical")}}
+            {{> "modules/mortal-needs/templates/components/need-bar-vertical.hbs" this entityId=../id}}
+          {{else if (eq ../barOrientation "radial")}}
+            {{> "modules/mortal-needs/templates/components/need-bar-radial.hbs" this entityId=../id}}
+          {{else}}
+            {{> "modules/mortal-needs/templates/components/need-bar-horizontal.hbs" this entityId=../id}}
+          {{/if}}
+        {{/if}}
+      {{/each}}
+    </div>
   </div>
 
   {{#if expanded}}

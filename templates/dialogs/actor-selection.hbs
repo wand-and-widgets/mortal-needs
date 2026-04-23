@@ -1,60 +1,118 @@
-<div class="mn-dialog__body">
-  {{#if hasES}}
-    <div class="mn-dialog__tabs">
-      <button class="mn-dialog__tab is-active" data-tab="actors">{{localize "MORTAL_NEEDS.ActorSelection.FoundryActors"}}</button>
-      <button class="mn-dialog__tab" data-tab="es-characters">{{localize "MORTAL_NEEDS.ActorSelection.ESCharacters"}}</button>
-    </div>
-  {{/if}}
+<div class="mn-dialog__body mn-actor-select-shell">
+  <div class="mn-actor-select__topbar">
+    {{#if hasES}}
+      <div class="mn-actor-select__tabs" role="tablist">
+        <button class="mn-actor-select__tab is-active" type="button" data-tab="actors" role="tab" aria-selected="true">
+          <i class="fas fa-users"></i>
+          <span>{{localize "MORTAL_NEEDS.ActorSelection.FoundryActors"}}</span>
+          <strong>{{actorStats.available}}</strong>
+        </button>
+        <button class="mn-actor-select__tab" type="button" data-tab="es-characters" role="tab" aria-selected="false">
+          <i class="fas fa-theater-masks"></i>
+          <span>{{localize "MORTAL_NEEDS.ActorSelection.ESCharacters"}}</span>
+          <strong>{{esStats.available}}</strong>
+        </button>
+      </div>
+    {{else}}
+      <div class="mn-actor-select__source-title">
+        <i class="fas fa-users"></i>
+        <span>{{localize "MORTAL_NEEDS.ActorSelection.FoundryActors"}}</span>
+      </div>
+    {{/if}}
 
-  {{!-- Foundry Actors --}}
-  <div class="mn-dialog__tab-content" data-tab-content="actors">
-    <div class="mn-dialog__section">
-      <input class="mn-toolbar__search" type="text" name="actorSearch" placeholder="{{localize 'MORTAL_NEEDS.ActorSelection.SearchPlaceholder'}}" style="width: 100%; margin-bottom: 8px;">
-    </div>
-    <div class="mn-dialog__list" data-list="actors">
-      {{#each actors}}
-        <label class="mn-dialog__list-item" data-actor-id="{{id}}">
-          <input type="checkbox" name="selectedActors" value="{{id}}" {{#if tracked}}checked disabled{{/if}}>
-          <img class="mn-dialog__list-item-img" src="{{img}}" alt="{{name}}">
-          <span class="mn-dialog__list-item-name">{{name}}</span>
-          {{#if tracked}}
-            <span class="mn-badge mn-badge--source">{{localize "MORTAL_NEEDS.ActorSelection.AlreadyTracked"}}</span>
-          {{/if}}
-        </label>
-      {{/each}}
+    <div class="mn-actor-select__stats" aria-hidden="true">
+      <div>
+        <strong>{{totalStats.available}}</strong>
+        <span>{{localize "MORTAL_NEEDS.ActorSelection.Available"}}</span>
+      </div>
+      <div>
+        <strong>{{totalStats.tracked}}</strong>
+        <span>{{localize "MORTAL_NEEDS.ActorSelection.AlreadyTracked"}}</span>
+      </div>
     </div>
   </div>
 
+  <label class="mn-actor-select__search">
+    <i class="fas fa-search"></i>
+    <input class="mn-toolbar__search" type="text" name="actorSearch" autocomplete="off" placeholder="{{localize 'MORTAL_NEEDS.ActorSelection.SearchPlaceholder'}}">
+  </label>
+
+  {{!-- Foundry Actors --}}
+  <section class="mn-actor-select__tab-content" data-tab-content="actors" role="tabpanel">
+    <header class="mn-actor-select__list-header">
+      <span>{{localize "MORTAL_NEEDS.ActorSelection.FoundryActors"}}</span>
+      <strong>{{actorStats.available}}</strong>
+    </header>
+
+    <div class="mn-actor-select__list" data-list="actors">
+      {{#each actors}}
+        <label class="mn-actor-select__row {{#if tracked}}is-tracked{{/if}}" data-actor-id="{{id}}">
+          <input type="checkbox" name="selectedActors" value="{{id}}" {{#if tracked}}checked disabled{{/if}}>
+          <span class="mn-actor-select__portrait">
+            <img src="{{img}}" alt="{{name}}">
+          </span>
+          <span class="mn-actor-select__identity">
+            <strong class="mn-dialog__list-item-name">{{name}}</strong>
+            <span>{{localize "MORTAL_NEEDS.ActorSelection.FoundryActors"}}</span>
+          </span>
+          {{#if tracked}}
+            <span class="mn-actor-select__badge">{{localize "MORTAL_NEEDS.ActorSelection.AlreadyTracked"}}</span>
+          {{/if}}
+        </label>
+      {{/each}}
+      {{#unless actors.length}}
+        <p class="mn-actor-select__empty">
+          <i class="fas fa-users-slash"></i>
+          <span>{{localize "MORTAL_NEEDS.ActorSelection.NoActors"}}</span>
+        </p>
+      {{/unless}}
+    </div>
+  </section>
+
   {{!-- Exalted Scenes Characters --}}
   {{#if hasES}}
-    <div class="mn-dialog__tab-content" data-tab-content="es-characters" style="display:none">
-      <div class="mn-dialog__list" data-list="es-characters">
+    <section class="mn-actor-select__tab-content" data-tab-content="es-characters" role="tabpanel" hidden>
+      <header class="mn-actor-select__list-header">
+        <span>{{localize "MORTAL_NEEDS.ActorSelection.ESCharacters"}}</span>
+        <strong>{{esStats.available}}</strong>
+      </header>
+
+      <div class="mn-actor-select__list" data-list="es-characters">
         {{#each esCharacters}}
-          <label class="mn-dialog__list-item" data-character-id="{{id}}">
+          <label class="mn-actor-select__row {{#if tracked}}is-tracked{{/if}}" data-character-id="{{id}}">
             <input type="checkbox" name="selectedESChars" value="{{id}}" {{#if tracked}}checked disabled{{/if}}>
-            <img class="mn-dialog__list-item-img" src="{{img}}" alt="{{name}}">
-            <span class="mn-dialog__list-item-name">{{name}}</span>
-            {{#if linkedActorName}}
-              <span class="mn-dialog__list-item-detail">
-                <i class="fas fa-link"></i> {{linkedActorName}}
-              </span>
-            {{/if}}
+            <span class="mn-actor-select__portrait">
+              <img src="{{img}}" alt="{{name}}">
+            </span>
+            <span class="mn-actor-select__identity">
+              <strong class="mn-dialog__list-item-name">{{name}}</strong>
+              {{#if linkedActorName}}
+                <span><i class="fas fa-link"></i> {{linkedActorName}}</span>
+              {{else}}
+                <span>{{localize "MORTAL_NEEDS.ActorSelection.ESCharacters"}}</span>
+              {{/if}}
+            </span>
             {{#if tracked}}
-              <span class="mn-badge mn-badge--source">{{localize "MORTAL_NEEDS.ActorSelection.AlreadyTracked"}}</span>
+              <span class="mn-actor-select__badge">{{localize "MORTAL_NEEDS.ActorSelection.AlreadyTracked"}}</span>
             {{/if}}
           </label>
         {{/each}}
         {{#unless esCharacters.length}}
-          <p class="mn-text-sm" style="padding: 12px; text-align: center; color: var(--mn-text-muted);">
-            {{localize "MORTAL_NEEDS.ActorSelection.NoESCharacters"}}
+          <p class="mn-actor-select__empty">
+            <i class="fas fa-theater-masks"></i>
+            <span>{{localize "MORTAL_NEEDS.ActorSelection.NoESCharacters"}}</span>
           </p>
         {{/unless}}
       </div>
-    </div>
+    </section>
   {{/if}}
 
-  <div class="mn-dialog__footer">
-    <button class="mn-btn mn-btn--primary" data-action="confirm">
+  <div class="mn-actor-select__footer">
+    <div class="mn-actor-select__selected">
+      <strong data-selected-count>0</strong>
+      <span>{{localize "MORTAL_NEEDS.ActorSelection.Selected"}}</span>
+    </div>
+    <button class="mn-btn mn-btn--primary" data-action="confirm" disabled>
       <i class="fas fa-user-plus"></i>
       <span>{{localize "MORTAL_NEEDS.ActorSelection.AddSelected"}}</span>
     </button>

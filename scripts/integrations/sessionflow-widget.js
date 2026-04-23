@@ -202,11 +202,11 @@ export function createMortalNeedsWidgetClass() {
 
     #buildNeedRow(entity, config, api, orientation = 'horizontal') {
       const state = entity.needs[config.id];
-      const value = state?.value ?? 0;
-      const max = state?.max ?? config.max ?? 100;
+      const value = NeedsEngine.normalizeNumber(state?.value, 0);
+      const max = NeedsEngine.normalizeNumber(state?.max ?? config.max, 100);
       const percentage = NeedsEngine.getPercentage(value, max);
       const severity = NeedsEngine.getSeverity(percentage);
-      const decimal = max > 0 ? value / max : 0;
+      const decimal = NeedsEngine.getRatio(value, max);
       const tooltip = `${game.i18n.localize(config.label)}: ${value}/${max} (${percentage}%)`;
 
       if (orientation === 'radial') return this.#buildNeedRadial(entity, config, api, severity, decimal, tooltip);
