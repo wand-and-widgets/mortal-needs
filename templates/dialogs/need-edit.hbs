@@ -113,6 +113,44 @@
         </div>
       </article>
 
+      <article class="mn-form-card mn-need-editor-panel mn-need-editor-panel--movement">
+        <header class="mn-need-editor-panel__header">
+          <h3>{{localize "MORTAL_NEEDS.NeedEdit.Movement"}}</h3>
+        </header>
+
+        <label class="mn-switch-row">
+          <span>
+            <strong>{{localize "MORTAL_NEEDS.NeedEdit.Movement"}}</strong>
+            <small>{{localize "MORTAL_NEEDS.NeedEdit.MovementEnabled"}}</small>
+          </span>
+          <span class="mn-switch">
+            <input type="checkbox" name="movementEnabled" {{#if config.movement.enabled}}checked{{/if}}>
+            <span class="mn-switch__track"><span class="mn-switch__thumb"></span></span>
+          </span>
+        </label>
+
+        <div class="mn-need-editor-grid mn-need-editor-grid--movement-fields">
+          <div class="mn-field">
+            <label>{{localize "MORTAL_NEEDS.NeedEdit.MovementInterval"}}</label>
+            <input type="number" name="movementInterval" value="{{config.movement.interval}}" min="1" step="1">
+          </div>
+
+          <div class="mn-field">
+            <label>{{localize "MORTAL_NEEDS.NeedEdit.MovementAmount"}}</label>
+            <input type="number" name="movementAmount" value="{{config.movement.amount}}" min="1" max="100" step="1">
+          </div>
+
+          <div class="mn-field mn-field--wide">
+            <label>{{localize "MORTAL_NEEDS.NeedEdit.MovementMetric"}}</label>
+            <select name="movementMetric">
+              {{#each movementMetrics}}
+                <option value="{{value}}" {{#if selected}}selected{{/if}}>{{localize label}}</option>
+              {{/each}}
+            </select>
+          </div>
+        </div>
+      </article>
+
       <article class="mn-form-card mn-need-editor-panel mn-need-editor-panel--consequences">
         <header class="mn-need-editor-panel__header">
           <h3>{{localize "MORTAL_NEEDS.NeedEdit.Consequences"}}</h3>
@@ -203,6 +241,10 @@
       <div>
         <span>{{localize "MORTAL_NEEDS.NeedEdit.Decay"}}</span>
         <strong data-live-decay>{{#if config.decay.enabled}}+{{config.decay.rate}} / {{config.decay.interval}}s{{else}}-{{/if}}</strong>
+      </div>
+      <div>
+        <span>{{localize "MORTAL_NEEDS.NeedEdit.Movement"}}</span>
+        <strong data-live-movement>{{#if config.movement.enabled}}+{{config.movement.amount}} / {{config.movement.interval}} {{movementMetricShortLabel}}{{else}}-{{/if}}</strong>
       </div>
       <div>
         <span>{{localize "MORTAL_NEEDS.NeedEdit.Consequences"}}</span>

@@ -312,6 +312,7 @@ export class HistoryDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       manual: 'SourceManual',
       reset: 'SourceReset',
       decay: 'SourceDecay',
+      movement: 'SourceMovement',
       socket: 'SourceSocket',
       registration: 'SourceRegistration',
     }[source] || 'SourceManual';
@@ -326,6 +327,7 @@ export class HistoryDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       manual: 'fa-pen',
       reset: 'fa-undo',
       decay: 'fa-clock',
+      movement: 'fa-shoe-prints',
       socket: 'fa-wifi',
       registration: 'fa-plus',
     }[source] || 'fa-pen';

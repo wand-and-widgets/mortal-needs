@@ -13,6 +13,7 @@
         <div><i class="fas fa-check-square"></i><span>{{localize "MORTAL_NEEDS.Config.EnabledCount"}}</span><strong class="mn-config-enabled-count">{{enabledCount}}/{{totalCount}}</strong></div>
         <div><i class="fas fa-star"></i><span>{{localize "MORTAL_NEEDS.Config.CustomCount"}}</span><strong>{{customCount}}</strong></div>
         <div><i class="fas fa-hourglass-half"></i><span>{{localize "MORTAL_NEEDS.Config.DecayCount"}}</span><strong>{{decayCount}}</strong></div>
+        <div><i class="fas fa-shoe-prints"></i><span>{{localize "MORTAL_NEEDS.Config.MovementCount"}}</span><strong>{{movementCount}}</strong></div>
       </div>
     </section>
 
@@ -71,6 +72,9 @@
                   {{#if decayEnabled}}
                     <span class="mn-config-icon-pill" data-tooltip="{{localize 'MORTAL_NEEDS.NeedEdit.Decay'}}"><i class="fas fa-hourglass-half"></i></span>
                   {{/if}}
+                  {{#if movementEnabled}}
+                    <span class="mn-config-icon-pill" data-tooltip="{{localize 'MORTAL_NEEDS.NeedEdit.Movement'}}"><i class="fas fa-shoe-prints"></i></span>
+                  {{/if}}
                   {{#if hasConsequences}}
                     <span class="mn-config-icon-pill" data-tooltip="{{localize 'MORTAL_NEEDS.NeedEdit.Consequences'}}">{{consequenceCount}}</span>
                   {{/if}}
@@ -118,6 +122,7 @@
               <div><i class="fas fa-bolt"></i><span class="mn-config-preview__stress">{{previewNeed.stressAmount}} {{localize "MORTAL_NEEDS.Config.StressPerClick"}}</span></div>
               <div><i class="fas fa-balance-scale"></i><span class="mn-config-preview__consequences">{{previewNeed.consequenceCount}} {{localize "MORTAL_NEEDS.Config.ConsequenceCount"}}</span></div>
               <div><i class="fas fa-hourglass-half"></i><span class="mn-config-preview__decay">{{#if previewNeed.decayEnabled}}+{{previewNeed.decayRate}} / {{previewNeed.decayInterval}}s{{else}}{{localize "MORTAL_NEEDS.Config.DecayOff"}}{{/if}}</span></div>
+              <div><i class="fas fa-shoe-prints"></i><span class="mn-config-preview__movement">{{#if previewNeed.movementEnabled}}+{{previewNeed.movementAmount}} / {{previewNeed.movementInterval}} {{previewNeed.movementMetricLabel}}{{else}}{{localize "MORTAL_NEEDS.Config.MovementOff"}}{{/if}}</span></div>
             </div>
 
             <div class="mn-config-threshold">
@@ -220,6 +225,7 @@
             <div><span>{{localize "MORTAL_NEEDS.Config.PresetNeeds"}}</span><strong>{{presetPreview.needCount}}/{{presetPreview.totalCount}}</strong></div>
             <div><span>{{localize "MORTAL_NEEDS.Config.PresetCategories"}}</span><strong>{{presetPreview.categoryCount}}</strong></div>
             <div><span>{{localize "MORTAL_NEEDS.Config.PresetDecay"}}</span><strong>{{presetPreview.decayCount}}</strong></div>
+            <div><span>{{localize "MORTAL_NEEDS.Config.PresetMovement"}}</span><strong>{{presetPreview.movementCount}}</strong></div>
           </div>
 
           <div class="mn-preset-preview__section">

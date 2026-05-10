@@ -1,7 +1,7 @@
 # Mortal Needs
 
-![Foundry VTT](https://img.shields.io/badge/Foundry%20VTT-v11--v13-informational)
-![Version](https://img.shields.io/badge/Version-1.2.0-blue)
+![Foundry VTT](https://img.shields.io/badge/Foundry%20VTT-v13--v14-informational)
+![Version](https://img.shields.io/badge/Version-2.2.0-blue)
 [![Patreon](https://img.shields.io/badge/Patreon-Wand%20%26%20Widgets-orange)](https://patreon.com/wandandwidgets)
 
 A survival needs management module for Foundry VTT. Track hunger, thirst, exhaustion, temperature, and other mortal necessities for your players with a beautiful, compact floating panel.
@@ -31,6 +31,12 @@ Stress amounts are modified by character Constitution - tougher characters are m
 - Drag bars for smooth adjustment
 - Quick +/- buttons for fast changes
 - Multi-select actors for bulk operations
+
+### Movement-Based Advancement
+- Configure individual needs to advance automatically when tracked character tokens move
+- Choose whether movement is measured by grid spaces, movement cost, or scene distance
+- Set the interval and amount per need, such as +10 exhaustion every 2 squares or hexes
+- Partial movement progress is preserved, so short moves still count toward the next threshold
 
 ### Punishment System
 - Automatic effects when needs reach critical thresholds
@@ -83,6 +89,7 @@ Go to **Module Settings > Mortal Needs** to configure:
 - Player visibility settings
 - Critical threshold notifications
 - Enable/disable specific needs
+- Optional movement-based advancement per need
 - Add custom needs
 
 ## API
@@ -127,9 +134,8 @@ Hooks.on('mortalNeedsThreshold', (data) => {
 
 | Foundry VTT Version | Status |
 |---------------------|--------|
-| v11                 | Compatible |
-| v12                 | Compatible |
 | v13                 | Verified |
+| v14                 | Verified |
 
 | Game System | Status | Notes |
 |-------------|--------|-------|

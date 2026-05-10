@@ -70,6 +70,7 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
     const enabledCount = needs.filter(n => this.#getDraftEnabled(n)).length;
     const customCount = needs.filter(n => n.custom).length;
     const decayCount = needs.filter(n => n.decay?.enabled).length;
+    const movementCount = needs.filter(n => n.movement?.enabled).length;
     const previewNeed = needs.find(n => n.id === this.#selectedNeedId)
       || needs.find(n => this.#getDraftEnabled(n))
       || needs[0]
@@ -88,6 +89,7 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
         hasConsequences: (n.consequences?.length ?? 0) > 0,
         consequenceCount: n.consequences?.length ?? 0,
         decayEnabled: !!n.decay?.enabled,
+        movementEnabled: !!n.movement?.enabled,
         isPreview: n.id === previewNeed?.id,
       })),
       presets: this.#preparePresetViews(presets, needs),
@@ -97,6 +99,7 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
       totalCount: needs.length,
       customCount,
       decayCount,
+      movementCount,
       criticalThreshold,
       thresholdMin: CRITICAL_THRESHOLD_MIN,
       thresholdMax: CRITICAL_THRESHOLD_MAX,
@@ -111,6 +114,10 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
         decayRate: previewNeed.decay?.rate ?? 0,
         decayInterval: previewNeed.decay?.interval ?? 0,
         decayEnabled: !!previewNeed.decay?.enabled,
+        movementAmount: previewNeed.movement?.amount ?? 0,
+        movementInterval: previewNeed.movement?.interval ?? 0,
+        movementMetricLabel: this.#getMovementMetricLabel(previewNeed.movement?.metric),
+        movementEnabled: !!previewNeed.movement?.enabled,
       } : null,
     };
   }
@@ -241,6 +248,7 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
     const categories = this.#getPresetCategoryBreakdown(rawNeeds);
     const categoryCount = categories.filter(category => category.count > 0).length;
     const decayCount = rawNeeds.filter(need => need.decay?.enabled).length;
+    const movementCount = rawNeeds.filter(need => need.movement?.enabled).length;
     const needs = rawNeeds.map(need => ({
       ...need,
       localizedLabel: game.i18n.localize(need.label),
@@ -257,6 +265,7 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
       totalCount: needConfigs.length,
       categoryCount,
       decayCount,
+      movementCount,
       categories,
     };
   }
@@ -372,6 +381,10 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
     const decayText = decayEnabled
       ? `+${config.decay?.rate ?? 0} / ${config.decay?.interval ?? 0}s`
       : game.i18n.localize('MORTAL_NEEDS.Config.DecayOff');
+    const movementEnabled = !!config.movement?.enabled;
+    const movementText = movementEnabled
+      ? `+${config.movement?.amount ?? 0} / ${config.movement?.interval ?? 0} ${this.#getMovementMetricLabel(config.movement?.metric)}`
+      : game.i18n.localize('MORTAL_NEEDS.Config.MovementOff');
 
     const statusBadge = this.element.querySelector('.mn-config-preview__enabled-badge');
     if (statusBadge) {
@@ -411,6 +424,19 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
 
     const decay = this.element.querySelector('.mn-config-preview__decay');
     if (decay) decay.textContent = decayText;
+
+    const movement = this.element.querySelector('.mn-config-preview__movement');
+    if (movement) movement.textContent = movementText;
+  }
+
+  #getMovementMetricLabel(metric) {
+    const key = {
+      spaces: 'MovementMetricSpacesShort',
+      cost: 'MovementMetricCostShort',
+      distance: 'MovementMetricDistanceShort',
+    }[metric] || 'MovementMetricSpacesShort';
+
+    return game.i18n.localize(`MORTAL_NEEDS.NeedEdit.${key}`);
   }
 
   #setCriticalThresholdDraft(value) {

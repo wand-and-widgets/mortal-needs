@@ -8,6 +8,7 @@ import { ConsequenceEngine } from './core/consequence-engine.js';
 import { ConfigManager } from './core/config-manager.js';
 import { SocketManager } from './core/socket-manager.js';
 import { TimeEngine } from './core/time-engine.js';
+import { MovementEngine } from './core/movement-engine.js';
 
 // Consequence types (self-registering)
 import './consequences/attribute-modify.js';
@@ -50,6 +51,7 @@ class MortalNeeds {
     this.configManager = null;
     this.socketManager = null;
     this.timeEngine = null;
+    this.movementEngine = null;
     this.adapter = null;
     this.chatCards = null;
     this.flavorEngine = null;
@@ -57,7 +59,7 @@ class MortalNeeds {
   }
 
   async initialize() {
-    console.log(`${MODULE_TITLE} | Initializing v2.0...`);
+    console.log(`${MODULE_TITLE} | Initializing v2.2...`);
 
     // 1. Create event bus
     this.eventBus = new EventBus();
@@ -73,6 +75,7 @@ class MortalNeeds {
     this.consequenceEngine = new ConsequenceEngine(this.eventBus, this.store, this.adapter);
     this.socketManager = new SocketManager(this.eventBus, this.store);
     this.timeEngine = new TimeEngine(this.eventBus, this.store, this.engine);
+    this.movementEngine = new MovementEngine(this.eventBus, this.store, this.engine);
 
     // 4. Load configuration
     const needsConfig = await this.configManager.loadNeedsConfig();
@@ -84,6 +87,7 @@ class MortalNeeds {
     // 6. Initialize subsystems
     this.socketManager.initialize();
     this.timeEngine.initialize();
+    this.movementEngine.initialize();
     this.chatCards = new ChatCards(this.eventBus, this.store);
     this.flavorEngine = new FlavorEngine(this.eventBus, this.store);
 

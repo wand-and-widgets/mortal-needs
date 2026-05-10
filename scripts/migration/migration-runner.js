@@ -1,4 +1,4 @@
-import { MODULE_ID, MODULE_TITLE } from '../constants.js';
+import { MODULE_ID, MODULE_TITLE, DEFAULT_MOVEMENT_ADVANCEMENT } from '../constants.js';
 
 /**
  * Handles v1 -> v2 data migration.
@@ -15,7 +15,7 @@ import { MODULE_ID, MODULE_TITLE } from '../constants.js';
  * - `consequenceRemovalMode` and `showConsequenceChat` settings
  */
 export class MigrationRunner {
-  static DATA_VERSION = 3;
+  static DATA_VERSION = 4;
 
   static async run() {
     if (!game.user.isGM) return;
@@ -31,6 +31,9 @@ export class MigrationRunner {
       }
       if (currentVersion < 3) {
         await MigrationRunner.#migrateV2toV3();
+      }
+      if (currentVersion < 4) {
+        await MigrationRunner.#migrateV3toV4();
       }
 
       await game.settings.set(MODULE_ID, 'dataVersion', MigrationRunner.DATA_VERSION);
@@ -252,5 +255,32 @@ export class MigrationRunner {
     if (envNeeds.includes(needId)) return 'environmental';
     if (mentalNeeds.includes(needId)) return 'mental';
     return 'physical';
+  }
+
+  /**
+   * v3 -> v4: add movement-based advancement config to saved needs.
+   */
+  static async #migrateV3toV4() {
+    try {
+      const savedConfig = game.settings.get(MODULE_ID, 'needsConfig') || [];
+      if (savedConfig.length === 0) return;
+
+      let changed = false;
+      const migrated = savedConfig.map(config => {
+        if (config.movement) return config;
+        changed = true;
+        return {
+          ...config,
+          movement: { ...DEFAULT_MOVEMENT_ADVANCEMENT },
+        };
+      });
+
+      if (changed) {
+        await game.settings.set(MODULE_ID, 'needsConfig', migrated);
+        console.log(`${MODULE_TITLE} | Movement advancement config added to needs.`);
+      }
+    } catch (err) {
+      console.warn(`${MODULE_TITLE} | Failed to add movement advancement config:`, err);
+    }
   }
 }

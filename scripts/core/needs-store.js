@@ -1,4 +1,4 @@
-import { MODULE_ID, Events, EntitySource } from '../constants.js';
+import { MODULE_ID, Events, EntitySource, DEFAULT_MOVEMENT_ADVANCEMENT } from '../constants.js';
 
 export class NeedsStore {
   #state = new Map();
@@ -136,6 +136,7 @@ export class NeedsStore {
       iconType: 'fa', category: 'custom', order: this.#needConfigs.length,
       stressAmount: 10, attribute: null, consequences: [],
       decay: { enabled: false, rate: 5, interval: 3600 },
+      movement: { ...DEFAULT_MOVEMENT_ADVANCEMENT },
       flavor: { apply: [], remove: [] },
       ...config,
     });
@@ -498,6 +499,10 @@ export class NeedsStore {
     const defaultValue = Math.max(min, Math.min(max, fallbackDefault));
     const stressAmount = Math.max(1, this.#normalizeNumber(config.stressAmount, 10));
     const decay = config.decay || {};
+    const movement = config.movement || {};
+    const movementMetric = ['spaces', 'cost', 'distance'].includes(movement.metric)
+      ? movement.metric
+      : DEFAULT_MOVEMENT_ADVANCEMENT.metric;
 
     return {
       ...config,
@@ -512,6 +517,15 @@ export class NeedsStore {
         enabled: !!decay.enabled,
         rate: Math.max(0, this.#normalizeNumber(decay.rate, 0)),
         interval: Math.max(1, this.#normalizeNumber(decay.interval, 3600)),
+      },
+      movement: {
+        ...DEFAULT_MOVEMENT_ADVANCEMENT,
+        ...movement,
+        enabled: !!movement.enabled,
+        metric: movementMetric,
+        interval: Math.max(1, this.#normalizeNumber(movement.interval, DEFAULT_MOVEMENT_ADVANCEMENT.interval)),
+        amount: Math.min(100, Math.max(1, this.#normalizeNumber(movement.amount, DEFAULT_MOVEMENT_ADVANCEMENT.amount))),
+        countTeleports: !!movement.countTeleports,
       },
     };
   }

@@ -90,6 +90,7 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       min: 0, max: 100, default: 0, stressAmount: 10,
       attribute: null, consequences: [],
       decay: { enabled: false, rate: 5, interval: 3600 },
+      movement: { enabled: false, metric: 'spaces', interval: 2, amount: 10, countTeleports: false },
     };
     const criticalThreshold = game.settings.get(MODULE_ID, 'criticalThreshold') ?? 80;
     const previewPercentage = Math.min(100, Math.max(0, criticalThreshold));
@@ -113,6 +114,8 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       previewSeverity,
       previewValue: Math.round((preparedConfig.max ?? 100) * (previewPercentage / 100)),
       criticalThreshold,
+      movementMetrics: this.#getMovementMetricChoices(preparedConfig.movement?.metric),
+      movementMetricShortLabel: this.#getMovementMetricLabel(preparedConfig.movement?.metric),
     };
   }
 
@@ -135,6 +138,7 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 
     this.#bindLivePreview();
     this.#syncDecayVisualState();
+    this.#syncMovementVisualState();
   }
 
   _onClose(options) {
@@ -155,6 +159,10 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       '[name="decayEnabled"]',
       '[name="decayRate"]',
       '[name="decayInterval"]',
+      '[name="movementEnabled"]',
+      '[name="movementMetric"]',
+      '[name="movementInterval"]',
+      '[name="movementAmount"]',
     ];
 
     for (const selector of fields) {
@@ -176,6 +184,10 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const decayEnabled = this.element.querySelector('[name="decayEnabled"]')?.checked ?? false;
     const decayRate = Number(this.element.querySelector('[name="decayRate"]')?.value) || 0;
     const decayInterval = Number(this.element.querySelector('[name="decayInterval"]')?.value) || 0;
+    const movementEnabled = this.element.querySelector('[name="movementEnabled"]')?.checked ?? false;
+    const movementAmount = Number(this.element.querySelector('[name="movementAmount"]')?.value) || 0;
+    const movementInterval = Number(this.element.querySelector('[name="movementInterval"]')?.value) || 0;
+    const movementMetric = this.element.querySelector('[name="movementMetric"]')?.value || 'spaces';
     const previewPercentage = Number(this.element.dataset.previewPercentage) || 0;
     const previewValue = Math.round(max * (previewPercentage / 100));
     const fallbackName = this.element.querySelector('[name="needId"]')?.value?.trim() || 'Need';
@@ -220,12 +232,25 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const decay = this.element.querySelector('[data-live-decay]');
     if (decay) decay.textContent = decayEnabled ? `+${decayRate} / ${decayInterval}s` : '-';
 
+    const movement = this.element.querySelector('[data-live-movement]');
+    if (movement) {
+      movement.textContent = movementEnabled
+        ? `+${movementAmount} / ${movementInterval} ${this.#getMovementMetricLabel(movementMetric)}`
+        : '-';
+    }
+
     this.#syncDecayVisualState();
+    this.#syncMovementVisualState();
   }
 
   #syncDecayVisualState() {
     const decayEnabled = this.element.querySelector('[name="decayEnabled"]')?.checked ?? false;
     this.element.querySelector('.mn-need-editor-panel--decay')?.classList.toggle('is-decay-disabled', !decayEnabled);
+  }
+
+  #syncMovementVisualState() {
+    const movementEnabled = this.element.querySelector('[name="movementEnabled"]')?.checked ?? false;
+    this.element.querySelector('.mn-need-editor-panel--movement')?.classList.toggle('is-movement-disabled', !movementEnabled);
   }
 
   #collectFormData() {
@@ -254,6 +279,9 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const stressAmount = this.#readInteger('stressAmount', 10);
     const decayRate = this.#readInteger('decayRate', 5);
     const decayInterval = this.#readInteger('decayInterval', 3600);
+    const movementInterval = this.#readInteger('movementInterval', 2);
+    const movementAmount = this.#readInteger('movementAmount', 10);
+    const movementMetric = this.#readMovementMetric('movementMetric', existingConfig?.movement?.metric || 'spaces');
 
     if (
       min < 0
@@ -265,6 +293,9 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       || stressAmount > 100
       || decayRate < 1
       || decayInterval < 60
+      || movementInterval < 1
+      || movementAmount < 1
+      || movementAmount > 100
     ) {
       ui.notifications.warn('MORTAL_NEEDS.NeedEdit.InvalidValueRange', { localize: true });
       return null;
@@ -288,6 +319,14 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         enabled: form.querySelector('[name="decayEnabled"]')?.checked ?? false,
         rate: decayRate,
         interval: decayInterval,
+      },
+      movement: {
+        ...(existingConfig?.movement || {}),
+        enabled: form.querySelector('[name="movementEnabled"]')?.checked ?? false,
+        metric: movementMetric,
+        interval: movementInterval,
+        amount: movementAmount,
+        countTeleports: existingConfig?.movement?.countTeleports ?? false,
       },
     };
   }
@@ -316,12 +355,46 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         rate: this.#readInteger('decayRate', existingConfig?.decay?.rate ?? 5),
         interval: this.#readInteger('decayInterval', existingConfig?.decay?.interval ?? 3600),
       },
+      movement: {
+        ...(existingConfig?.movement || {}),
+        enabled: form.querySelector('[name="movementEnabled"]')?.checked ?? false,
+        metric: this.#readMovementMetric('movementMetric', existingConfig?.movement?.metric || 'spaces'),
+        interval: this.#readInteger('movementInterval', existingConfig?.movement?.interval ?? 2),
+        amount: this.#readInteger('movementAmount', existingConfig?.movement?.amount ?? 10),
+        countTeleports: existingConfig?.movement?.countTeleports ?? false,
+      },
     };
   }
 
   #readInteger(name, fallback) {
     const value = Number.parseInt(this.element.querySelector(`[name="${name}"]`)?.value, 10);
     return Number.isFinite(value) ? value : fallback;
+  }
+
+  #readMovementMetric(name, fallback) {
+    const value = this.element.querySelector(`[name="${name}"]`)?.value;
+    return ['spaces', 'cost', 'distance'].includes(value) ? value : fallback;
+  }
+
+  #getMovementMetricChoices(selectedMetric = 'spaces') {
+    return [
+      { value: 'spaces', label: 'MORTAL_NEEDS.NeedEdit.MovementMetricSpaces' },
+      { value: 'cost', label: 'MORTAL_NEEDS.NeedEdit.MovementMetricCost' },
+      { value: 'distance', label: 'MORTAL_NEEDS.NeedEdit.MovementMetricDistance' },
+    ].map(choice => ({
+      ...choice,
+      selected: choice.value === selectedMetric,
+    }));
+  }
+
+  #getMovementMetricLabel(metric) {
+    const key = {
+      spaces: 'MovementMetricSpacesShort',
+      cost: 'MovementMetricCostShort',
+      distance: 'MovementMetricDistanceShort',
+    }[metric] || 'MovementMetricSpacesShort';
+
+    return game.i18n.localize(`MORTAL_NEEDS.NeedEdit.${key}`);
   }
 
   async #persistConfig(data) {

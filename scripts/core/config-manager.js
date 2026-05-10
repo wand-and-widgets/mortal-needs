@@ -1,4 +1,4 @@
-import { MODULE_ID, DEFAULT_NEEDS, BUILT_IN_PRESETS } from '../constants.js';
+import { MODULE_ID, DEFAULT_NEEDS, BUILT_IN_PRESETS, DEFAULT_MOVEMENT_ADVANCEMENT } from '../constants.js';
 
 export class ConfigManager {
   #eventBus;
@@ -21,6 +21,10 @@ export class ConfigManager {
 
     game.settings.register(MODULE_ID, 'needsHistory', {
       scope: 'world', config: false, type: Object, default: { version: 1, entries: [] },
+    });
+
+    game.settings.register(MODULE_ID, 'movementProgress', {
+      scope: 'world', config: false, type: Object, default: {},
     });
 
     game.settings.register(MODULE_ID, 'esCharacterNeeds', {
@@ -218,6 +222,7 @@ export class ConfigManager {
           // Ensure new v2 fields exist
           consequences: saved.consequences || saved.effects || [],
           decay: saved.decay || { enabled: false, rate: 5, interval: 3600 },
+          movement: ConfigManager.#mergeMovementStructure(defaultNeed.movement, saved.movement),
           category: saved.category || defaultNeed.category,
           iconType: saved.iconType || 'fa',
         });
@@ -234,6 +239,7 @@ export class ConfigManager {
         custom: true,
         consequences: custom.consequences || custom.effects || [],
         decay: custom.decay || { enabled: false, rate: 5, interval: 3600 },
+        movement: ConfigManager.#mergeMovementStructure(DEFAULT_MOVEMENT_ADVANCEMENT, custom.movement),
         category: custom.category || 'custom',
         iconType: custom.iconType || 'fa',
       });
@@ -320,6 +326,14 @@ export class ConfigManager {
     }
 
     return result;
+  }
+
+  static #mergeMovementStructure(defaultMovement, savedMovement) {
+    return {
+      ...DEFAULT_MOVEMENT_ADVANCEMENT,
+      ...(defaultMovement || {}),
+      ...(savedMovement || {}),
+    };
   }
 
   // --- Import/Export ---

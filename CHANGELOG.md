@@ -5,6 +5,17 @@ All notable changes to Mortal Needs will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-05-10
+
+### Added
+- Movement-based advancement can now be enabled per need, allowing GMs to advance hunger, thirst, exhaustion, fatigue, or custom needs when tracked character tokens move
+- Movement rules can measure grid spaces, movement cost, or scene distance, with configurable interval and stress amount per need
+- Partial movement progress is preserved between token moves so small movements accumulate correctly
+
+### Changed
+- Updated the module manifest for Foundry VTT v13 and v14 compatibility
+- Movement-triggered need changes are recorded in history with their own source label
+
 ## [2.1.1] - 2026-04-23
 
 ### Changed

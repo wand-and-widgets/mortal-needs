@@ -5,7 +5,7 @@ import { CustomCallbackConsequence } from '../consequences/custom-callback.js';
 
 export function createPublicAPI(store, engine, consequenceEngine, eventBus, configManager, adapter, app) {
   const api = {
-    version: '2.0.0',
+    version: '2.2.0',
 
     // --- Needs ---
     needs: {

@@ -32,6 +32,7 @@ export const Events = Object.freeze({
   UI_TOGGLED:          'mortalNeeds.ui.toggled',
 
   TIME_DECAY_TICK:     'mortalNeeds.time.decayTick',
+  MOVEMENT_STRESS_TICK: 'mortalNeeds.movement.stressTick',
 
   CONSEQUENCE_TYPE_REGISTERED: 'mortalNeeds.consequenceType.registered',
   PRESET_REGISTERED:           'mortalNeeds.preset.registered',
@@ -88,6 +89,18 @@ export const NeedCategory = Object.freeze({
   CUSTOM: 'custom',
 });
 
+export const DEFAULT_MOVEMENT_ADVANCEMENT = Object.freeze({
+  enabled: false,
+  metric: 'spaces',
+  interval: 2,
+  amount: 10,
+  countTeleports: false,
+});
+
+function defaultMovementAdvancement() {
+  return { ...DEFAULT_MOVEMENT_ADVANCEMENT };
+}
+
 export const DEFAULT_NEEDS = [
   {
     id: 'hunger', label: 'MORTAL_NEEDS.Needs.Hunger', icon: 'fa-utensils', iconType: 'fa',
@@ -95,6 +108,7 @@ export const DEFAULT_NEEDS = [
     min: 0, max: 100, default: 0, custom: false, stressAmount: 10,
     attribute: null, consequences: [],
     decay: { enabled: false, rate: 5, interval: 3600 },
+    movement: defaultMovementAdvancement(),
     flavor: buildFlavorKeys('hunger')
   },
   {
@@ -103,6 +117,7 @@ export const DEFAULT_NEEDS = [
     min: 0, max: 100, default: 0, custom: false, stressAmount: 15,
     attribute: null, consequences: [],
     decay: { enabled: false, rate: 8, interval: 3600 },
+    movement: defaultMovementAdvancement(),
     flavor: buildFlavorKeys('thirst')
   },
   {
@@ -111,6 +126,7 @@ export const DEFAULT_NEEDS = [
     min: 0, max: 100, default: 0, custom: false, stressAmount: 10,
     attribute: null, consequences: [],
     decay: { enabled: false, rate: 5, interval: 3600 },
+    movement: defaultMovementAdvancement(),
     flavor: buildFlavorKeys('exhaustion')
   },
   {
@@ -119,6 +135,7 @@ export const DEFAULT_NEEDS = [
     min: 0, max: 100, default: 0, custom: false, stressAmount: 10,
     attribute: null, consequences: [],
     decay: { enabled: false, rate: 10, interval: 3600 },
+    movement: defaultMovementAdvancement(),
     flavor: buildFlavorKeys('cold')
   },
   {
@@ -127,6 +144,7 @@ export const DEFAULT_NEEDS = [
     min: 0, max: 100, default: 0, custom: false, stressAmount: 10,
     attribute: null, consequences: [],
     decay: { enabled: false, rate: 10, interval: 3600 },
+    movement: defaultMovementAdvancement(),
     flavor: buildFlavorKeys('heat')
   },
   {
@@ -135,6 +153,7 @@ export const DEFAULT_NEEDS = [
     min: 0, max: 100, default: 0, custom: false, stressAmount: 10,
     attribute: null, consequences: [],
     decay: { enabled: false, rate: 3, interval: 3600 },
+    movement: defaultMovementAdvancement(),
     flavor: buildFlavorKeys('comfort')
   },
   {
@@ -143,6 +162,7 @@ export const DEFAULT_NEEDS = [
     min: 0, max: 100, default: 0, custom: false, stressAmount: 5,
     attribute: null, consequences: [],
     decay: { enabled: false, rate: 2, interval: 3600 },
+    movement: defaultMovementAdvancement(),
     flavor: buildFlavorKeys('sanity')
   },
   {
@@ -151,6 +171,7 @@ export const DEFAULT_NEEDS = [
     min: 0, max: 100, default: 0, custom: false, stressAmount: 5,
     attribute: null, consequences: [],
     decay: { enabled: false, rate: 2, interval: 3600 },
+    movement: defaultMovementAdvancement(),
     flavor: buildFlavorKeys('morale')
   },
   {
@@ -159,6 +180,7 @@ export const DEFAULT_NEEDS = [
     min: 0, max: 100, default: 0, custom: false, stressAmount: 10,
     attribute: null, consequences: [],
     decay: { enabled: false, rate: 3, interval: 3600 },
+    movement: defaultMovementAdvancement(),
     flavor: buildFlavorKeys('pain')
   },
   {
@@ -167,6 +189,7 @@ export const DEFAULT_NEEDS = [
     min: 0, max: 100, default: 0, custom: false, stressAmount: 5,
     attribute: null, consequences: [],
     decay: { enabled: false, rate: 1, interval: 3600 },
+    movement: defaultMovementAdvancement(),
     flavor: buildFlavorKeys('radiation')
   },
   {
@@ -175,6 +198,7 @@ export const DEFAULT_NEEDS = [
     min: 0, max: 100, default: 0, custom: false, stressAmount: 2,
     attribute: null, consequences: [],
     decay: { enabled: false, rate: 1, interval: 7200 },
+    movement: defaultMovementAdvancement(),
     flavor: buildFlavorKeys('corruption')
   },
   {
@@ -183,6 +207,7 @@ export const DEFAULT_NEEDS = [
     min: 0, max: 100, default: 0, custom: false, stressAmount: 10,
     attribute: null, consequences: [],
     decay: { enabled: false, rate: 5, interval: 3600 },
+    movement: defaultMovementAdvancement(),
     flavor: buildFlavorKeys('fatigue')
   },
   {
@@ -191,6 +216,7 @@ export const DEFAULT_NEEDS = [
     min: 0, max: 100, default: 0, custom: false, stressAmount: 10,
     attribute: null, consequences: [],
     decay: { enabled: false, rate: 5, interval: 3600 },
+    movement: defaultMovementAdvancement(),
     flavor: buildFlavorKeys('environmental')
   },
 ];
