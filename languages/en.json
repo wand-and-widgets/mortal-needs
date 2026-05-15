@@ -377,6 +377,23 @@
       "OrientationHorizontal": "Horizontal Bars",
       "OrientationVertical": "Vertical Bars",
       "OrientationRadial": "Radial Arcs",
+      "BroadcastLayout": "Broadcast HUD Layout",
+      "BroadcastLayoutHint": "Choose the bar style used only by the broadcast HUD, or inherit the main panel style.",
+      "BroadcastLayoutInherit": "Inherit Panel Style",
+      "BroadcastDensity": "Broadcast HUD Density",
+      "BroadcastDensityHint": "Control how much screen space the broadcast HUD uses.",
+      "BroadcastDensityNormal": "Normal",
+      "BroadcastDensityCompact": "Compact",
+      "BroadcastDensityMicro": "Micro Dock",
+      "BroadcastContentMode": "Broadcast HUD Content",
+      "BroadcastContentModeHint": "Choose whether the broadcast HUD shows every need, only each character's worst need, or crisis-focused needs.",
+      "BroadcastContentAll": "All Needs",
+      "BroadcastContentWorst": "Worst Need Only",
+      "BroadcastContentCrisis": "High and Critical Focus",
+      "BroadcastAutoFade": "Broadcast HUD Auto-Fade",
+      "BroadcastAutoFadeHint": "Let the broadcast HUD fade when idle and return to full opacity on hover or focus.",
+      "BroadcastIdleOpacity": "Broadcast Idle Opacity",
+      "BroadcastIdleOpacityHint": "Opacity used by the broadcast HUD while idle.",
       "UIScale": "UI Scale",
       "UIScaleHint": "Adjust the size of the needs panel (80-200%).",
       "CompactMode": "Compact Mode",
@@ -421,6 +438,14 @@
       "QuickStressTitle": "Quick Stress"
     },
 
+    "Broadcast": {
+      "CycleDensity": "Cycle broadcast density",
+      "ResetPosition": "Reset broadcast position",
+      "OpenPanel": "Open Mortal Needs panel",
+      "StressNeed": "Stress {need}",
+      "RelieveNeed": "Relieve {need}"
+    },
+
     "SessionFlow": {
       "WidgetLabel": "Mortal Needs",
       "NoTracked": "No characters tracked. Use the toolbar to add actors.",
@@ -451,6 +476,7 @@
       "ImportFormatted": "Import JSON formatted.",
       "PresetApplied": "Preset applied.",
       "PresetSaved": "Preset saved.",
+      "BroadcastActionFailed": "Failed to update need from the broadcast HUD.",
       "LongRestComplete": "Long rest complete — all needs reset.",
       "ShortRestComplete": "Short rest complete — needs partially relieved.",
       "SceneModifierSet": "Scene modifier updated."

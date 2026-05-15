@@ -159,7 +159,64 @@ export class ConfigManager {
       onChange: () => {
         const app = game.modules.get(MODULE_ID)?.api;
         app?.ui?.refresh();
+        Hooks.callAll('mortalNeeds.broadcast.settingsChanged');
       },
+    });
+
+    game.settings.register(MODULE_ID, 'broadcastLayout', {
+      name: 'MORTAL_NEEDS.Settings.BroadcastLayout',
+      hint: 'MORTAL_NEEDS.Settings.BroadcastLayoutHint',
+      scope: 'client', config: true, type: String,
+      default: 'inherit',
+      choices: {
+        inherit: 'MORTAL_NEEDS.Settings.BroadcastLayoutInherit',
+        horizontal: 'MORTAL_NEEDS.Settings.OrientationHorizontal',
+        vertical: 'MORTAL_NEEDS.Settings.OrientationVertical',
+        radial: 'MORTAL_NEEDS.Settings.OrientationRadial',
+      },
+      onChange: () => Hooks.callAll('mortalNeeds.broadcast.settingsChanged'),
+    });
+
+    game.settings.register(MODULE_ID, 'broadcastDensity', {
+      name: 'MORTAL_NEEDS.Settings.BroadcastDensity',
+      hint: 'MORTAL_NEEDS.Settings.BroadcastDensityHint',
+      scope: 'client', config: true, type: String,
+      default: 'normal',
+      choices: {
+        normal: 'MORTAL_NEEDS.Settings.BroadcastDensityNormal',
+        compact: 'MORTAL_NEEDS.Settings.BroadcastDensityCompact',
+        micro: 'MORTAL_NEEDS.Settings.BroadcastDensityMicro',
+      },
+      onChange: () => Hooks.callAll('mortalNeeds.broadcast.settingsChanged'),
+    });
+
+    game.settings.register(MODULE_ID, 'broadcastContentMode', {
+      name: 'MORTAL_NEEDS.Settings.BroadcastContentMode',
+      hint: 'MORTAL_NEEDS.Settings.BroadcastContentModeHint',
+      scope: 'client', config: true, type: String,
+      default: 'all',
+      choices: {
+        all: 'MORTAL_NEEDS.Settings.BroadcastContentAll',
+        worst: 'MORTAL_NEEDS.Settings.BroadcastContentWorst',
+        crisis: 'MORTAL_NEEDS.Settings.BroadcastContentCrisis',
+      },
+      onChange: () => Hooks.callAll('mortalNeeds.broadcast.settingsChanged'),
+    });
+
+    game.settings.register(MODULE_ID, 'broadcastAutoFade', {
+      name: 'MORTAL_NEEDS.Settings.BroadcastAutoFade',
+      hint: 'MORTAL_NEEDS.Settings.BroadcastAutoFadeHint',
+      scope: 'client', config: true, type: Boolean,
+      default: true,
+      onChange: () => Hooks.callAll('mortalNeeds.broadcast.settingsChanged'),
+    });
+
+    game.settings.register(MODULE_ID, 'broadcastIdleOpacity', {
+      name: 'MORTAL_NEEDS.Settings.BroadcastIdleOpacity',
+      hint: 'MORTAL_NEEDS.Settings.BroadcastIdleOpacityHint',
+      scope: 'client', config: true, type: Number,
+      default: 55, range: { min: 20, max: 100, step: 5 },
+      onChange: () => Hooks.callAll('mortalNeeds.broadcast.settingsChanged'),
     });
 
     game.settings.register(MODULE_ID, 'panelPosition', {

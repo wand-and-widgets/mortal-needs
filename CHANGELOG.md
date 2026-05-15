@@ -5,6 +5,21 @@ All notable changes to Mortal Needs will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.0] - 2026-05-15
+
+### Added
+- GM-only +/- controls in the Broadcast HUD for adjusting individual needs directly from the broadcast view, hidden from players
+- Broadcast HUD density modes: Normal, Compact, and Micro for tables where screen space is precious
+- Broadcast HUD content focus modes: show all needs, only each character's worst need, or only at-risk/critical needs
+- Idle transparency with configurable opacity that fades the HUD when not in use and restores full visibility on hover or focus
+- Reset-position button for the Broadcast HUD to recover from offscreen drag states
+- New client settings: broadcast layout override, density, content mode, auto-fade toggle, and idle opacity
+
+### Changed
+- Broadcast HUD now clamps its position inside the visible screen so it cannot get stuck offscreen
+- Crisis states (at-risk/critical needs) are subtly highlighted in the HUD so the GM does not miss important pressure points
+- Micro density mode keeps need icons visible to remain compact without becoming cryptic
+
 ## [2.2.0] - 2026-05-10
 
 ### Added

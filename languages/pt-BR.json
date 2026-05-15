@@ -377,6 +377,23 @@
       "OrientationHorizontal": "Barras Horizontais",
       "OrientationVertical": "Barras Verticais",
       "OrientationRadial": "Arcos Radiais",
+      "BroadcastLayout": "Layout do HUD de Transmiss\u00e3o",
+      "BroadcastLayoutHint": "Escolha o estilo de barras usado apenas no HUD de transmiss\u00e3o, ou herde o estilo do painel principal.",
+      "BroadcastLayoutInherit": "Herdar Estilo do Painel",
+      "BroadcastDensity": "Densidade do HUD de Transmiss\u00e3o",
+      "BroadcastDensityHint": "Controla quanto espa\u00e7o de tela o HUD de transmiss\u00e3o usa.",
+      "BroadcastDensityNormal": "Normal",
+      "BroadcastDensityCompact": "Compacto",
+      "BroadcastDensityMicro": "Doca Micro",
+      "BroadcastContentMode": "Conte\u00fado do HUD de Transmiss\u00e3o",
+      "BroadcastContentModeHint": "Escolha se o HUD mostra todas as necessidades, apenas a pior de cada personagem, ou necessidades em crise.",
+      "BroadcastContentAll": "Todas as Necessidades",
+      "BroadcastContentWorst": "Apenas Pior Necessidade",
+      "BroadcastContentCrisis": "Foco em Alto e Cr\u00edtico",
+      "BroadcastAutoFade": "Transpar\u00eancia Autom\u00e1tica do HUD",
+      "BroadcastAutoFadeHint": "Faz o HUD de transmiss\u00e3o ficar transparente quando inativo e voltar \u00e0 opacidade total em hover ou foco.",
+      "BroadcastIdleOpacity": "Opacidade Inativa do Broadcast",
+      "BroadcastIdleOpacityHint": "Opacidade usada pelo HUD de transmiss\u00e3o enquanto estiver inativo.",
       "UIScale": "Escala da Interface",
       "UIScaleHint": "Ajuste o tamanho do painel de necessidades (80-200%).",
       "CompactMode": "Modo Compacto",
@@ -421,6 +438,14 @@
       "QuickStressTitle": "Estresse Rápido"
     },
 
+    "Broadcast": {
+      "CycleDensity": "Alternar densidade da transmiss\u00e3o",
+      "ResetPosition": "Resetar posi\u00e7\u00e3o da transmiss\u00e3o",
+      "OpenPanel": "Abrir painel de Necessidades Mortais",
+      "StressNeed": "Estressar {need}",
+      "RelieveNeed": "Aliviar {need}"
+    },
+
     "SessionFlow": {
       "WidgetLabel": "Necessidades Mortais",
       "NoTracked": "Nenhum personagem rastreado. Use a barra de ferramentas para adicionar.",
@@ -451,6 +476,7 @@
       "ImportFailed": "Falha ao importar configuração.",
       "PresetApplied": "Predefinição aplicada.",
       "PresetSaved": "Predefinição salva.",
+      "BroadcastActionFailed": "Falha ao atualizar a necessidade pelo HUD de transmiss\u00e3o.",
       "LongRestComplete": "Descanso longo completo — todas as necessidades resetadas.",
       "ShortRestComplete": "Descanso curto completo — necessidades parcialmente aliviadas.",
       "SceneModifierSet": "Modificador de cena atualizado."
