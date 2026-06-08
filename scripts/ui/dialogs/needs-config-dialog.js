@@ -1,4 +1,5 @@
 import { MODULE_ID, Events } from '../../constants.js';
+import { NeedDisplayRule, isGMOnlyNeed, normalizeNeedDisplayRule } from '../../core/need-visibility.js';
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 const CRITICAL_THRESHOLD_MIN = 50;
@@ -34,6 +35,8 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
     actions: {
       'save': NeedsConfigDialog.#onSave,
       'edit-need': NeedsConfigDialog.#onEditNeed,
+      'move-need-up': NeedsConfigDialog.#onMoveNeedUp,
+      'move-need-down': NeedsConfigDialog.#onMoveNeedDown,
       'add-custom-need': NeedsConfigDialog.#onAddCustomNeed,
       'export-config': NeedsConfigDialog.#onExport,
       'import-config': NeedsConfigDialog.#onImport,
@@ -82,14 +85,20 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
     this.#selectedNeedId = previewNeed?.id ?? null;
 
     return {
-      needs: needs.map(n => ({
+      needs: needs.map((n, index) => ({
         ...n,
         enabled: this.#getDraftEnabled(n),
         localizedLabel: game.i18n.localize(n.label),
+        hasCustomColor: !!n.color,
         hasConsequences: (n.consequences?.length ?? 0) > 0,
         consequenceCount: n.consequences?.length ?? 0,
         decayEnabled: !!n.decay?.enabled,
         movementEnabled: !!n.movement?.enabled,
+        isInverted: n.inverted === true,
+        isGMOnly: isGMOnlyNeed(n),
+        showAboveZeroOnly: normalizeNeedDisplayRule(n) === NeedDisplayRule.ABOVE_ZERO,
+        canMoveUp: index > 0,
+        canMoveDown: index < needs.length - 1,
         isPreview: n.id === previewNeed?.id,
       })),
       presets: this.#preparePresetViews(presets, needs),
@@ -110,6 +119,7 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
         ...previewNeed,
         enabled: this.#getDraftEnabled(previewNeed),
         localizedLabel: game.i18n.localize(previewNeed.label),
+        hasCustomColor: !!previewNeed.color,
         consequenceCount: previewNeed.consequences?.length ?? 0,
         decayRate: previewNeed.decay?.rate ?? 0,
         decayInterval: previewNeed.decay?.interval ?? 0,
@@ -118,6 +128,9 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
         movementInterval: previewNeed.movement?.interval ?? 0,
         movementMetricLabel: this.#getMovementMetricLabel(previewNeed.movement?.metric),
         movementEnabled: !!previewNeed.movement?.enabled,
+        isInverted: previewNeed.inverted === true,
+        isGMOnly: isGMOnlyNeed(previewNeed),
+        showAboveZeroOnly: normalizeNeedDisplayRule(previewNeed) === NeedDisplayRule.ABOVE_ZERO,
       } : null,
     };
   }
@@ -378,13 +391,13 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
     const localizedLabel = game.i18n.localize(config.label);
     const consequenceCount = config.consequences?.length ?? 0;
     const decayEnabled = !!config.decay?.enabled;
-    const decayText = decayEnabled
-      ? `+${config.decay?.rate ?? 0} / ${config.decay?.interval ?? 0}s`
-      : game.i18n.localize('MORTAL_NEEDS.Config.DecayOff');
     const movementEnabled = !!config.movement?.enabled;
     const movementText = movementEnabled
-      ? `+${config.movement?.amount ?? 0} / ${config.movement?.interval ?? 0} ${this.#getMovementMetricLabel(config.movement?.metric)}`
+      ? `${config.inverted ? '-' : '+'}${config.movement?.amount ?? 0} / ${config.movement?.interval ?? 0} ${this.#getMovementMetricLabel(config.movement?.metric)}`
       : game.i18n.localize('MORTAL_NEEDS.Config.MovementOff');
+    const decayText = decayEnabled
+      ? `${config.inverted ? '-' : '+'}${config.decay?.rate ?? 0} / ${config.decay?.interval ?? 0}s`
+      : game.i18n.localize('MORTAL_NEEDS.Config.DecayOff');
 
     const statusBadge = this.element.querySelector('.mn-config-preview__enabled-badge');
     if (statusBadge) {
@@ -399,6 +412,11 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
     const ring = this.element.querySelector('.mn-config-preview__ring');
     ring?.style.setProperty('--mn-preview-percent', `${previewPercentage}%`);
     ring?.setAttribute('data-severity', previewSeverity);
+    if (config.color) {
+      ring?.style.setProperty('--mn-need-preview-color', config.color);
+    } else {
+      ring?.style.removeProperty('--mn-need-preview-color');
+    }
 
     const percentage = this.element.querySelector('.mn-config-preview__ring-core strong');
     if (percentage) percentage.textContent = `${previewPercentage}%`;
@@ -410,9 +428,25 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
     if (pills) {
       const traitKey = config.custom ? 'MORTAL_NEEDS.Config.CustomTrait' : 'MORTAL_NEEDS.Config.DefaultTrait';
       const traitClass = config.custom ? 'custom' : 'default';
+      const gmOnlyTrait = isGMOnlyNeed(config)
+        ? `<span class="mn-config-pill mn-config-pill--source">${game.i18n.localize('MORTAL_NEEDS.Config.GMOnlyTrait')}</span>`
+        : '';
+      const aboveZeroTrait = normalizeNeedDisplayRule(config) === NeedDisplayRule.ABOVE_ZERO
+        ? `<span class="mn-config-pill mn-config-pill--source">${game.i18n.localize('MORTAL_NEEDS.Config.ShowAboveZeroTrait')}</span>`
+        : '';
+      const invertedTrait = config.inverted
+        ? `<span class="mn-config-pill mn-config-pill--source">${game.i18n.localize('MORTAL_NEEDS.Config.InvertedTrait')}</span>`
+        : '';
+      const colorTrait = config.color
+        ? `<span class="mn-config-pill mn-config-pill--source"><span class="mn-config-color-dot" style="--mn-need-color: ${config.color};"></span>${game.i18n.localize('MORTAL_NEEDS.Config.CustomColorTrait')}</span>`
+        : '';
       pills.innerHTML = `
         <span class="mn-config-pill mn-config-pill--${config.category}">${config.category}</span>
         <span class="mn-config-pill mn-config-pill--${traitClass}">${game.i18n.localize(traitKey)}</span>
+        ${gmOnlyTrait}
+        ${aboveZeroTrait}
+        ${invertedTrait}
+        ${colorTrait}
       `;
     }
 
@@ -545,6 +579,33 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
     const { NeedEditDialog } = await import('./need-edit-dialog.js');
     const dialog = new NeedEditDialog(needId, this.#store, this.#configManager, this.#eventBus);
     dialog.render(true);
+  }
+
+  static async #onMoveNeedUp(event, target) {
+    await this.#moveNeed(target.dataset.needId, -1);
+  }
+
+  static async #onMoveNeedDown(event, target) {
+    await this.#moveNeed(target.dataset.needId, 1);
+  }
+
+  async #moveNeed(needId, direction) {
+    if (!needId || !direction) return;
+
+    const configs = this.#store.getAllNeedConfigs();
+    const index = configs.findIndex(config => config.id === needId);
+    const nextIndex = index + direction;
+    if (index < 0 || nextIndex < 0 || nextIndex >= configs.length) return;
+
+    const reordered = [...configs];
+    [reordered[index], reordered[nextIndex]] = [reordered[nextIndex], reordered[index]];
+    const updated = reordered.map((config, order) => ({ ...config, order }));
+
+    this.#store.setNeedConfigs(updated);
+    await this.#configManager.saveNeedsConfig(this.#store.getAllNeedConfigs());
+    this.#selectedNeedId = needId;
+    this.#eventBus.emit(Events.CONFIG_CHANGED, { source: 'dialog', needId });
+    this.render(false);
   }
 
   static async #onAddCustomNeed() {

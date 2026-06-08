@@ -1,5 +1,6 @@
 import { MODULE_ID, MODULE_TITLE, Events, mnRenderTemplate } from '../constants.js';
 import { NeedsEngine } from '../core/needs-engine.js';
+import { filterDisplayNeedsForEntity, filterNeedsForUser, isGMOnlyNeed } from '../core/need-visibility.js';
 
 /**
  * Chat card system for Mortal Needs.
@@ -32,7 +33,8 @@ export class ChatCards {
     const value = NeedsEngine.normalizeNumber(needState?.value, 0);
     const max = NeedsEngine.normalizeNumber(needState?.max, 100);
     const percentage = NeedsEngine.getPercentage(value, max);
-    const severity = NeedsEngine.getSeverity(percentage);
+    const stressPercentage = NeedsEngine.getStressPercentage(value, max, needConfig);
+    const severity = NeedsEngine.getSeverity(stressPercentage);
 
     const templateData = {
       actorName: entityInfo.name,
@@ -72,7 +74,11 @@ export class ChatCards {
     const safeValue = NeedsEngine.normalizeNumber(value, 0);
     const safeMax = NeedsEngine.normalizeNumber(max, 100);
     const safePercentage = NeedsEngine.getPercentage(safeValue, safeMax);
-    const severity = NeedsEngine.getSeverity(safePercentage);
+    const stressPercentage = NeedsEngine.normalizeNumber(
+      percentage,
+      NeedsEngine.getStressPercentage(safeValue, safeMax, needConfig),
+    );
+    const severity = NeedsEngine.getSeverity(stressPercentage);
 
     const templateData = {
       actorName: entityInfo.name,
@@ -93,11 +99,17 @@ export class ChatCards {
       templateData,
     );
 
-    await ChatMessage.create({
+    const messageData = {
       content,
       speaker: { alias: MODULE_TITLE },
       flags: { [MODULE_ID]: { type: 'threshold-critical', entityId, needId } },
-    });
+    };
+
+    if (isGMOnlyNeed(needConfig)) {
+      messageData.whisper = game.users.filter(u => u.isGM).map(u => u.id);
+    }
+
+    await ChatMessage.create(messageData);
   }
 
   /**
@@ -107,13 +119,20 @@ export class ChatCards {
     const entityInfo = this.#store.getTrackedEntityInfo(entityId);
     if (!entityInfo) return;
 
-    const enabledConfigs = this.#store.getEnabledNeedConfigs();
+    const publicUser = { isGM: false };
+    const entityNeeds = this.#store.getActorAllNeeds(entityId) || {};
+    const enabledConfigs = filterDisplayNeedsForEntity(
+      filterNeedsForUser(this.#store.getEnabledNeedConfigs(), publicUser),
+      entityNeeds,
+      { user: publicUser },
+    );
     const needs = enabledConfigs.map(config => {
       const state = this.#store.getActorNeedState(entityId, config.id);
       const value = NeedsEngine.normalizeNumber(state?.value, 0);
       const max = NeedsEngine.normalizeNumber(state?.max ?? config.max, 100);
       const percentage = NeedsEngine.getPercentage(value, max);
-      const severity = NeedsEngine.getSeverity(percentage);
+      const stressPercentage = NeedsEngine.getStressPercentage(value, max, config);
+      const severity = NeedsEngine.getSeverity(stressPercentage);
 
       return {
         id: config.id,

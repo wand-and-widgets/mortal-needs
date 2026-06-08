@@ -1,4 +1,5 @@
 import { MODULE_ID } from '../../constants.js';
+import { filterNeedsForUser } from '../../core/need-visibility.js';
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -49,7 +50,7 @@ export class MultiStressDialog extends HandlebarsApplicationMixin(ApplicationV2)
 
   async _prepareContext(options) {
     const tracked = this.#store.getAllTrackedActors();
-    const needs = this.#store.getEnabledNeedConfigs();
+    const needs = filterNeedsForUser(this.#store.getEnabledNeedConfigs(), game.user);
     const defaultAmount = game.settings.get(MODULE_ID, 'defaultStressAmount');
     const selectedNeedCount = needs.length ? 1 : 0;
     const targetCount = tracked.length;
@@ -72,6 +73,7 @@ export class MultiStressDialog extends HandlebarsApplicationMixin(ApplicationV2)
 
   _onRender(context, options) {
     super._onRender(context, options);
+    this.#bringToFront();
 
     const clampAmount = value => Math.min(100, Math.max(1, parseInt(value) || 1));
 
@@ -182,6 +184,45 @@ export class MultiStressDialog extends HandlebarsApplicationMixin(ApplicationV2)
     });
 
     updatePreview();
+    requestAnimationFrame(() => this.#bringToFront());
+  }
+
+  #bringToFront() {
+    const element = this.element;
+    if (!element) return;
+
+    const foundryBringToTop = this.bringToTop ?? this.bringToFront;
+    if (typeof foundryBringToTop === 'function') {
+      try {
+        foundryBringToTop.call(this);
+      } catch (error) {
+        console.warn('Mortal Needs | Could not use Foundry window focus helper', error);
+      }
+    }
+
+    const layeredSelectors = [
+      '.application',
+      '.app',
+      '.window-app',
+      '.dialog',
+      '.sessionflow-gm-panel',
+      '.sessionflow-player-panel',
+      '.sessionflow-scene-panel',
+      '.sessionflow-beat-panel',
+      '.sessionflow-widget',
+      '.sessionflow-character-detail',
+      '.sessionflow-player-detail',
+    ].join(', ');
+
+    const topZ = [...document.querySelectorAll(layeredSelectors)]
+      .filter(el => el !== element)
+      .map(el => Number.parseInt(getComputedStyle(el).zIndex, 10))
+      .filter(zIndex => Number.isFinite(zIndex) && zIndex > 0 && zIndex < 100000)
+      .reduce((highest, zIndex) => Math.max(highest, zIndex), 0);
+
+    const nextZ = Math.min(Math.max(20050, topZ + 20), 99999);
+    element.style.setProperty('z-index', String(nextZ), 'important');
+    element.classList.add('mn-dialog--front');
   }
 
   static #onCancel() {

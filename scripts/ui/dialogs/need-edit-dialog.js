@@ -1,5 +1,12 @@
 import { MODULE_ID, Events, NeedCategory } from '../../constants.js';
 import { getAllConsequenceTypes, getConsequenceType, getConsequenceDescription } from '../../consequences/consequence-type.js';
+import { NeedsEngine } from '../../core/needs-engine.js';
+import {
+  NeedDisplayRule,
+  NeedVisibility,
+  normalizeNeedDisplayRule,
+  normalizeNeedVisibility,
+} from '../../core/need-visibility.js';
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -84,20 +91,30 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       iconClass: getConsequenceType(s.type)?.ICON || 'fas fa-bolt',
     }));
 
-    const preparedConfig = config || {
+    const baseConfig = config || {
       id: '', label: '', icon: 'fa-question', iconType: 'fa',
       enabled: true, category: NeedCategory.CUSTOM, custom: true,
       min: 0, max: 100, default: 0, stressAmount: 10,
+      inverted: false,
       attribute: null, consequences: [],
       decay: { enabled: false, rate: 5, interval: 3600 },
       movement: { enabled: false, metric: 'spaces', interval: 2, amount: 10, countTeleports: false },
     };
+    const preparedConfig = {
+      ...baseConfig,
+      visibility: normalizeNeedVisibility(baseConfig),
+      showWhen: normalizeNeedDisplayRule(baseConfig),
+      color: this.#normalizeColor(baseConfig.color),
+      inverted: baseConfig.inverted === true,
+    };
     const criticalThreshold = game.settings.get(MODULE_ID, 'criticalThreshold') ?? 80;
-    const previewPercentage = Math.min(100, Math.max(0, criticalThreshold));
-    const previewSeverity = previewPercentage >= 80 ? 'critical'
-      : previewPercentage >= 60 ? 'high'
-        : previewPercentage >= 40 ? 'medium'
-          : previewPercentage >= 20 ? 'low'
+    const previewRiskPercentage = Math.min(100, Math.max(0, criticalThreshold));
+    const previewValue = NeedsEngine.getValueForStressPercentage(previewRiskPercentage, preparedConfig.max ?? 100, preparedConfig);
+    const previewPercentage = Math.min(100, Math.max(0, NeedsEngine.getPercentage(previewValue, preparedConfig.max ?? 100)));
+    const previewSeverity = previewRiskPercentage >= 80 ? 'critical'
+      : previewRiskPercentage >= 60 ? 'high'
+        : previewRiskPercentage >= 40 ? 'medium'
+          : previewRiskPercentage >= 20 ? 'low'
             : 'safe';
 
     return {
@@ -111,9 +128,11 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       hasSuggestions: needSuggestions.length > 0,
       canDelete: !!config?.custom,
       previewPercentage,
+      previewRiskPercentage,
       previewSeverity,
-      previewValue: Math.round((preparedConfig.max ?? 100) * (previewPercentage / 100)),
+      previewValue,
       criticalThreshold,
+      colorValue: preparedConfig.color || '#d79524',
       movementMetrics: this.#getMovementMetricChoices(preparedConfig.movement?.metric),
       movementMetricShortLabel: this.#getMovementMetricLabel(preparedConfig.movement?.metric),
     };
@@ -153,9 +172,16 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       '[name="label"]',
       '[name="icon"]',
       '[name="category"]',
+      '[name="customColorEnabled"]',
+      '[name="color"]',
+      '[name="min"]',
       '[name="max"]',
+      '[name="default"]',
       '[name="stressAmount"]',
+      '[name="inverted"]',
       '[name="enabled"]',
+      '[name="gmOnly"]',
+      '[name="showAboveZeroOnly"]',
       '[name="decayEnabled"]',
       '[name="decayRate"]',
       '[name="decayInterval"]',
@@ -171,6 +197,18 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       input?.addEventListener('change', () => this.#refreshLivePreview());
     }
 
+    this.element.querySelector('[name="inverted"]')?.addEventListener('change', (event) => {
+      if (!event.currentTarget.checked) return;
+      const min = Number(this.element.querySelector('[name="min"]')?.value) || 0;
+      const max = Number(this.element.querySelector('[name="max"]')?.value) || 100;
+      const defaultInput = this.element.querySelector('[name="default"]');
+      const currentDefault = Number(defaultInput?.value);
+      if (defaultInput && (!Number.isFinite(currentDefault) || currentDefault <= min)) {
+        defaultInput.value = String(max);
+      }
+      this.#refreshLivePreview();
+    });
+
     this.#refreshLivePreview();
   }
 
@@ -178,7 +216,9 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const labelValue = this.element.querySelector('[name="label"]')?.value?.trim() ?? '';
     const iconValue = this.element.querySelector('[name="icon"]')?.value?.trim() || 'fa-question';
     const category = this.element.querySelector('[name="category"]')?.value || NeedCategory.CUSTOM;
+    const min = Number(this.element.querySelector('[name="min"]')?.value) || 0;
     const max = Number(this.element.querySelector('[name="max"]')?.value) || 100;
+    const inverted = this.element.querySelector('[name="inverted"]')?.checked ?? false;
     const stressAmount = Number(this.element.querySelector('[name="stressAmount"]')?.value) || 0;
     const enabled = this.element.querySelector('[name="enabled"]')?.checked ?? true;
     const decayEnabled = this.element.querySelector('[name="decayEnabled"]')?.checked ?? false;
@@ -188,8 +228,11 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const movementAmount = Number(this.element.querySelector('[name="movementAmount"]')?.value) || 0;
     const movementInterval = Number(this.element.querySelector('[name="movementInterval"]')?.value) || 0;
     const movementMetric = this.element.querySelector('[name="movementMetric"]')?.value || 'spaces';
-    const previewPercentage = Number(this.element.dataset.previewPercentage) || 0;
-    const previewValue = Math.round(max * (previewPercentage / 100));
+    const customColorEnabled = this.element.querySelector('[name="customColorEnabled"]')?.checked ?? false;
+    const customColor = this.#normalizeColor(this.element.querySelector('[name="color"]')?.value);
+    const previewRiskPercentage = Number(this.element.dataset.previewRiskPercentage) || 0;
+    const previewValue = NeedsEngine.getValueForStressPercentage(previewRiskPercentage, max, { min, max, inverted });
+    const previewPercentage = Math.min(100, Math.max(0, NeedsEngine.getPercentage(previewValue, max)));
     const fallbackName = this.element.querySelector('[name="needId"]')?.value?.trim() || 'Need';
     const displayName = labelValue ? game.i18n.localize(labelValue) : fallbackName;
     const iconClass = `fas ${iconValue}`;
@@ -226,16 +269,31 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const meta = this.element.querySelector('[data-live-meta]');
     if (meta) meta.textContent = `${previewValue}/${max} \u00b7 ${category}`;
 
+    const previewPercent = this.element.querySelector('[data-live-percent]');
+    if (previewPercent) previewPercent.textContent = `${previewPercentage}%`;
+
+    const previewRing = this.element.querySelector('.mn-need-preview__ring');
+    if (previewRing) {
+      previewRing.style.setProperty('--mn-preview-percent', `${previewPercentage}%`);
+      if (customColorEnabled && customColor) {
+        previewRing.style.setProperty('--mn-need-preview-color', customColor);
+      } else {
+        previewRing.style.removeProperty('--mn-need-preview-color');
+      }
+    }
+
     const stress = this.element.querySelector('[data-live-stress]');
     if (stress) stress.textContent = `${stressAmount} ${game.i18n.localize('MORTAL_NEEDS.NeedEdit.StressAmount')}`;
 
     const decay = this.element.querySelector('[data-live-decay]');
-    if (decay) decay.textContent = decayEnabled ? `+${decayRate} / ${decayInterval}s` : '-';
+    const rawStressSign = inverted ? '-' : '+';
+
+    if (decay) decay.textContent = decayEnabled ? `${rawStressSign}${decayRate} / ${decayInterval}s` : '-';
 
     const movement = this.element.querySelector('[data-live-movement]');
     if (movement) {
       movement.textContent = movementEnabled
-        ? `+${movementAmount} / ${movementInterval} ${this.#getMovementMetricLabel(movementMetric)}`
+        ? `${rawStressSign}${movementAmount} / ${movementInterval} ${this.#getMovementMetricLabel(movementMetric)}`
         : '-';
     }
 
@@ -312,7 +370,13 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       max,
       default: defaultValue,
       stressAmount,
+      inverted: form.querySelector('[name="inverted"]')?.checked ?? false,
       enabled: form.querySelector('[name="enabled"]')?.checked ?? true,
+      color: form.querySelector('[name="customColorEnabled"]')?.checked ? this.#normalizeColor(form.querySelector('[name="color"]')?.value) : null,
+      visibility: form.querySelector('[name="gmOnly"]')?.checked ? NeedVisibility.GM : NeedVisibility.ALL,
+      showWhen: form.querySelector('[name="showAboveZeroOnly"]')?.checked
+        ? NeedDisplayRule.ABOVE_ZERO
+        : NeedDisplayRule.ALWAYS,
       custom: existingConfig?.custom ?? true,
       consequences: existingConfig?.consequences || [],
       decay: {
@@ -347,7 +411,13 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       max: this.#readInteger('max', existingConfig?.max ?? 100),
       default: this.#readInteger('default', existingConfig?.default ?? 0),
       stressAmount: this.#readInteger('stressAmount', existingConfig?.stressAmount ?? 10),
+      inverted: form.querySelector('[name="inverted"]')?.checked ?? false,
       enabled: form.querySelector('[name="enabled"]')?.checked ?? true,
+      color: form.querySelector('[name="customColorEnabled"]')?.checked ? this.#normalizeColor(form.querySelector('[name="color"]')?.value) : null,
+      visibility: form.querySelector('[name="gmOnly"]')?.checked ? NeedVisibility.GM : NeedVisibility.ALL,
+      showWhen: form.querySelector('[name="showAboveZeroOnly"]')?.checked
+        ? NeedDisplayRule.ABOVE_ZERO
+        : NeedDisplayRule.ALWAYS,
       custom: existingConfig?.custom ?? true,
       consequences: existingConfig?.consequences || [],
       decay: {
@@ -369,6 +439,12 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
   #readInteger(name, fallback) {
     const value = Number.parseInt(this.element.querySelector(`[name="${name}"]`)?.value, 10);
     return Number.isFinite(value) ? value : fallback;
+  }
+
+  #normalizeColor(value) {
+    if (typeof value !== 'string') return null;
+    const color = value.trim();
+    return /^#[0-9a-fA-F]{6}$/.test(color) ? color.toLowerCase() : null;
   }
 
   #readMovementMetric(name, fallback) {

@@ -1,4 +1,4 @@
-<div class="mn-dialog__body mn-need-edit-shell" data-preview-percentage="{{previewPercentage}}">
+<div class="mn-dialog__body mn-need-edit-shell" data-preview-risk-percentage="{{previewRiskPercentage}}">
   <main class="mn-need-edit-main">
     <section class="mn-need-editor-hero mn-form-card">
       <div class="mn-need-editor-hero__summary">
@@ -45,6 +45,18 @@
         </div>
 
         <div class="mn-field">
+          <label>{{localize "MORTAL_NEEDS.NeedEdit.Color"}}</label>
+          <div class="mn-color-field">
+            <label class="mn-switch mn-color-field__switch">
+              <input type="checkbox" name="customColorEnabled" {{#if config.color}}checked{{/if}}>
+              <span class="mn-switch__track"><span class="mn-switch__thumb"></span></span>
+              <span>{{localize "MORTAL_NEEDS.NeedEdit.UseCustomColor"}}</span>
+            </label>
+            <input type="color" name="color" value="{{colorValue}}" aria-label="{{localize 'MORTAL_NEEDS.NeedEdit.Color'}}">
+          </div>
+        </div>
+
+        <div class="mn-field">
           <label>{{localize "MORTAL_NEEDS.NeedEdit.Category"}}</label>
           <select name="category">
             {{#each categories}}
@@ -82,6 +94,45 @@
             <input type="number" name="stressAmount" value="{{config.stressAmount}}" min="1" max="100">
           </div>
         </div>
+
+        <label class="mn-switch-row">
+          <span>
+            <strong>{{localize "MORTAL_NEEDS.NeedEdit.Inverted"}}</strong>
+            <small>{{localize "MORTAL_NEEDS.NeedEdit.InvertedHint"}}</small>
+          </span>
+          <span class="mn-switch">
+            <input type="checkbox" name="inverted" {{#if config.inverted}}checked{{/if}}>
+            <span class="mn-switch__track"><span class="mn-switch__thumb"></span></span>
+          </span>
+        </label>
+      </article>
+
+      <article class="mn-form-card mn-need-editor-panel mn-need-editor-panel--visibility">
+        <header class="mn-need-editor-panel__header">
+          <h3>{{localize "MORTAL_NEEDS.NeedEdit.Visibility"}}</h3>
+        </header>
+
+        <label class="mn-switch-row">
+          <span>
+            <strong>{{localize "MORTAL_NEEDS.NeedEdit.GMOnly"}}</strong>
+            <small>{{localize "MORTAL_NEEDS.NeedEdit.GMOnlyHint"}}</small>
+          </span>
+          <span class="mn-switch">
+            <input type="checkbox" name="gmOnly" {{#if (eq config.visibility "gm")}}checked{{/if}}>
+            <span class="mn-switch__track"><span class="mn-switch__thumb"></span></span>
+          </span>
+        </label>
+
+        <label class="mn-switch-row">
+          <span>
+            <strong>{{localize "MORTAL_NEEDS.NeedEdit.ShowAboveZeroOnly"}}</strong>
+            <small>{{localize "MORTAL_NEEDS.NeedEdit.ShowAboveZeroOnlyHint"}}</small>
+          </span>
+          <span class="mn-switch">
+            <input type="checkbox" name="showAboveZeroOnly" {{#if (eq config.showWhen "aboveZero")}}checked{{/if}}>
+            <span class="mn-switch__track"><span class="mn-switch__thumb"></span></span>
+          </span>
+        </label>
       </article>
 
       <article class="mn-form-card mn-need-editor-panel mn-need-editor-panel--decay">
@@ -224,7 +275,7 @@
       </span>
     </header>
 
-    <div class="mn-need-preview__ring" data-severity="{{previewSeverity}}" style="--mn-preview-percent: {{previewPercentage}}%;">
+    <div class="mn-need-preview__ring" data-severity="{{previewSeverity}}" style="--mn-preview-percent: {{previewPercentage}}%;{{#if config.color}} --mn-need-preview-color: {{config.color}};{{/if}}">
       <div class="mn-need-preview__ring-core">
         <i class="fas {{config.icon}}" data-live-icon></i>
         <strong data-live-percent>{{previewPercentage}}%</strong>
@@ -240,11 +291,11 @@
     <div class="mn-need-preview__status">
       <div>
         <span>{{localize "MORTAL_NEEDS.NeedEdit.Decay"}}</span>
-        <strong data-live-decay>{{#if config.decay.enabled}}+{{config.decay.rate}} / {{config.decay.interval}}s{{else}}-{{/if}}</strong>
+        <strong data-live-decay>{{#if config.decay.enabled}}{{#if config.inverted}}-{{else}}+{{/if}}{{config.decay.rate}} / {{config.decay.interval}}s{{else}}-{{/if}}</strong>
       </div>
       <div>
         <span>{{localize "MORTAL_NEEDS.NeedEdit.Movement"}}</span>
-        <strong data-live-movement>{{#if config.movement.enabled}}+{{config.movement.amount}} / {{config.movement.interval}} {{movementMetricShortLabel}}{{else}}-{{/if}}</strong>
+        <strong data-live-movement>{{#if config.movement.enabled}}{{#if config.inverted}}-{{else}}+{{/if}}{{config.movement.amount}} / {{config.movement.interval}} {{movementMetricShortLabel}}{{else}}-{{/if}}</strong>
       </div>
       <div>
         <span>{{localize "MORTAL_NEEDS.NeedEdit.Consequences"}}</span>

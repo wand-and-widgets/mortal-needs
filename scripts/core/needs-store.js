@@ -1,4 +1,5 @@
 import { MODULE_ID, Events, EntitySource, DEFAULT_MOVEMENT_ADVANCEMENT } from '../constants.js';
+import { isGMOnlyNeed, normalizeNeedDisplayRule, normalizeNeedVisibility } from './need-visibility.js';
 
 export class NeedsStore {
   #state = new Map();
@@ -113,7 +114,7 @@ export class NeedsStore {
   // --- Configuration Mutations ---
 
   setNeedConfigs(configs) {
-    this.#needConfigs = configs.map(c => this.#normalizeNeedConfig(c));
+    this.#needConfigs = this.#normalizeNeedConfigList(configs);
     this.#reconcileStateWithConfigs();
   }
 
@@ -121,9 +122,10 @@ export class NeedsStore {
     const idx = this.#needConfigs.findIndex(c => c.id === needId);
     if (idx === -1) return null;
     this.#needConfigs[idx] = this.#normalizeNeedConfig({ ...this.#needConfigs[idx], ...changes });
+    this.#needConfigs = this.#sortNeedConfigs(this.#needConfigs);
     this.#reconcileStateWithConfigs();
     this.#eventBus.emit(Events.CONFIG_CHANGED, { needId, changes });
-    return { ...this.#needConfigs[idx] };
+    return this.getNeedConfig(needId);
   }
 
   registerNeed(config) {
@@ -131,16 +133,20 @@ export class NeedsStore {
       console.warn(`Mortal Needs | Need "${config.id}" already registered`);
       return null;
     }
+    const min = this.#normalizeNumber(config?.min, 0);
+    const max = this.#normalizeMax(config?.max, min);
     const fullConfig = this.#normalizeNeedConfig({
-      min: 0, max: 100, default: 0, enabled: true, custom: true,
-      iconType: 'fa', category: 'custom', order: this.#needConfigs.length,
+      min, max, default: config?.inverted === true ? max : min, enabled: true, custom: true,
+      iconType: 'fa', category: 'custom', order: this.#getNextOrder(),
       stressAmount: 10, attribute: null, consequences: [],
+      inverted: false,
       decay: { enabled: false, rate: 5, interval: 3600 },
       movement: { ...DEFAULT_MOVEMENT_ADVANCEMENT },
       flavor: { apply: [], remove: [] },
       ...config,
     });
     this.#needConfigs.push(fullConfig);
+    this.#needConfigs = this.#sortNeedConfigs(this.#needConfigs);
 
     // Initialize for all tracked entities
     for (const [entityId] of this.#trackedEntities) {
@@ -293,7 +299,11 @@ export class NeedsStore {
 
   // --- Sync from Remote ---
 
-  syncFromRemote(remoteState) {
+  syncFromRemote(remoteState, options = {}) {
+    if (options.replace) {
+      this.#state.clear();
+    }
+
     for (const [entityId, needs] of Object.entries(remoteState)) {
       let entityNeeds = this.#state.get(entityId);
       if (!entityNeeds) {
@@ -492,10 +502,22 @@ export class NeedsStore {
     }
   }
 
-  #normalizeNeedConfig(config = {}) {
+  #normalizeNeedConfigList(configs = []) {
+    return this.#sortNeedConfigs(configs.map((config, index) => this.#normalizeNeedConfig(config, index)));
+  }
+
+  #sortNeedConfigs(configs = []) {
+    return [...configs].sort((a, b) => (
+      this.#normalizeNumber(a.order, 0) - this.#normalizeNumber(b.order, 0)
+      || String(a.label || a.id).localeCompare(String(b.label || b.id))
+      || String(a.id).localeCompare(String(b.id))
+    ));
+  }
+
+  #normalizeNeedConfig(config = {}, fallbackOrder = 0) {
     const min = this.#normalizeNumber(config.min, 0);
     const max = this.#normalizeMax(config.max, min);
-    const fallbackDefault = this.#normalizeNumber(config.default, min);
+    const fallbackDefault = this.#normalizeNumber(config.default, config.inverted === true ? max : min);
     const defaultValue = Math.max(min, Math.min(max, fallbackDefault));
     const stressAmount = Math.max(1, this.#normalizeNumber(config.stressAmount, 10));
     const decay = config.decay || {};
@@ -510,6 +532,9 @@ export class NeedsStore {
       max,
       default: defaultValue,
       stressAmount,
+      order: this.#normalizeNumber(config.order, fallbackOrder),
+      color: this.#normalizeColor(config.color),
+      inverted: config.inverted === true,
       enabled: config.enabled !== false,
       consequences: Array.isArray(config.consequences) ? config.consequences : [],
       decay: {
@@ -527,14 +552,26 @@ export class NeedsStore {
         amount: Math.min(100, Math.max(1, this.#normalizeNumber(movement.amount, DEFAULT_MOVEMENT_ADVANCEMENT.amount))),
         countTeleports: !!movement.countTeleports,
       },
+      visibility: normalizeNeedVisibility(config),
+      showWhen: normalizeNeedDisplayRule(config),
     };
   }
 
-  getSerializableState() {
+  #getNextOrder() {
+    if (!this.#needConfigs.length) return 0;
+    return Math.max(...this.#needConfigs.map(config => this.#normalizeNumber(config.order, 0))) + 1;
+  }
+
+  getSerializableState(options = {}) {
+    const includeGMOnly = options.includeGMOnly !== false;
+    const publicNeedIds = includeGMOnly
+      ? null
+      : new Set(this.#needConfigs.filter(config => !isGMOnlyNeed(config)).map(config => config.id));
     const result = {};
     for (const [entityId, entityNeeds] of this.#state) {
       result[entityId] = {};
       for (const [needId, state] of entityNeeds) {
+        if (publicNeedIds && !publicNeedIds.has(needId)) continue;
         result[entityId][needId] = state.value;
       }
     }
@@ -566,6 +603,12 @@ export class NeedsStore {
   #normalizeNumber(value, fallback = 0) {
     const number = Number(value);
     return Number.isFinite(number) ? number : fallback;
+  }
+
+  #normalizeColor(value) {
+    if (typeof value !== 'string') return null;
+    const color = value.trim();
+    return /^#[0-9a-fA-F]{6}$/.test(color) ? color.toLowerCase() : null;
   }
 
   #normalizeMax(value, min = 0) {

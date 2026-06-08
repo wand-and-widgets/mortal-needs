@@ -1,4 +1,4 @@
-<div class="mn-need-bar mn-need-bar--horizontal" data-need-id="{{id}}" data-entity-id="{{entityId}}" data-severity="{{severity}}">
+<div class="mn-need-bar mn-need-bar--horizontal {{#if hasCustomColor}}mn-need-bar--custom-color{{/if}}" data-need-id="{{id}}" data-entity-id="{{entityId}}" data-severity="{{severity}}" {{#if color}}style="--mn-need-color: {{color}};"{{/if}}>
   <span class="mn-need-bar__icon" data-severity="{{severity}}" data-tooltip="{{localizedLabel}}">
     <i class="fas {{icon}}"></i>
   </span>

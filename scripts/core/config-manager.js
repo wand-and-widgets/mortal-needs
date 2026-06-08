@@ -163,6 +163,23 @@ export class ConfigManager {
       },
     });
 
+    game.settings.register(MODULE_ID, 'panelDisplayMode', {
+      name: 'MORTAL_NEEDS.Settings.PanelDisplayMode',
+      hint: 'MORTAL_NEEDS.Settings.PanelDisplayModeHint',
+      scope: 'client', config: true, type: String,
+      default: 'normal',
+      choices: {
+        normal: 'MORTAL_NEEDS.Settings.PanelDisplayNormal',
+        compact: 'MORTAL_NEEDS.Settings.PanelDisplayCompact',
+        focus: 'MORTAL_NEEDS.Settings.PanelDisplayFocus',
+        category: 'MORTAL_NEEDS.Settings.PanelDisplayCategory',
+      },
+      onChange: () => {
+        const app = game.modules.get(MODULE_ID)?.api;
+        app?.ui?.refresh();
+      },
+    });
+
     game.settings.register(MODULE_ID, 'broadcastLayout', {
       name: 'MORTAL_NEEDS.Settings.BroadcastLayout',
       hint: 'MORTAL_NEEDS.Settings.BroadcastLayoutHint',
@@ -234,7 +251,7 @@ export class ConfigManager {
     game.settings.register(MODULE_ID, 'compactMode', {
       name: 'MORTAL_NEEDS.Settings.CompactMode',
       hint: 'MORTAL_NEEDS.Settings.CompactModeHint',
-      scope: 'client', config: true, type: Boolean,
+      scope: 'client', config: false, type: Boolean,
       default: false,
     });
 

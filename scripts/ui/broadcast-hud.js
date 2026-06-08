@@ -212,11 +212,11 @@ export class BroadcastHUD {
       if (!needViews.length) continue;
 
       for (const need of needViews) {
-        if (need.percentage >= AT_RISK_THRESHOLD) {
+        if (need.stressPercentage >= AT_RISK_THRESHOLD) {
           hasRisk = true;
-          riskParts.push(`${actor.id}:${need.config.id}:${need.percentage}`);
+          riskParts.push(`${actor.id}:${need.config.id}:${need.stressPercentage}`);
         }
-        if (need.percentage >= criticalThreshold) hasCritical = true;
+        if (need.stressPercentage >= criticalThreshold) hasCritical = true;
       }
 
       const visibleNeeds = this.#selectVisibleNeeds(needViews, settings.contentMode);
@@ -274,7 +274,8 @@ export class BroadcastHUD {
     const value = NeedsEngine.normalizeNumber(state.value, config.default ?? 0);
     const max = Math.max(1, NeedsEngine.normalizeNumber(state.max ?? config.max, 100));
     const percentage = Math.max(0, Math.min(100, NeedsEngine.getPercentage(value, max)));
-    const severity = NeedsEngine.getSeverity(percentage);
+    const stressPercentage = Math.max(0, Math.min(100, NeedsEngine.getStressPercentage(value, max, config)));
+    const severity = NeedsEngine.getSeverity(stressPercentage);
     const decimal = NeedsEngine.getRatio(value, max);
     const label = game.i18n.localize(config.label);
 
@@ -284,6 +285,7 @@ export class BroadcastHUD {
       value,
       max,
       percentage,
+      stressPercentage,
       severity,
       decimal,
       label,
@@ -299,8 +301,8 @@ export class BroadcastHUD {
 
     if (contentMode === 'crisis') {
       const riskNeeds = needs
-        .filter(need => need.percentage >= AT_RISK_THRESHOLD)
-        .sort((a, b) => b.percentage - a.percentage);
+        .filter(need => need.stressPercentage >= AT_RISK_THRESHOLD)
+        .sort((a, b) => b.stressPercentage - a.stressPercentage);
       if (riskNeeds.length) return riskNeeds;
 
       const worst = this.#getWorstNeed(needs);
@@ -312,7 +314,7 @@ export class BroadcastHUD {
 
   #getWorstNeed(needs) {
     return needs.reduce((worst, need) => {
-      if (!worst || need.percentage > worst.percentage) return need;
+      if (!worst || need.stressPercentage > worst.stressPercentage) return need;
       return worst;
     }, null);
   }
@@ -321,6 +323,7 @@ export class BroadcastHUD {
     const needEl = document.createElement('div');
     needEl.className = 'mn-broadcast__need';
     needEl.title = need.tooltip;
+    this.#applyNeedColor(needEl, need.config);
 
     const icon = document.createElement('span');
     icon.className = 'mn-broadcast__need-icon';
@@ -346,6 +349,7 @@ export class BroadcastHUD {
     const needEl = document.createElement('div');
     needEl.className = 'mn-broadcast__need mn-broadcast__need--vertical';
     needEl.title = need.tooltip;
+    this.#applyNeedColor(needEl, need.config);
 
     const icon = document.createElement('span');
     icon.className = 'mn-broadcast__need-icon';
@@ -381,6 +385,7 @@ export class BroadcastHUD {
     const needEl = document.createElement('div');
     needEl.className = 'mn-broadcast__need mn-broadcast__need--radial';
     needEl.title = need.tooltip;
+    this.#applyNeedColor(needEl, need.config);
 
     const svgNS = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(svgNS, 'svg');
@@ -416,6 +421,12 @@ export class BroadcastHUD {
     needEl.appendChild(ringWrap);
     this.#appendGMControls(needEl, need);
     return needEl;
+  }
+
+  #applyNeedColor(element, config) {
+    if (!config?.color) return;
+    element.classList.add('mn-broadcast__need--custom-color');
+    element.style.setProperty('--mn-need-color', config.color);
   }
 
   #appendGMControls(needEl, need) {

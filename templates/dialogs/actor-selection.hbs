@@ -5,12 +5,12 @@
         <button class="mn-actor-select__tab is-active" type="button" data-tab="actors" role="tab" aria-selected="true">
           <i class="fas fa-users"></i>
           <span>{{localize "MORTAL_NEEDS.ActorSelection.FoundryActors"}}</span>
-          <strong>{{actorStats.available}}</strong>
+          <strong>{{actorStats.total}}</strong>
         </button>
         <button class="mn-actor-select__tab" type="button" data-tab="es-characters" role="tab" aria-selected="false">
           <i class="fas fa-theater-masks"></i>
           <span>{{localize "MORTAL_NEEDS.ActorSelection.ESCharacters"}}</span>
-          <strong>{{esStats.available}}</strong>
+          <strong>{{esStats.total}}</strong>
         </button>
       </div>
     {{else}}
@@ -41,13 +41,13 @@
   <section class="mn-actor-select__tab-content" data-tab-content="actors" role="tabpanel">
     <header class="mn-actor-select__list-header">
       <span>{{localize "MORTAL_NEEDS.ActorSelection.FoundryActors"}}</span>
-      <strong>{{actorStats.available}}</strong>
+      <strong>{{actorStats.total}}</strong>
     </header>
 
     <div class="mn-actor-select__list" data-list="actors">
       {{#each actors}}
         <label class="mn-actor-select__row {{#if tracked}}is-tracked{{/if}}" data-actor-id="{{id}}">
-          <input type="checkbox" name="selectedActors" value="{{id}}" {{#if tracked}}checked disabled{{/if}}>
+          <input type="checkbox" name="selectedActors" value="{{id}}" data-tracked="{{#if tracked}}true{{else}}false{{/if}}" {{#if tracked}}checked{{/if}}>
           <span class="mn-actor-select__portrait">
             <img src="{{img}}" alt="{{name}}">
           </span>
@@ -55,9 +55,7 @@
             <strong class="mn-dialog__list-item-name">{{name}}</strong>
             <span>{{localize "MORTAL_NEEDS.ActorSelection.FoundryActors"}}</span>
           </span>
-          {{#if tracked}}
-            <span class="mn-actor-select__badge">{{localize "MORTAL_NEEDS.ActorSelection.AlreadyTracked"}}</span>
-          {{/if}}
+          <span class="mn-actor-select__badge" data-state-badge {{#unless tracked}}hidden{{/unless}}>{{#if tracked}}{{localize "MORTAL_NEEDS.ActorSelection.AlreadyTracked"}}{{/if}}</span>
         </label>
       {{/each}}
       {{#unless actors.length}}
@@ -74,13 +72,13 @@
     <section class="mn-actor-select__tab-content" data-tab-content="es-characters" role="tabpanel" hidden>
       <header class="mn-actor-select__list-header">
         <span>{{localize "MORTAL_NEEDS.ActorSelection.ESCharacters"}}</span>
-        <strong>{{esStats.available}}</strong>
+        <strong>{{esStats.total}}</strong>
       </header>
 
       <div class="mn-actor-select__list" data-list="es-characters">
         {{#each esCharacters}}
           <label class="mn-actor-select__row {{#if tracked}}is-tracked{{/if}}" data-character-id="{{id}}">
-            <input type="checkbox" name="selectedESChars" value="{{id}}" {{#if tracked}}checked disabled{{/if}}>
+            <input type="checkbox" name="selectedESChars" value="{{id}}" data-tracked="{{#if tracked}}true{{else}}false{{/if}}" {{#if tracked}}checked{{/if}}>
             <span class="mn-actor-select__portrait">
               <img src="{{img}}" alt="{{name}}">
             </span>
@@ -92,9 +90,7 @@
                 <span>{{localize "MORTAL_NEEDS.ActorSelection.ESCharacters"}}</span>
               {{/if}}
             </span>
-            {{#if tracked}}
-              <span class="mn-actor-select__badge">{{localize "MORTAL_NEEDS.ActorSelection.AlreadyTracked"}}</span>
-            {{/if}}
+            <span class="mn-actor-select__badge" data-state-badge {{#unless tracked}}hidden{{/unless}}>{{#if tracked}}{{localize "MORTAL_NEEDS.ActorSelection.AlreadyTracked"}}{{/if}}</span>
           </label>
         {{/each}}
         {{#unless esCharacters.length}}
@@ -110,11 +106,12 @@
   <div class="mn-actor-select__footer">
     <div class="mn-actor-select__selected">
       <strong data-selected-count>0</strong>
-      <span>{{localize "MORTAL_NEEDS.ActorSelection.Selected"}}</span>
+      <span>{{localize "MORTAL_NEEDS.ActorSelection.Tracking"}}</span>
+      <small><b data-added-count>0</b> {{localize "MORTAL_NEEDS.ActorSelection.ToAdd"}} / <b data-removed-count>0</b> {{localize "MORTAL_NEEDS.ActorSelection.ToRemove"}}</small>
     </div>
     <button class="mn-btn mn-btn--primary" data-action="confirm" disabled>
-      <i class="fas fa-user-plus"></i>
-      <span>{{localize "MORTAL_NEEDS.ActorSelection.AddSelected"}}</span>
+      <i class="fas fa-check"></i>
+      <span>{{localize "MORTAL_NEEDS.ActorSelection.ApplyChanges"}}</span>
     </button>
   </div>
 </div>

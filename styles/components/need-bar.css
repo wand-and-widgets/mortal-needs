@@ -62,6 +62,17 @@
   animation: mn-bar-pulse 2s ease-in-out infinite;
 }
 
+.mn-need-bar--custom-color .mn-need-bar__icon,
+.mn-need-bar--custom-color .mn-need-bar__value,
+.mn-need-bar--custom-color .mn-need-bar__radial-icon {
+  color: var(--mn-need-color);
+}
+
+.mn-need-bar--custom-color .mn-need-bar__fill {
+  color: var(--mn-need-color);
+  background: var(--mn-need-color);
+}
+
 /* Percentage text */
 .mn-need-bar__value {
   font-size: var(--mn-font-size-xs);
@@ -75,6 +86,10 @@
 
 .mn-need-bar__value[data-severity="high"] { color: var(--mn-severity-high); }
 .mn-need-bar__value[data-severity="critical"] { color: var(--mn-severity-critical); }
+
+.mn-need-bar--custom-color .mn-need-bar__value {
+  color: var(--mn-need-color);
+}
 
 /* +/- buttons */
 .mn-need-bar__controls {
@@ -190,6 +205,10 @@
 .mn-need-bar--radial .mn-need-bar__ring-fill[data-severity="high"] { stroke: var(--mn-severity-high); }
 .mn-need-bar--radial .mn-need-bar__ring-fill[data-severity="critical"] { stroke: var(--mn-severity-critical); }
 
+.mn-need-bar--custom-color.mn-need-bar--radial .mn-need-bar__ring-fill {
+  stroke: var(--mn-need-color);
+}
+
 .mn-need-bar--radial .mn-need-bar__radial-icon {
   position: absolute;
   top: 50%;
@@ -197,6 +216,10 @@
   transform: translate(-50%, -50%);
   font-size: 12px;
   color: var(--mn-text-secondary);
+}
+
+.mn-need-bar--custom-color.mn-need-bar--radial .mn-need-bar__radial-icon {
+  color: var(--mn-need-color);
 }
 
 /* === Controls in vertical/radial layouts === */

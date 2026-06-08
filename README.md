@@ -1,7 +1,7 @@
 # Mortal Needs
 
 ![Foundry VTT](https://img.shields.io/badge/Foundry%20VTT-v13--v14-informational)
-![Version](https://img.shields.io/badge/Version-2.3.0-blue)
+![Version](https://img.shields.io/badge/Version-2.3.1-blue)
 [![Patreon](https://img.shields.io/badge/Patreon-Wand%20%26%20Widgets-orange)](https://patreon.com/wandandwidgets)
 
 A survival needs management module for Foundry VTT. Track hunger, thirst, exhaustion, temperature, and other mortal necessities for your players with a beautiful, compact floating panel.

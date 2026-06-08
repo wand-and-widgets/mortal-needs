@@ -45,6 +45,8 @@ tests/
 # Documentation drafts
 docs/drafts/
 *.draft.md
+CHANGELOG-*.md
+mockups/
 
 # Local development
 .env

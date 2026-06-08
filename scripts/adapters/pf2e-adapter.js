@@ -32,6 +32,21 @@ export class Pf2eAdapter extends SystemAdapter {
     }));
   }
 
+  getAvailableConditions() {
+    const iconDir = CONFIG.PF2E?.statusEffects?.iconDir ?? 'systems/pf2e/icons/conditions/';
+    const conditionTypes = Object.entries(CONFIG.PF2E?.conditionTypes ?? {}).map(([id, label]) => ({
+      id,
+      label,
+      img: `${iconDir}${id}.webp`,
+    }));
+
+    return this._buildConditionList(
+      CONFIG.statusEffects,
+      conditionTypes,
+      CONFIG.PF2E?.statusEffects?.conditions
+    );
+  }
+
   getModifierTable() {
     // PF2e uses modifier-based scaling (-1 to +7 range for ability mods)
     return [

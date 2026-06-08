@@ -1,7 +1,18 @@
 import { MODULE_ID, MODULE_TITLE, Events, EntitySource, Severity } from '../constants.js';
 import { NeedsEngine } from '../core/needs-engine.js';
+import { filterDisplayNeedsForEntity, filterNeedsForUser } from '../core/need-visibility.js';
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
+
+const PANEL_DISPLAY_MODES = Object.freeze([
+  { id: 'normal', label: 'MORTAL_NEEDS.Panel.ModeNormal', icon: 'fa-list' },
+  { id: 'compact', label: 'MORTAL_NEEDS.Panel.ModeCompact', icon: 'fa-compress-alt' },
+  { id: 'focus', label: 'MORTAL_NEEDS.Panel.ModeFocus', icon: 'fa-bullseye' },
+  { id: 'category', label: 'MORTAL_NEEDS.Panel.ModeCategory', icon: 'fa-layer-group' },
+]);
+
+const PANEL_DISPLAY_MODE_IDS = new Set(PANEL_DISPLAY_MODES.map(mode => mode.id));
+const CATEGORY_ORDER = ['physical', 'environmental', 'mental', 'custom'];
 
 export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
   #store;
@@ -12,6 +23,7 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
   #app;
   #unsubscribers = [];
   #expandedActors = new Set();
+  #actorSearchQuery = '';
   static #RING_RADIUS = 18;
 
   static DEFAULT_OPTIONS = {
@@ -33,6 +45,8 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
       'relieve': MortalNeedsApp.#onRelieve,
       'toggle-expand': MortalNeedsApp.#onToggleExpand,
       'reset-all': MortalNeedsApp.#onResetAll,
+      'reset-all-tracked': MortalNeedsApp.#onResetAllTracked,
+      'panel-display-mode': MortalNeedsApp.#onPanelDisplayMode,
       'untrack': MortalNeedsApp.#onUntrack,
       'add-actors': MortalNeedsApp.#onAddActors,
       'stress-all': MortalNeedsApp.#onStressAll,
@@ -82,6 +96,7 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
     }
 
     this.#eventBus.emit(Events.UI_RENDERED, {});
+    this.#activateActorSearch();
   }
 
   _onClose(options) {
@@ -104,7 +119,7 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   async _prepareContext(options) {
     const tracked = this.#store.getAllTrackedActors();
-    const enabledConfigs = this.#store.getEnabledNeedConfigs();
+    const enabledConfigs = filterNeedsForUser(this.#store.getEnabledNeedConfigs(), game.user);
     const isGM = game.user.isGM;
     const criticalThreshold = game.settings.get(MODULE_ID, 'criticalThreshold');
     const atRiskThreshold = 60;
@@ -112,17 +127,22 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
     let totalNeeds = 0;
     let lastChange = 0;
     const crisisQueue = [];
+    const panelDisplayMode = this.#getPanelDisplayMode();
+    const isCategoryDisplay = panelDisplayMode === 'category';
 
     // Build actor data with need bar info
     const actors = tracked.map(entity => {
       let worstNeed = null;
 
-      const needs = enabledConfigs.map(config => {
+      const displayConfigs = filterDisplayNeedsForEntity(enabledConfigs, entity.needs, { user: game.user });
+      const needs = displayConfigs.map(config => {
         const state = entity.needs[config.id];
         const value = NeedsEngine.normalizeNumber(state?.value, config.default ?? 0);
-        const max = MortalNeedsApp.#normalizeMax(state?.max ?? config.max, config.min ?? 0);
+        const min = MortalNeedsApp.#normalizeNumber(state?.min ?? config.min, 0);
+        const max = MortalNeedsApp.#normalizeMax(state?.max ?? config.max, min);
         const percentage = MortalNeedsApp.#normalizePercentage(NeedsEngine.getPercentage(value, max));
-        const severity = NeedsEngine.getSeverity(percentage);
+        const stressPercentage = MortalNeedsApp.#normalizePercentage(NeedsEngine.getStressPercentage(value, max, { ...config, min }));
+        const severity = NeedsEngine.getSeverity(stressPercentage);
         const decimal = MortalNeedsApp.#normalizeRatio(NeedsEngine.getRatio(value, max));
         const circumference = 2 * Math.PI * MortalNeedsApp.#RING_RADIUS;
         const dashOffset = MortalNeedsApp.#normalizeNumber(circumference * (1 - decimal), circumference);
@@ -130,7 +150,7 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
         const severityLabel = this.#getSeverityLabel(severity);
         const lastChangeTime = state?.lastChange ?? 0;
 
-        totalPercentage += percentage;
+        totalPercentage += stressPercentage;
         totalNeeds += 1;
         if (lastChangeTime > lastChange) lastChange = lastChangeTime;
 
@@ -138,14 +158,19 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
           id: config.id,
           label: config.label,
           localizedLabel,
+          category: config.category || 'custom',
           icon: config.icon,
+          color: config.color || null,
+          hasCustomColor: !!config.color,
+          inverted: NeedsEngine.isInvertedNeed(config),
           enabled: config.enabled,
-          value, max, percentage, severity, decimal,
+          value, min, max, percentage, stressPercentage, severity, decimal,
           percentageLabel: `${percentage}%`,
+          stressPercentageLabel: `${stressPercentage}%`,
           displayValue: `${value}/${max}`,
           severityLabel,
-          isCritical: percentage >= criticalThreshold,
-          isAtRisk: percentage >= atRiskThreshold,
+          isCritical: stressPercentage >= criticalThreshold,
+          isAtRisk: stressPercentage >= atRiskThreshold,
           hasConsequences: (config.consequences?.length ?? 0) > 0,
           consequenceCount: config.consequences?.length ?? 0,
           decayEnabled: !!config.decay?.enabled,
@@ -154,13 +179,13 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
           entityId: entity.id,
         };
 
-        if (!worstNeed || percentage > worstNeed.percentage) {
+        if (!worstNeed || stressPercentage > worstNeed.stressPercentage) {
           worstNeed = needData;
         }
 
-        if (percentage >= atRiskThreshold) {
+        if (stressPercentage >= atRiskThreshold) {
           const activeConsequence = (config.consequences || [])
-            .find(c => percentage >= (c.threshold ?? 100));
+            .find(c => stressPercentage >= (c.threshold ?? 100));
           const tickProgress = activeConsequence
             ? this.#app?.consequenceEngine?.getTickProgress?.(entity.id, config.id, activeConsequence)
             : null;
@@ -172,8 +197,10 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
             needId: config.id,
             needLabel: localizedLabel,
             needIcon: config.icon,
-            percentage,
+            percentage: stressPercentage,
             percentageLabel: `${percentage}%`,
+            stressPercentage,
+            stressPercentageLabel: `${stressPercentage}%`,
             severity,
             severityLabel,
             hasConsequence: !!activeConsequence,
@@ -187,14 +214,20 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
       const worstSeverity = this.#getWorstSeverity(needs);
       const criticalNeedCount = needs.filter(n => n.isCritical).length;
       const atRiskNeedCount = needs.filter(n => n.isAtRisk).length;
+      const displayNeeds = panelDisplayMode === 'focus' && worstNeed ? [worstNeed] : needs;
+      const needsByCategory = this.#groupNeedsByCategory(displayNeeds);
 
       return {
         id: entity.id,
         name: entity.name,
         img: entity.img,
         source: entity.source,
+        searchText: `${entity.name} ${entity.source} ${worstNeed?.localizedLabel ?? ''}`.toLocaleLowerCase(),
         expanded: this.#expandedActors.has(entity.id),
         needs,
+        displayNeeds,
+        needsByCategory,
+        isCategoryDisplay,
         worstSeverity,
         worstNeed,
         worstNeedLabel: worstNeed?.localizedLabel ?? '',
@@ -206,24 +239,28 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
     // Count critical actors
     const criticalCount = actors.filter(a =>
-      a.needs.some(n => n.percentage >= criticalThreshold)
+      a.needs.some(n => n.stressPercentage >= criticalThreshold)
     ).length;
     const atRiskCount = actors.filter(a =>
-      a.needs.some(n => n.percentage >= atRiskThreshold)
+      a.needs.some(n => n.stressPercentage >= atRiskThreshold)
     ).length;
     const averageSeverity = totalNeeds > 0 ? Math.round(totalPercentage / totalNeeds) : 0;
-    const decayActiveCount = enabledConfigs.filter(c => c.decay?.enabled).length;
+    const displayableDecayConfigs = enabledConfigs.filter(config => (
+      config.decay?.enabled
+      && tracked.some(entity => filterDisplayNeedsForEntity([config], entity.needs, { user: game.user }).length > 0)
+    ));
+    const decayActiveCount = displayableDecayConfigs.length;
     const lastChangeLabel = this.#formatRelativeTime(lastChange);
 
     crisisQueue.sort((a, b) => b.percentage - a.percentage);
 
-    const nextDecay = enabledConfigs
-      .filter(c => c.decay?.enabled)
+    const nextDecay = displayableDecayConfigs
       .slice(0, 3)
       .map(c => ({
         id: c.id,
         label: game.i18n.localize(c.label),
         icon: c.icon,
+        sign: NeedsEngine.isInvertedNeed(c) ? '-' : '+',
         rate: c.decay.rate,
         intervalLabel: this.#formatDuration(c.decay.interval),
       }));
@@ -246,7 +283,88 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
       hasDecay: nextDecay.length > 0,
       isGM,
       barOrientation,
+      actorSearchQuery: this.#actorSearchQuery,
+      panelDisplayMode,
+      panelDisplayModeClass: `mn-rework--mode-${panelDisplayMode}`,
+      panelDisplayModes: this.#getPanelDisplayModeChoices(panelDisplayMode),
+      isCategoryDisplay,
     };
+  }
+
+  #getPanelDisplayMode() {
+    const mode = game.settings.get(MODULE_ID, 'panelDisplayMode') ?? 'normal';
+    return PANEL_DISPLAY_MODE_IDS.has(mode) ? mode : 'normal';
+  }
+
+  #getPanelDisplayModeChoices(activeMode) {
+    return PANEL_DISPLAY_MODES.map(mode => ({
+      ...mode,
+      active: mode.id === activeMode,
+    }));
+  }
+
+  #groupNeedsByCategory(needs) {
+    const groups = new Map();
+
+    for (const need of needs) {
+      const category = need.category || 'custom';
+      if (!groups.has(category)) {
+        groups.set(category, {
+          id: category,
+          label: this.#getCategoryLabel(category),
+          order: CATEGORY_ORDER.includes(category) ? CATEGORY_ORDER.indexOf(category) : CATEGORY_ORDER.length,
+          needs: [],
+        });
+      }
+      groups.get(category).needs.push(need);
+    }
+
+    return [...groups.values()]
+      .map(group => ({ ...group, count: group.needs.length }))
+      .sort((a, b) => a.order - b.order || a.label.localeCompare(b.label));
+  }
+
+  #getCategoryLabel(category) {
+    const key = {
+      physical: 'Physical',
+      environmental: 'Environmental',
+      mental: 'Mental',
+      custom: 'Custom',
+    }[category];
+
+    return key ? game.i18n.localize(`MORTAL_NEEDS.Categories.${key}`) : category;
+  }
+
+  #activateActorSearch() {
+    const input = this.element.querySelector('[data-actor-search-input]');
+    if (!input) return;
+
+    input.value = this.#actorSearchQuery;
+    input.addEventListener('input', (event) => {
+      this.#actorSearchQuery = event.target.value.trim().toLocaleLowerCase();
+      this.#applyActorFilter();
+    });
+
+    this.#applyActorFilter();
+  }
+
+  #applyActorFilter() {
+    const query = this.#actorSearchQuery;
+    const cards = [...this.element.querySelectorAll('[data-actor-search-text]')];
+    let visibleCount = 0;
+
+    for (const card of cards) {
+      const text = card.dataset.actorSearchText || card.textContent?.toLocaleLowerCase() || '';
+      const visible = !query || text.includes(query);
+      card.hidden = !visible;
+      if (visible) visibleCount += 1;
+    }
+
+    const count = this.element.querySelector('[data-actor-search-count]');
+    if (count) count.textContent = String(visibleCount);
+
+    const empty = this.element.querySelector('[data-actor-filter-empty]');
+    if (empty) empty.hidden = !query || visibleCount > 0;
   }
 
   #getWorstSeverity(needs) {
@@ -351,6 +469,39 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
     if (confirmed) {
       await this.#engine.resetAll(entityId);
     }
+  }
+
+  static async #onResetAllTracked() {
+    if (!game.user.isGM) {
+      ui.notifications.warn('MORTAL_NEEDS.Notifications.GMOnly', { localize: true });
+      return;
+    }
+
+    const entityIds = this.#store.getTrackedEntityIds();
+    if (!entityIds.length) return;
+
+    const confirmed = await foundry.applications.api.DialogV2.confirm({
+      window: { title: game.i18n.localize('MORTAL_NEEDS.Dialogs.ResetAllTrackedTitle') },
+      content: `<p>${game.i18n.format('MORTAL_NEEDS.Dialogs.ResetAllTrackedContent', { count: entityIds.length })}</p>`,
+    });
+    if (!confirmed) return;
+
+    for (const entityId of entityIds) {
+      await this.#engine.resetAll(entityId);
+    }
+
+    ui.notifications.info(
+      game.i18n.format('MORTAL_NEEDS.Notifications.ResetAllTrackedComplete', { count: entityIds.length }),
+    );
+  }
+
+  static async #onPanelDisplayMode(event, target) {
+    const actionTarget = MortalNeedsApp.#getActionTarget(event, target, 'panel-display-mode');
+    const mode = actionTarget?.dataset.mode;
+    if (!PANEL_DISPLAY_MODE_IDS.has(mode)) return;
+
+    await game.settings.set(MODULE_ID, 'panelDisplayMode', mode);
+    this.render(false);
   }
 
   static async #onUntrack(event, target) {

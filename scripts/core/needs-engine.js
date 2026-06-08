@@ -33,7 +33,8 @@ export class NeedsEngine {
       adjustedAmount = Math.round(adjustedAmount * sceneMod);
     }
 
-    const result = this.#store.adjustNeedValue(entityId, needId, adjustedAmount, source);
+    const signedAmount = NeedsEngine.isInvertedNeed(config) ? -adjustedAmount : adjustedAmount;
+    const result = this.#store.adjustNeedValue(entityId, needId, signedAmount, source);
     if (!result) return null;
 
     this.#eventBus.emit(Events.NEED_STRESSED, {
@@ -41,6 +42,7 @@ export class NeedsEngine {
       amount: adjustedAmount,
       value: result.value,
       previousValue: result.previousValue,
+      min: result.min,
       max: result.max,
       source,
     });
@@ -60,7 +62,8 @@ export class NeedsEngine {
 
     const finalAmount = this.#resolveStressAmount(config, amount);
     const source = options.source || 'relieve';
-    const result = this.#store.adjustNeedValue(entityId, needId, -finalAmount, source);
+    const signedAmount = NeedsEngine.isInvertedNeed(config) ? finalAmount : -finalAmount;
+    const result = this.#store.adjustNeedValue(entityId, needId, signedAmount, source);
     if (!result) return null;
 
     this.#eventBus.emit(Events.NEED_RELIEVED, {
@@ -68,6 +71,7 @@ export class NeedsEngine {
       amount: finalAmount,
       value: result.value,
       previousValue: result.previousValue,
+      min: result.min,
       max: result.max,
       source,
     });
@@ -92,6 +96,7 @@ export class NeedsEngine {
       entityId, needId,
       value: result.value,
       previousValue: result.previousValue,
+      min: result.min,
       max: result.max,
     });
 
@@ -198,8 +203,9 @@ export class NeedsEngine {
   // --- Threshold Evaluation ---
 
   #evaluateThresholds(entityId, needId, oldValue, newValue, max, source = 'manual') {
-    const oldPct = NeedsEngine.getPercentage(oldValue, max);
-    const newPct = NeedsEngine.getPercentage(newValue, max);
+    const config = this.#store.getNeedConfig(needId);
+    const oldPct = NeedsEngine.getStressPercentage(oldValue, max, config);
+    const newPct = NeedsEngine.getStressPercentage(newValue, max, config);
     const oldSev = NeedsEngine.getSeverity(oldPct);
     const newSev = NeedsEngine.getSeverity(newPct);
 
@@ -226,7 +232,7 @@ export class NeedsEngine {
       });
     }
     // Still at critical but stressed further
-    else if (newPct >= 100 && oldPct >= 100 && newValue > oldValue) {
+    else if (newPct >= 100 && oldPct >= 100 && newPct > oldPct) {
       this.#eventBus.emit(Events.THRESHOLD_CRITICAL, {
         entityId, needId,
         value: newValue, max,
@@ -281,6 +287,45 @@ export class NeedsEngine {
     const ratio = safeValue / safeMax;
     if (!Number.isFinite(ratio)) return 0;
     return Math.max(0, Math.min(1, ratio));
+  }
+
+  static getStressPercentage(value, max, config = {}) {
+    if (!NeedsEngine.isInvertedNeed(config)) {
+      return NeedsEngine.getPercentage(value, max);
+    }
+
+    const safeValue = NeedsEngine.normalizeNumber(value, 0);
+    const safeMin = NeedsEngine.normalizeNumber(config?.min, 0);
+    const safeMax = NeedsEngine.normalizeNumber(max ?? config?.max, 100);
+    const range = safeMax - safeMin;
+    if (range <= 0) return 0;
+
+    const percentage = Math.round(((safeMax - safeValue) / range) * 100);
+    if (!Number.isFinite(percentage)) return 0;
+    return Math.max(0, Math.min(100, percentage));
+  }
+
+  static getStressRatio(value, max, config = {}) {
+    const percentage = NeedsEngine.getStressPercentage(value, max, config);
+    return Math.max(0, Math.min(1, percentage / 100));
+  }
+
+  static getValueForStressPercentage(percentage, max, config = {}) {
+    const safePercentage = Math.max(0, Math.min(100, NeedsEngine.normalizeNumber(percentage, 0)));
+    const safeMin = NeedsEngine.normalizeNumber(config?.min, 0);
+    const safeMax = NeedsEngine.normalizeNumber(max ?? config?.max, 100);
+    const range = safeMax - safeMin;
+    if (range <= 0) return safeMin;
+
+    const ratio = safePercentage / 100;
+    if (NeedsEngine.isInvertedNeed(config)) {
+      return Math.round(safeMax - (range * ratio));
+    }
+    return Math.round(safeMin + (range * ratio));
+  }
+
+  static isInvertedNeed(config = {}) {
+    return config?.inverted === true;
   }
 
   static normalizeNumber(value, fallback = 0) {

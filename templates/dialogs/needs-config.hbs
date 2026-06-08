@@ -54,7 +54,10 @@
                 <div class="mn-config-need-cell">
                   <span class="mn-config-need-cell__icon"><i class="fas {{icon}}"></i></span>
                   <div>
-                    <strong>{{localizedLabel}}</strong>
+                    <strong>
+                      {{#if hasCustomColor}}<span class="mn-config-color-dot" style="--mn-need-color: {{color}};"></span>{{/if}}
+                      {{localizedLabel}}
+                    </strong>
                     <span>{{id}}</span>
                   </div>
                 </div>
@@ -75,12 +78,30 @@
                   {{#if movementEnabled}}
                     <span class="mn-config-icon-pill" data-tooltip="{{localize 'MORTAL_NEEDS.NeedEdit.Movement'}}"><i class="fas fa-shoe-prints"></i></span>
                   {{/if}}
+                  {{#if isInverted}}
+                    <span class="mn-config-icon-pill" data-tooltip="{{localize 'MORTAL_NEEDS.NeedEdit.Inverted'}}"><i class="fas fa-arrow-down"></i></span>
+                  {{/if}}
+                  {{#if isGMOnly}}
+                    <span class="mn-config-icon-pill" data-tooltip="{{localize 'MORTAL_NEEDS.NeedEdit.GMOnly'}}"><i class="fas fa-user-secret"></i></span>
+                  {{/if}}
+                  {{#if showAboveZeroOnly}}
+                    <span class="mn-config-icon-pill" data-tooltip="{{localize 'MORTAL_NEEDS.NeedEdit.ShowAboveZeroOnly'}}"><i class="fas fa-eye-slash"></i></span>
+                  {{/if}}
+                  {{#if hasCustomColor}}
+                    <span class="mn-config-icon-pill" data-tooltip="{{localize 'MORTAL_NEEDS.Config.CustomColorTrait'}}"><span class="mn-config-color-dot" style="--mn-need-color: {{color}};"></span></span>
+                  {{/if}}
                   {{#if hasConsequences}}
                     <span class="mn-config-icon-pill" data-tooltip="{{localize 'MORTAL_NEEDS.NeedEdit.Consequences'}}">{{consequenceCount}}</span>
                   {{/if}}
                 </div>
 
                 <div class="mn-config-actions-cell">
+                  <button class="mn-icon-btn" data-action="move-need-up" data-need-id="{{id}}" data-tooltip="{{localize 'MORTAL_NEEDS.Config.MoveNeedUp'}}" {{#unless canMoveUp}}disabled{{/unless}}>
+                    <i class="fas fa-chevron-up"></i>
+                  </button>
+                  <button class="mn-icon-btn" data-action="move-need-down" data-need-id="{{id}}" data-tooltip="{{localize 'MORTAL_NEEDS.Config.MoveNeedDown'}}" {{#unless canMoveDown}}disabled{{/unless}}>
+                    <i class="fas fa-chevron-down"></i>
+                  </button>
                   <button class="mn-icon-btn" data-action="edit-need" data-need-id="{{id}}" data-tooltip="{{localize 'MORTAL_NEEDS.Config.EditNeed'}}">
                     <i class="fas fa-pen"></i>
                   </button>
@@ -100,7 +121,7 @@
         </header>
 
         {{#if previewNeed}}
-          <div class="mn-config-preview__ring" data-severity="{{previewSeverity}}" style="--mn-preview-percent: {{previewPercentage}}%;">
+          <div class="mn-config-preview__ring" data-severity="{{previewSeverity}}" style="--mn-preview-percent: {{previewPercentage}}%;{{#if previewNeed.color}} --mn-need-preview-color: {{previewNeed.color}};{{/if}}">
             <div class="mn-config-preview__ring-core">
               <i class="fas {{previewNeed.icon}}"></i>
               <strong>{{previewPercentage}}%</strong>
@@ -116,13 +137,25 @@
               {{else}}
                 <span class="mn-config-pill mn-config-pill--default">{{localize "MORTAL_NEEDS.Config.DefaultTrait"}}</span>
               {{/if}}
+              {{#if previewNeed.isGMOnly}}
+                <span class="mn-config-pill mn-config-pill--source">{{localize "MORTAL_NEEDS.Config.GMOnlyTrait"}}</span>
+              {{/if}}
+              {{#if previewNeed.showAboveZeroOnly}}
+                <span class="mn-config-pill mn-config-pill--source">{{localize "MORTAL_NEEDS.Config.ShowAboveZeroTrait"}}</span>
+              {{/if}}
+              {{#if previewNeed.isInverted}}
+                <span class="mn-config-pill mn-config-pill--source">{{localize "MORTAL_NEEDS.Config.InvertedTrait"}}</span>
+              {{/if}}
+              {{#if previewNeed.hasCustomColor}}
+                <span class="mn-config-pill mn-config-pill--source"><span class="mn-config-color-dot" style="--mn-need-color: {{previewNeed.color}};"></span>{{localize "MORTAL_NEEDS.Config.CustomColorTrait"}}</span>
+              {{/if}}
             </div>
 
             <div class="mn-config-preview__facts">
               <div><i class="fas fa-bolt"></i><span class="mn-config-preview__stress">{{previewNeed.stressAmount}} {{localize "MORTAL_NEEDS.Config.StressPerClick"}}</span></div>
               <div><i class="fas fa-balance-scale"></i><span class="mn-config-preview__consequences">{{previewNeed.consequenceCount}} {{localize "MORTAL_NEEDS.Config.ConsequenceCount"}}</span></div>
-              <div><i class="fas fa-hourglass-half"></i><span class="mn-config-preview__decay">{{#if previewNeed.decayEnabled}}+{{previewNeed.decayRate}} / {{previewNeed.decayInterval}}s{{else}}{{localize "MORTAL_NEEDS.Config.DecayOff"}}{{/if}}</span></div>
-              <div><i class="fas fa-shoe-prints"></i><span class="mn-config-preview__movement">{{#if previewNeed.movementEnabled}}+{{previewNeed.movementAmount}} / {{previewNeed.movementInterval}} {{previewNeed.movementMetricLabel}}{{else}}{{localize "MORTAL_NEEDS.Config.MovementOff"}}{{/if}}</span></div>
+              <div><i class="fas fa-hourglass-half"></i><span class="mn-config-preview__decay">{{#if previewNeed.decayEnabled}}{{#if previewNeed.isInverted}}-{{else}}+{{/if}}{{previewNeed.decayRate}} / {{previewNeed.decayInterval}}s{{else}}{{localize "MORTAL_NEEDS.Config.DecayOff"}}{{/if}}</span></div>
+              <div><i class="fas fa-shoe-prints"></i><span class="mn-config-preview__movement">{{#if previewNeed.movementEnabled}}{{#if previewNeed.isInverted}}-{{else}}+{{/if}}{{previewNeed.movementAmount}} / {{previewNeed.movementInterval}} {{previewNeed.movementMetricLabel}}{{else}}{{localize "MORTAL_NEEDS.Config.MovementOff"}}{{/if}}</span></div>
             </div>
 
             <div class="mn-config-threshold">

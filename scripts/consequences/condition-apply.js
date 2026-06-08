@@ -16,10 +16,11 @@ export class ConditionApplyConsequence extends ConsequenceType {
     if (!statusId) return { success: false, reason: 'no-status-id' };
 
     // Check if already has this condition from this need
-    const existing = actor.effects.find(e =>
-      e.statuses?.has(statusId) &&
-      e.flags?.[MODULE_ID]?.sourceNeed === needId
-    );
+    const existing = this.adapter.findAppliedCondition?.(actor, statusId, { sourceNeed: needId })
+      ?? actor.effects.find(e =>
+        e.statuses?.has(statusId) &&
+        e.flags?.[MODULE_ID]?.sourceNeed === needId
+      );
     if (existing) return { success: false, reason: 'already-active' };
 
     // Apply via adapter
@@ -32,19 +33,25 @@ export class ConditionApplyConsequence extends ConsequenceType {
   async remove(actor, needId, config) {
     if (!actor) return false;
 
+    if (typeof this.adapter.removeCondition === 'function') {
+      return this.adapter.removeCondition(actor, config.statusId, { sourceNeed: needId });
+    }
+
     const effect = actor.effects.find(e =>
       e.statuses?.has(config.statusId) &&
       e.flags?.[MODULE_ID]?.sourceNeed === needId
     );
-    if (effect) {
-      await effect.delete();
-      return true;
-    }
-    return false;
+    if (!effect) return false;
+    await effect.delete();
+    return true;
   }
 
   async isActive(actor, needId, config) {
     if (!actor) return false;
+    if (typeof this.adapter.findAppliedCondition === 'function') {
+      return !!this.adapter.findAppliedCondition(actor, config.statusId, { sourceNeed: needId });
+    }
+
     return actor.effects.some(e =>
       e.statuses?.has(config.statusId) &&
       e.flags?.[MODULE_ID]?.sourceNeed === needId

@@ -1,5 +1,6 @@
 import { MODULE_ID, MODULE_TITLE, Events, SEVERITY_ORDER, mnRenderTemplate } from '../constants.js';
 import { NeedsEngine } from '../core/needs-engine.js';
+import { isGMOnlyNeed } from '../core/need-visibility.js';
 
 /**
  * FlavorEngine — Severity-aware narrative flavor message system.
@@ -283,7 +284,7 @@ export class FlavorEngine {
       flags: { [MODULE_ID]: { type: 'flavor', entityId: entry.entityId, needId: entry.needId } },
     };
 
-    if (visibility === 'gm') {
+    if (visibility === 'gm' || isGMOnlyNeed(needConfig)) {
       messageData.whisper = game.users.filter(u => u.isGM).map(u => u.id);
     }
 
@@ -338,7 +339,7 @@ export class FlavorEngine {
       flags: { [MODULE_ID]: { type: 'flavor-batch', needId: first.needId } },
     };
 
-    if (visibility === 'gm') {
+    if (visibility === 'gm' || isGMOnlyNeed(needConfig)) {
       messageData.whisper = game.users.filter(u => u.isGM).map(u => u.id);
     }
 

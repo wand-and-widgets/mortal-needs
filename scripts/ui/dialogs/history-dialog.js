@@ -124,9 +124,12 @@ export class HistoryDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const max = entry.max ?? needConfig?.max ?? 100;
     const previousPercentage = NeedsEngine.getPercentage(entry.previousValue, max);
     const newPercentage = NeedsEngine.getPercentage(entry.newValue, max);
-    const newSeverity = NeedsEngine.getSeverity(newPercentage);
-    const previousSeverity = NeedsEngine.getSeverity(previousPercentage);
+    const previousStressPercentage = NeedsEngine.getStressPercentage(entry.previousValue, max, needConfig);
+    const newStressPercentage = NeedsEngine.getStressPercentage(entry.newValue, max, needConfig);
+    const newSeverity = NeedsEngine.getSeverity(newStressPercentage);
+    const previousSeverity = NeedsEngine.getSeverity(previousStressPercentage);
     const delta = entry.newValue - entry.previousValue;
+    const stressDelta = newStressPercentage - previousStressPercentage;
     const timestamp = Number(entry.timestamp) || Date.now();
     const date = new Date(timestamp);
     const needLabel = needConfig ? game.i18n.localize(needConfig.label) : entry.needId;
@@ -156,6 +159,8 @@ export class HistoryDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       newValue: entry.newValue,
       previousPercentage,
       newPercentage,
+      previousStressPercentage,
+      newStressPercentage,
       previousSeverity,
       newSeverity,
       severityLabel: this.#getSeverityLabel(newSeverity),
@@ -165,7 +170,7 @@ export class HistoryDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       sourceIcon: this.#getSourceIcon(source),
       delta,
       deltaLabel: delta > 0 ? `+${delta}` : `${delta}`,
-      direction: delta < 0 ? 'recovery' : 'worsening',
+      direction: stressDelta < 0 ? 'recovery' : 'worsening',
       searchText: `${entityName} ${needLabel} ${sourceLabel} ${entry.previousValue} ${entry.newValue}`.toLocaleLowerCase(),
     };
   }
@@ -185,7 +190,7 @@ export class HistoryDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       total: entries.length,
       critical: entries.filter(entry => entry.newSeverity === 'critical').length,
       high: entries.filter(entry => entry.newSeverity === 'high').length,
-      recoveries: entries.filter(entry => entry.delta < 0).length,
+      recoveries: entries.filter(entry => entry.direction === 'recovery').length,
       mostAffected,
       lastChange: entries[0]?.relativeTime || game.i18n.localize('MORTAL_NEEDS.History.None'),
     };
@@ -194,7 +199,7 @@ export class HistoryDialog extends HandlebarsApplicationMixin(ApplicationV2) {
   #buildActivityBars(entries) {
     return entries.slice(0, 12).reverse().map(entry => ({
       severity: entry.newSeverity,
-      height: Math.max(18, Math.min(100, entry.newPercentage)),
+      height: Math.max(18, Math.min(100, entry.newStressPercentage)),
       label: `${entry.needLabel}: ${entry.newValue}`,
     }));
   }
@@ -256,7 +261,7 @@ export class HistoryDialog extends HandlebarsApplicationMixin(ApplicationV2) {
   #updateSummary(rows) {
     const critical = rows.filter(row => row.dataset.severity === 'critical').length;
     const high = rows.filter(row => row.dataset.severity === 'high').length;
-    const recoveries = rows.filter(row => Number(row.dataset.delta) < 0).length;
+    const recoveries = rows.filter(row => row.dataset.direction === 'recovery').length;
     const affectedNeeds = new Map();
 
     for (const row of rows) {

@@ -5,6 +5,27 @@ All notable changes to Mortal Needs will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.1] - 2026-06-08
+
+### Added
+- GM-only needs for private threats, hidden illnesses, curses, regional pressure, or other tracks only the GM should see
+- Display rules that can hide a need from visual panels until its value is above zero
+- Inverted needs for resources that become dangerous as they run low, such as morale, supplies, oxygen, warmth, or magical protection
+- Search in the main Mortal Needs panel for quickly finding tracked characters in large parties, NPC groups, pets, and retinues
+- Display modes for the main panel: Normal, Compact, Focus, and Categories
+- Custom need colors and manual need ordering in the configuration window
+
+### Changed
+- The Add Actors dialog now also works as a tracking manager, allowing GMs to add new characters and remove already tracked characters from the same list
+- GMs can reset every tracked character's needs from the main panel with one confirmed action
+- The SessionFlow widget has been rebuilt as a compact GM cockpit with crisis metrics, worst-need focus, faster actor controls, batch stress and relief shortcuts, clearer broadcast and flash actions, and safer small-size behavior
+- Actor detail drawers in the SessionFlow widget can stay open independently so GMs can compare several characters while the widget keeps scrolling cleanly
+- The batch Stress All and Relief All dialog opens above the SessionFlow panel when launched from the widget
+
+### Fixed
+- PF2E users can edit Apply Condition consequences again in Foundry v14, using PF2E's current condition list more reliably
+- SessionFlow widget layouts now guard against overlapping controls, shrinking actor cards, and stacked need meters at small and medium sizes
+
 ## [2.3.0] - 2026-05-15
 
 ### Added

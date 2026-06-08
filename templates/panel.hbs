@@ -1,4 +1,4 @@
-<div class="mn-panel mn-rework {{#if isDense}}mn-rework--dense{{/if}}">
+<div class="mn-panel mn-rework {{#if isDense}}mn-rework--dense{{/if}} {{panelDisplayModeClass}}" data-panel-display-mode="{{panelDisplayMode}}">
   {{#if hasTracked}}
     <header class="mn-panel-hero">
       <div class="mn-panel-hero__title">
@@ -23,6 +23,10 @@
           <span>{{localize "MORTAL_NEEDS.Toolbar.RelieveAll"}}</span>
         </button>
         {{#if isGM}}
+          <button type="button" class="mn-tool-btn" data-action="reset-all-tracked" data-tooltip="{{localize 'MORTAL_NEEDS.Toolbar.ResetAllTracked'}}">
+            <i class="fas fa-undo-alt"></i>
+            <span>{{localize "MORTAL_NEEDS.Toolbar.ResetAll"}}</span>
+          </button>
           <button type="button" class="mn-icon-btn" data-action="configure" data-tooltip="{{localize 'MORTAL_NEEDS.Toolbar.Configure'}}">
             <i class="fas fa-cog"></i>
             <span>{{localize "MORTAL_NEEDS.Toolbar.Configure"}}</span>
@@ -65,8 +69,43 @@
 
     <section class="mn-panel-workspace">
       <div class="mn-panel-main">
+        <div class="mn-panel-filter">
+          <label class="mn-panel-filter__search">
+            <i class="fas fa-search"></i>
+            <input
+              type="text"
+              data-actor-search-input
+              autocomplete="off"
+              value="{{actorSearchQuery}}"
+              placeholder="{{localize 'MORTAL_NEEDS.Panel.SearchActors'}}">
+          </label>
+          <div class="mn-panel-filter__count">
+            <strong data-actor-search-count>{{trackedCount}}</strong>
+            <span>{{localize "MORTAL_NEEDS.Panel.Visible"}}</span>
+          </div>
+          <div class="mn-panel-display-modes" role="group" aria-label="{{localize 'MORTAL_NEEDS.Panel.DisplayMode'}}">
+            {{#each panelDisplayModes}}
+              <button
+                type="button"
+                class="mn-panel-display-mode {{#if active}}is-active{{/if}}"
+                data-action="panel-display-mode"
+                data-mode="{{id}}"
+                data-tooltip="{{localize label}}"
+                aria-pressed="{{#if active}}true{{else}}false{{/if}}">
+                <i class="fas {{icon}}"></i>
+                <span>{{localize label}}</span>
+              </button>
+            {{/each}}
+          </div>
+        </div>
+
+        <p class="mn-panel-filter__empty" data-actor-filter-empty hidden>
+          <i class="fas fa-search"></i>
+          <span>{{localize "MORTAL_NEEDS.Panel.NoActorMatches"}}</span>
+        </p>
+
         {{#each actors}}
-          {{> "modules/mortal-needs/templates/components/actor-card.hbs" this isGM=../isGM barOrientation=../barOrientation}}
+          {{> "modules/mortal-needs/templates/components/actor-card.hbs" this isGM=../isGM barOrientation=../barOrientation panelDisplayMode=../panelDisplayMode}}
         {{/each}}
       </div>
 
@@ -138,7 +177,7 @@
                   <div class="mn-decay-item">
                     <i class="fas {{icon}}"></i>
                     <span>{{label}}</span>
-                    <strong>+{{rate}} / {{intervalLabel}}</strong>
+                    <strong>{{sign}}{{rate}} / {{intervalLabel}}</strong>
                   </div>
                 {{/each}}
               {{else}}

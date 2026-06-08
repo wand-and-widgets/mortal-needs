@@ -29,8 +29,8 @@ export class ConsequenceEngine {
 
     const actor = this.#resolveActor(entityId, entityInfo);
 
-    const oldPct = NeedsEngine.getPercentage(previousValue, max);
-    const newPct = NeedsEngine.getPercentage(value, max);
+    const oldPct = NeedsEngine.getStressPercentage(previousValue, max, config);
+    const newPct = NeedsEngine.getStressPercentage(value, max, config);
 
     for (const consequenceConfig of config.consequences) {
       const threshold = this.#normalizeThreshold(consequenceConfig.threshold);

@@ -121,7 +121,8 @@ export class FlashPopup {
       const value = NeedsEngine.normalizeNumber(state.value, 0);
       const max = NeedsEngine.normalizeNumber(state.max ?? config.max, 100);
       const percentage = NeedsEngine.getPercentage(value, max);
-      const severity = NeedsEngine.getSeverity(percentage);
+      const stressPercentage = NeedsEngine.getStressPercentage(value, max, config);
+      const severity = NeedsEngine.getSeverity(stressPercentage);
       const decimal = NeedsEngine.getRatio(value, max);
       const tooltip = `${game.i18n.localize(config.label)}: ${value}/${max} (${percentage}%)`;
 
@@ -146,6 +147,7 @@ export class FlashPopup {
     const needEl = document.createElement('div');
     needEl.className = 'mn-flash__need';
     needEl.title = tooltip;
+    this.#applyNeedColor(needEl, config);
 
     const icon = document.createElement('span');
     icon.className = 'mn-flash__need-icon';
@@ -175,6 +177,7 @@ export class FlashPopup {
     const needEl = document.createElement('div');
     needEl.className = 'mn-flash__need mn-flash__need--vertical';
     needEl.title = tooltip;
+    this.#applyNeedColor(needEl, config);
 
     const icon = document.createElement('span');
     icon.className = 'mn-flash__need-icon';
@@ -209,6 +212,7 @@ export class FlashPopup {
     const needEl = document.createElement('div');
     needEl.className = 'mn-flash__need mn-flash__need--radial';
     needEl.title = tooltip;
+    this.#applyNeedColor(needEl, config);
 
     const svgNS = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(svgNS, 'svg');
@@ -244,5 +248,11 @@ export class FlashPopup {
     needEl.appendChild(ringWrap);
 
     return needEl;
+  }
+
+  #applyNeedColor(element, config) {
+    if (!config?.color) return;
+    element.classList.add('mn-flash__need--custom-color');
+    element.style.setProperty('--mn-need-color', config.color);
   }
 }

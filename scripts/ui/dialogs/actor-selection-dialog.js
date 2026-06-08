@@ -144,36 +144,103 @@ export class ActorSelectionDialog extends HandlebarsApplicationMixin(Application
   }
 
   #syncSelectionState() {
-    const selected = this.element.querySelectorAll(
-      'input[name="selectedActors"]:checked:not(:disabled), input[name="selectedESChars"]:checked:not(:disabled)'
-    );
+    const inputs = [...this.element.querySelectorAll('input[name="selectedActors"], input[name="selectedESChars"]')];
+    let selectedCount = 0;
+    let addedCount = 0;
+    let removedCount = 0;
 
     this.element.querySelectorAll('.mn-actor-select__row').forEach(row => {
       const checkbox = row.querySelector('input[type="checkbox"]');
-      row.classList.toggle('is-selected', !!checkbox?.checked && !checkbox.disabled);
+      if (!checkbox) return;
+
+      const wasTracked = checkbox.dataset.tracked === 'true';
+      const isChecked = checkbox.checked;
+      const isAdded = !wasTracked && isChecked;
+      const isRemoved = wasTracked && !isChecked;
+      const badge = row.querySelector('[data-state-badge]');
+
+      row.classList.toggle('is-selected', isChecked);
+      row.classList.toggle('is-new', isAdded);
+      row.classList.toggle('is-removing', isRemoved);
+
+      if (badge) {
+        if (isRemoved) {
+          badge.hidden = false;
+          badge.textContent = game.i18n.localize('MORTAL_NEEDS.ActorSelection.WillRemove');
+          badge.dataset.state = 'remove';
+        } else if (isAdded) {
+          badge.hidden = false;
+          badge.textContent = game.i18n.localize('MORTAL_NEEDS.ActorSelection.WillAdd');
+          badge.dataset.state = 'add';
+        } else if (wasTracked) {
+          badge.hidden = false;
+          badge.textContent = game.i18n.localize('MORTAL_NEEDS.ActorSelection.AlreadyTracked');
+          badge.dataset.state = 'tracked';
+        } else {
+          badge.hidden = true;
+          badge.textContent = '';
+          delete badge.dataset.state;
+        }
+      }
     });
 
-    const selectedCount = selected.length;
+    for (const input of inputs) {
+      const wasTracked = input.dataset.tracked === 'true';
+      if (input.checked) selectedCount += 1;
+      if (!wasTracked && input.checked) addedCount += 1;
+      if (wasTracked && !input.checked) removedCount += 1;
+    }
+
     const count = this.element.querySelector('[data-selected-count]');
+    const added = this.element.querySelector('[data-added-count]');
+    const removed = this.element.querySelector('[data-removed-count]');
     const confirm = this.element.querySelector('[data-action="confirm"]');
+    const hasChanges = addedCount > 0 || removedCount > 0;
 
     if (count) count.textContent = String(selectedCount);
-    if (confirm) confirm.disabled = selectedCount === 0;
+    if (added) added.textContent = String(addedCount);
+    if (removed) removed.textContent = String(removedCount);
+    if (confirm) confirm.disabled = !hasChanges;
   }
 
   static async #onConfirm() {
     const api = game.modules.get(MODULE_ID).api;
+    let addedCount = 0;
+    let removedCount = 0;
 
-    // Selected Foundry Actors
-    const actorCheckboxes = this.element.querySelectorAll('input[name="selectedActors"]:checked:not(:disabled)');
+    // Foundry Actors
+    const actorCheckboxes = this.element.querySelectorAll('input[name="selectedActors"]');
     for (const cb of actorCheckboxes) {
-      await api.actors.track(cb.value, EntitySource.ACTOR);
+      const wasTracked = cb.dataset.tracked === 'true';
+      if (cb.checked && !wasTracked) {
+        await api.actors.track(cb.value, EntitySource.ACTOR);
+        addedCount += 1;
+      } else if (!cb.checked && wasTracked) {
+        await api.actors.untrack(cb.value);
+        removedCount += 1;
+      }
     }
 
-    // Selected ES Characters
-    const esCheckboxes = this.element.querySelectorAll('input[name="selectedESChars"]:checked:not(:disabled)');
+    // Exalted Scenes Characters
+    const esCheckboxes = this.element.querySelectorAll('input[name="selectedESChars"]');
     for (const cb of esCheckboxes) {
-      await api.actors.track(cb.value, EntitySource.EXALTED_SCENES);
+      const wasTracked = cb.dataset.tracked === 'true';
+      if (cb.checked && !wasTracked) {
+        await api.actors.track(cb.value, EntitySource.EXALTED_SCENES);
+        addedCount += 1;
+      } else if (!cb.checked && wasTracked) {
+        await api.actors.untrack(cb.value);
+        removedCount += 1;
+      }
+    }
+
+    if (addedCount || removedCount) {
+      ui.notifications.info(
+        game.i18n.format('MORTAL_NEEDS.Notifications.ActorTrackingUpdated', {
+          added: addedCount,
+          removed: removedCount,
+        }),
+      );
     }
 
     this.close();

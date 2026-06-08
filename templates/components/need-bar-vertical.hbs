@@ -1,4 +1,4 @@
-<div class="mn-need-bar mn-need-bar--vertical" data-need-id="{{id}}" data-entity-id="{{entityId}}" data-severity="{{severity}}" data-tooltip="{{localizedLabel}}: {{percentageLabel}}">
+<div class="mn-need-bar mn-need-bar--vertical {{#if hasCustomColor}}mn-need-bar--custom-color{{/if}}" data-need-id="{{id}}" data-entity-id="{{entityId}}" data-severity="{{severity}}" data-tooltip="{{localizedLabel}}: {{percentageLabel}}" {{#if color}}style="--mn-need-color: {{color}};"{{/if}}>
   <div class="mn-need-bar__head">
     <span class="mn-need-bar__icon" data-severity="{{severity}}">
       <i class="fas {{icon}}"></i>
