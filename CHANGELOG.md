@@ -5,6 +5,11 @@ All notable changes to Mortal Needs will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.3.2] - 2026-06-09
+
+### Fixed
+- Mortal Needs windows opened from the SessionFlow widget now stay above SessionFlow panels, including Add Actors, Toggle Needs, batch stress and relief, configuration, history, and confirmation dialogs
+
 ## [2.3.1] - 2026-06-08
 
 ### Added

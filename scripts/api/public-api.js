@@ -23,7 +23,7 @@ export function createPublicAPI(store, engine, consequenceEngine, eventBus, conf
   };
 
   const api = {
-    version: '2.3.1',
+    version: '2.3.2',
 
     // --- Needs ---
     needs: {

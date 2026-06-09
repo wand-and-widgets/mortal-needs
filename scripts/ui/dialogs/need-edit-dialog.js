@@ -7,6 +7,11 @@ import {
   normalizeNeedDisplayRule,
   normalizeNeedVisibility,
 } from '../../core/need-visibility.js';
+import {
+  bringMortalNeedsWindowToFront,
+  releaseMortalNeedsWindowLayer,
+  watchNextMortalNeedsDialogRender,
+} from './window-layering.js';
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -140,6 +145,7 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 
   _onRender(context, options) {
     super._onRender(context, options);
+    bringMortalNeedsWindowToFront(this);
 
     // Listen for config changes to refresh consequence list
     if (this._configChangedHandler) {
@@ -164,6 +170,7 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     if (this._configChangedHandler) {
       this.#eventBus.off(Events.CONFIG_CHANGED, this._configChangedHandler);
     }
+    releaseMortalNeedsWindowLayer(this);
     super._onClose(options);
   }
 
@@ -509,9 +516,11 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static async #onDelete() {
     if (!this.#needId) return;
+    watchNextMortalNeedsDialogRender();
     const confirmed = await foundry.applications.api.DialogV2.confirm({
       window: { title: game.i18n.localize('MORTAL_NEEDS.NeedEdit.DeleteTitle') },
       content: `<p>${game.i18n.localize('MORTAL_NEEDS.NeedEdit.DeleteConfirm')}</p>`,
+      classes: ['mortal-needs-panel', 'mn-dialog'],
     });
     if (confirmed) {
       this.#store.unregisterNeed(this.#needId);
@@ -546,9 +555,11 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const index = parseInt(target.closest('[data-index]')?.dataset.index);
     if (isNaN(index)) return;
 
+    watchNextMortalNeedsDialogRender();
     const confirmed = await foundry.applications.api.DialogV2.confirm({
       window: { title: game.i18n.localize('MORTAL_NEEDS.EffectConfig.DeleteConfirm') },
       content: `<p>${game.i18n.localize('MORTAL_NEEDS.EffectConfig.DeleteConfirm')}</p>`,
+      classes: ['mortal-needs-panel', 'mn-dialog'],
     });
     if (!confirmed) return;
 

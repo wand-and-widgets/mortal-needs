@@ -1,4 +1,5 @@
 import { MODULE_ID } from '../constants.js';
+import { watchNextMortalNeedsDialogRender } from '../ui/dialogs/window-layering.js';
 
 /**
  * Convenience functions for use in Foundry macros.
@@ -137,6 +138,7 @@ export async function quickStressDialog() {
     </form>
   `;
 
+  watchNextMortalNeedsDialogRender();
   const result = await foundry.applications.api.DialogV2.prompt({
     window: { title: game.i18n.localize('MORTAL_NEEDS.Dialogs.QuickStressTitle') },
     content,
@@ -150,6 +152,7 @@ export async function quickStressDialog() {
         };
       },
     },
+    classes: ['mortal-needs-panel', 'mn-dialog'],
   });
 
   if (result) {

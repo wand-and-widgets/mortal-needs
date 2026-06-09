@@ -1,5 +1,6 @@
 import { MODULE_ID, Events } from '../../constants.js';
 import { getAllConsequenceTypes, getConsequenceType } from '../../consequences/consequence-type.js';
+import { bringMortalNeedsWindowToFront, releaseMortalNeedsWindowLayer } from './window-layering.js';
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -159,6 +160,7 @@ export class EffectConfigDialog extends HandlebarsApplicationMixin(ApplicationV2
 
   _onRender(context, options) {
     super._onRender(context, options);
+    bringMortalNeedsWindowToFront(this);
 
     // When consequence type changes, re-render config fields
     const typeSelect = this.element.querySelector('select[name="consequenceType"]');
@@ -172,6 +174,11 @@ export class EffectConfigDialog extends HandlebarsApplicationMixin(ApplicationV2
     }
 
     this.#bindLiveBehaviorSummary();
+  }
+
+  _onClose(options) {
+    releaseMortalNeedsWindowLayer(this);
+    super._onClose(options);
   }
 
   #bindLiveBehaviorSummary() {

@@ -1,6 +1,11 @@
 import { MODULE_ID, MODULE_TITLE, Events, EntitySource, Severity } from '../constants.js';
 import { NeedsEngine } from '../core/needs-engine.js';
 import { filterDisplayNeedsForEntity, filterNeedsForUser } from '../core/need-visibility.js';
+import {
+  bringMortalNeedsWindowToFront,
+  releaseMortalNeedsWindowLayer,
+  watchNextMortalNeedsDialogRender,
+} from './dialogs/window-layering.js';
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -80,6 +85,7 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
 
   _onRender(context, options) {
     super._onRender(context, options);
+    bringMortalNeedsWindowToFront(this);
 
     // Only subscribe once to avoid stacking listeners on every re-render.
     if (this.#unsubscribers.length === 0) {
@@ -100,6 +106,7 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   _onClose(options) {
+    releaseMortalNeedsWindowLayer(this);
     super._onClose(options);
 
     // Unsubscribe from all events
@@ -462,9 +469,11 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const entityId = actionTarget?.dataset.entityId;
     if (!entityId) return;
 
+    watchNextMortalNeedsDialogRender();
     const confirmed = await foundry.applications.api.DialogV2.confirm({
       window: { title: game.i18n.localize('MORTAL_NEEDS.Dialogs.ResetAllTitle') },
       content: `<p>${game.i18n.localize('MORTAL_NEEDS.Dialogs.ResetAllContent')}</p>`,
+      classes: ['mortal-needs-panel', 'mn-dialog'],
     });
     if (confirmed) {
       await this.#engine.resetAll(entityId);
@@ -480,9 +489,11 @@ export class MortalNeedsApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const entityIds = this.#store.getTrackedEntityIds();
     if (!entityIds.length) return;
 
+    watchNextMortalNeedsDialogRender();
     const confirmed = await foundry.applications.api.DialogV2.confirm({
       window: { title: game.i18n.localize('MORTAL_NEEDS.Dialogs.ResetAllTrackedTitle') },
       content: `<p>${game.i18n.format('MORTAL_NEEDS.Dialogs.ResetAllTrackedContent', { count: entityIds.length })}</p>`,
+      classes: ['mortal-needs-panel', 'mn-dialog'],
     });
     if (!confirmed) return;
 

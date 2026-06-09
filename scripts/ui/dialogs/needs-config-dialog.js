@@ -1,5 +1,10 @@
 import { MODULE_ID, Events } from '../../constants.js';
 import { NeedDisplayRule, isGMOnlyNeed, normalizeNeedDisplayRule } from '../../core/need-visibility.js';
+import {
+  bringMortalNeedsWindowToFront,
+  releaseMortalNeedsWindowLayer,
+  watchNextMortalNeedsDialogRender,
+} from './window-layering.js';
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 const CRITICAL_THRESHOLD_MIN = 50;
@@ -137,6 +142,7 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
 
   _onRender(context, options) {
     super._onRender(context, options);
+    bringMortalNeedsWindowToFront(this);
 
     this.element.querySelectorAll('.mn-dialog__tab').forEach(tab => {
       tab.addEventListener('click', (e) => {
@@ -212,6 +218,7 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
       this.#configChangedUnsubscribe();
       this.#configChangedUnsubscribe = null;
     }
+    releaseMortalNeedsWindowLayer(this);
     super._onClose(options);
   }
 
@@ -353,9 +360,11 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
     const preset = this.#configManager.getAllPresets().find(p => p.id === presetId);
     if (!preset) return;
 
+    watchNextMortalNeedsDialogRender();
     const confirmed = await foundry.applications.api.DialogV2.confirm({
       window: { title: game.i18n.localize('MORTAL_NEEDS.Config.ApplyPresetTitle') },
       content: `<p>${game.i18n.localize('MORTAL_NEEDS.Config.ApplyPresetConfirm')}</p>`,
+      classes: ['mortal-needs-panel', 'mn-dialog'],
     });
     if (!confirmed) return;
 
@@ -691,6 +700,7 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
   }
 
   static async #onSavePreset() {
+    watchNextMortalNeedsDialogRender();
     const result = await foundry.applications.api.DialogV2.prompt({
       window: { title: game.i18n.localize('MORTAL_NEEDS.Config.SavePresetTitle') },
       content: `
@@ -715,6 +725,7 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
           };
         },
       },
+      classes: ['mortal-needs-panel', 'mn-dialog'],
     });
 
     if (result?.name) {

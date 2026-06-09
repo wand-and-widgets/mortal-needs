@@ -1,5 +1,10 @@
 import { MODULE_ID, Events } from '../../constants.js';
 import { NeedsEngine } from '../../core/needs-engine.js';
+import {
+  bringMortalNeedsWindowToFront,
+  releaseMortalNeedsWindowLayer,
+  watchNextMortalNeedsDialogRender,
+} from './window-layering.js';
 
 const { ApplicationV2, DialogV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -70,6 +75,7 @@ export class HistoryDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 
   _onRender(context, options) {
     super._onRender(context, options);
+    bringMortalNeedsWindowToFront(this);
     this.#subscribeToHistory();
 
     const filterEntity = this.element.querySelector('[data-history-filter="entity"]');
@@ -97,6 +103,7 @@ export class HistoryDialog extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   _onClose(options) {
+    releaseMortalNeedsWindowLayer(this);
     super._onClose(options);
 
     for (const unsubscribe of this.#unsubscribers) {
@@ -407,9 +414,11 @@ export class HistoryDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       return;
     }
 
+    watchNextMortalNeedsDialogRender();
     const confirmed = await DialogV2.confirm({
       window: { title: game.i18n.localize('MORTAL_NEEDS.History.ClearTitle') },
       content: `<p>${game.i18n.localize('MORTAL_NEEDS.History.ClearContent')}</p>`,
+      classes: ['mortal-needs-panel', 'mn-dialog'],
     });
     if (!confirmed) return;
 

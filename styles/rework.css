@@ -20,6 +20,19 @@
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.48);
 }
 
+body.mortal-needs-dialog-open #ui-windows {
+  position: relative !important;
+  z-index: 100190 !important;
+}
+
+.mortal-needs-panel.mn-dialog {
+  z-index: 100160 !important;
+}
+
+.mortal-needs-panel.mn-dialog--front {
+  z-index: 100170 !important;
+}
+
 .mortal-needs-panel .window-header {
   min-height: 32px;
   background: #111315;
@@ -1587,11 +1600,11 @@
 
 #mortal-needs-multi-stress.mortal-needs-panel {
   width: min(860px, calc(100vw - 64px)) !important;
-  z-index: 20050 !important;
+  z-index: 100160 !important;
 }
 
 #mortal-needs-multi-stress.mortal-needs-panel.mn-dialog--front {
-  z-index: 20050 !important;
+  z-index: 100170 !important;
 }
 
 #mortal-needs-multi-stress.mortal-needs-panel .window-content {

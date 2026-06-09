@@ -1,6 +1,7 @@
 import { MODULE_ID, Events, EntitySource } from '../constants.js';
 import { getConsequenceType } from '../consequences/consequence-type.js';
 import { NeedsEngine } from './needs-engine.js';
+import { watchNextMortalNeedsDialogRender } from '../ui/dialogs/window-layering.js';
 
 export class ConsequenceEngine {
   #eventBus;
@@ -198,6 +199,7 @@ export class ConsequenceEngine {
     const needName = needConfig ? game.i18n.localize(needConfig.label) : needId;
     const description = instance.getDescription(this.#getRuntimeConfig(needId, consequenceConfig));
 
+    watchNextMortalNeedsDialogRender();
     const confirmed = await foundry.applications.api.DialogV2.confirm({
       window: { title: game.i18n.localize('MORTAL_NEEDS.Dialogs.RemoveConsequenceTitle') },
       content: `<p>${game.i18n.format('MORTAL_NEEDS.Dialogs.RemoveConsequenceContent', {
@@ -207,6 +209,7 @@ export class ConsequenceEngine {
       })}</p>`,
       yes: { label: game.i18n.localize('MORTAL_NEEDS.Dialogs.Remove') },
       no: { label: game.i18n.localize('MORTAL_NEEDS.Dialogs.Keep') },
+      classes: ['mortal-needs-panel', 'mn-dialog'],
     });
 
     if (confirmed) {

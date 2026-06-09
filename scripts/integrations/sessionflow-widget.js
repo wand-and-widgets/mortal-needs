@@ -1,6 +1,7 @@
 import { MODULE_ID, Events } from '../constants.js';
 import { NeedsEngine } from '../core/needs-engine.js';
 import { filterDisplayNeedsForEntity } from '../core/need-visibility.js';
+import { watchNextMortalNeedsDialogRender } from '../ui/dialogs/window-layering.js';
 
 const AT_RISK_THRESHOLD = 60;
 const RING_RADIUS = 14;
@@ -903,6 +904,7 @@ export function createMortalNeedsWidgetClass() {
 
       const wrapper = `<div class="mn-sf-toggle-needs">${content}</div>`;
 
+      watchNextMortalNeedsDialogRender();
       const result = await foundry.applications.api.DialogV2.wait({
         window: {
           title: game.i18n.localize('MORTAL_NEEDS.SessionFlow.ToggleNeeds'),
@@ -922,7 +924,7 @@ export function createMortalNeedsWidgetClass() {
           action: 'cancel',
           label: game.i18n.localize('Cancel'),
         }],
-        classes: ['mortal-needs-panel'],
+        classes: ['mortal-needs-panel', 'mn-dialog'],
       });
 
       if (result instanceof Set) {

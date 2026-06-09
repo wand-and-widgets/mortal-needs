@@ -1,4 +1,5 @@
 import { MODULE_ID, EntitySource } from '../../constants.js';
+import { bringMortalNeedsWindowToFront, releaseMortalNeedsWindowLayer } from './window-layering.js';
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
@@ -86,10 +87,16 @@ export class ActorSelectionDialog extends HandlebarsApplicationMixin(Application
 
   _onRender(context, options) {
     super._onRender(context, options);
+    bringMortalNeedsWindowToFront(this);
 
     this.#activateTabs();
     this.#activateSearch();
     this.#activateSelectionState();
+  }
+
+  _onClose(options) {
+    releaseMortalNeedsWindowLayer(this);
+    super._onClose(options);
   }
 
   static #getSelectionStats(entries) {

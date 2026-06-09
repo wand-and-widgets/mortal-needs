@@ -5,6 +5,7 @@
  */
 
 import { MODULE_ID, MODULE_TITLE as MODULE_NAME } from './constants.js';
+import { watchNextMortalNeedsDialogRender } from './ui/dialogs/window-layering.js';
 
 
 /**
@@ -589,11 +590,13 @@ export class PunishmentSystem {
         const needName = game.i18n.localize(`MORTAL_NEEDS.Needs.${needId}`);
         const punishmentName = this._getPunishmentDisplayName(punishmentConfig);
 
+        watchNextMortalNeedsDialogRender();
         new foundry.applications.api.DialogV2({
             window: {
                 title: game.i18n.localize('MORTAL_NEEDS.Dialogs.RemovalTitle'),
                 icon: 'fas fa-heart-crack'
             },
+            classes: ['mortal-needs-panel', 'mn-dialog'],
             content: `
                 <div class="mn-removal-dialog">
                     <div class="mn-removal-portrait">
