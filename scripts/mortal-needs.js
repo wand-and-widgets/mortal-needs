@@ -9,6 +9,8 @@ import { ConfigManager } from './core/config-manager.js';
 import { SocketManager } from './core/socket-manager.js';
 import { TimeEngine } from './core/time-engine.js';
 import { MovementEngine } from './core/movement-engine.js';
+import { isResponsibleGM } from './core/access.js';
+import { needIcon } from './ui/need-icons.js';
 
 // Consequence types (self-registering)
 import './consequences/attribute-modify.js';
@@ -27,7 +29,7 @@ import { Wfrp4eAdapter } from './adapters/wfrp4e-adapter.js';
 import { GenericAdapter } from './adapters/generic-adapter.js';
 
 // UI
-import { MortalNeedsApp } from './ui/mortal-needs-app.js';
+import { MortalNeedsDock as MortalNeedsApp } from './ui/mortal-needs-dock.js';
 
 // Integrations
 import { ChatCards } from './integrations/chat-cards.js';
@@ -59,7 +61,7 @@ class MortalNeeds {
   }
 
   async initialize() {
-    console.log(`${MODULE_TITLE} | Initializing v2.2...`);
+    console.log(`${MODULE_TITLE} | Initializing v3.0.0...`);
 
     // 1. Create event bus
     this.eventBus = new EventBus();
@@ -195,7 +197,7 @@ class MortalNeeds {
   }
 
   #registerActorHooks() {
-    Hooks.on('updateActor', (actor) => {
+    Hooks.on('updateActor', (actor, changes) => {
       if (this.store.isTracked(actor.id)) {
         // Refresh entity info (name/img might have changed)
         this.store.trackEntity(actor.id, {
@@ -203,6 +205,11 @@ class MortalNeeds {
           name: actor.name,
           img: actor.img || actor.prototypeToken?.texture?.src || 'icons/svg/mystery-man.svg',
         });
+        const flat = foundry.utils.flattenObject(changes);
+        if (Object.keys(flat).some(key => key === `flags.${MODULE_ID}.needs` || key.startsWith(`flags.${MODULE_ID}.needs.`))) {
+          this.engine.ingestActorNeeds(actor).catch(error => console.error('Mortal Needs | Actor sync failed:', error));
+        }
+        this.eventBus.emit(Events.ACTORS_REFRESHED, {});
       }
     });
 
@@ -211,9 +218,52 @@ class MortalNeeds {
         this.store.untrackEntity(actor.id);
         // Remove from tracked list
         const trackedIds = (game.settings.get(MODULE_ID, 'trackedActors') || []).filter(id => id !== actor.id);
-        game.settings.set(MODULE_ID, 'trackedActors', trackedIds);
+        if (isResponsibleGM()) game.settings.set(MODULE_ID, 'trackedActors', trackedIds);
       }
     });
+
+    Hooks.on('mortalNeeds.settingsChanged', ({ key }) => {
+      this.#syncSettings(key).catch(error => console.error('Mortal Needs | Settings sync failed:', error));
+    });
+    for (const event of ['createActiveEffect', 'updateActiveEffect', 'deleteActiveEffect', 'createItem', 'updateItem', 'deleteItem']) {
+      Hooks.on(event, doc => {
+        if (this.store.isTracked(doc.parent?.id)) this.eventBus.emit(Events.ACTORS_REFRESHED, {});
+      });
+    }
+  }
+
+  async #syncSettings(key) {
+    if (key === 'needsConfig') {
+      this.store.setNeedConfigs(game.settings.get(MODULE_ID, key) || []);
+      this.eventBus.emit(Events.CONFIG_CHANGED, { source: 'document' });
+    } else if (key === 'trackedActors') {
+      const ids = game.settings.get(MODULE_ID, key) || [];
+      for (const entity of this.store.getTrackedEntitiesBySource(EntitySource.ACTOR)) {
+        if (!ids.includes(entity.id)) this.store.untrackEntity(entity.id);
+      }
+      for (const id of ids) {
+        const actor = game.actors.get(id);
+        if (!actor || this.store.isTracked(id)) continue;
+        this.store.trackEntity(id, { source: EntitySource.ACTOR, name: actor.name, img: actor.img });
+        await this.store.loadActorNeeds(actor);
+      }
+    } else if (key === 'esCharacterNeeds') {
+      const data = game.settings.get(MODULE_ID, key) || {};
+      for (const entity of this.store.getTrackedEntitiesBySource(EntitySource.EXALTED_SCENES)) {
+        if (!data[entity.id]) this.store.untrackEntity(entity.id);
+        else await this.engine.ingestEntityNeeds(entity.id, () => this.store.loadESCharacterNeeds(entity.id));
+      }
+      const es = game.modules.get('exalted-scenes')?.api;
+      for (const id of Object.keys(data)) {
+        if (this.store.isTracked(id) || !es?.isReady) continue;
+        const character = es.characters.get(id);
+        if (!character) continue;
+        this.store.trackEntity(id, { source: EntitySource.EXALTED_SCENES, name: character.name,
+          img: character.thumbnail || character.image || 'icons/svg/mystery-man.svg', linkedActorId: character.actorId || null });
+        await this.store.loadESCharacterNeeds(id);
+      }
+    }
+    this.eventBus.emit(Events.ACTORS_REFRESHED, {});
   }
 
   async #initSessionFlowIntegration() {
@@ -255,7 +305,7 @@ Hooks.once('init', () => {
   mortalNeeds.configManager.registerAllSettings();
 
   // Pre-load partial templates so {{> "path"}} works in Handlebars
-  loadTemplates([
+  (foundry.applications.handlebars?.loadTemplates ?? globalThis.loadTemplates)([
     `modules/${MODULE_ID}/templates/components/actor-card.hbs`,
     `modules/${MODULE_ID}/templates/components/need-bar-horizontal.hbs`,
     `modules/${MODULE_ID}/templates/components/need-bar-vertical.hbs`,
@@ -264,6 +314,7 @@ Hooks.once('init', () => {
   ]);
 
   // Register Handlebars helpers
+  Handlebars.registerHelper('mnIcon', config => new Handlebars.SafeString(needIcon(config)));
   Handlebars.registerHelper('mnPercentage', (value, max) => {
     return NeedsEngine.getPercentage(value, max);
   });
@@ -328,4 +379,8 @@ Hooks.once('ready', async () => {
     mortalNeeds.adapter,
     mortalNeeds,
   );
+  mortalNeeds.ui.restore();
+  if (game.settings.get(MODULE_ID, 'broadcastState')?.visible) {
+    Hooks.callAll('mortalNeeds.broadcast.show', game.modules.get(MODULE_ID).api.broadcast._buildPayload());
+  }
 });

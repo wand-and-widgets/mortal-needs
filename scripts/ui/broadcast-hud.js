@@ -1,5 +1,6 @@
 import { MODULE_ID, Events } from '../constants.js';
 import { NeedsEngine } from '../core/needs-engine.js';
+import { needIcon, needColor } from './need-icons.js';
 
 const DOCK_POS_KEY = 'mn-broadcast-position';
 const UPDATE_DEBOUNCE_MS = 200;
@@ -328,7 +329,7 @@ export class BroadcastHUD {
     const icon = document.createElement('span');
     icon.className = 'mn-broadcast__need-icon';
     icon.dataset.severity = need.severity;
-    icon.innerHTML = `<i class="fas ${need.config.icon}"></i>`;
+    icon.innerHTML = needIcon(need.config);
     needEl.appendChild(icon);
 
     const track = document.createElement('div');
@@ -354,7 +355,7 @@ export class BroadcastHUD {
     const icon = document.createElement('span');
     icon.className = 'mn-broadcast__need-icon';
     icon.dataset.severity = need.severity;
-    icon.innerHTML = `<i class="fas ${need.config.icon}"></i>`;
+    icon.innerHTML = needIcon(need.config);
     needEl.appendChild(icon);
 
     const track = document.createElement('div');
@@ -415,7 +416,7 @@ export class BroadcastHUD {
 
     const iconEl = document.createElement('span');
     iconEl.className = 'mn-broadcast__radial-icon';
-    iconEl.innerHTML = `<i class="fas ${need.config.icon}"></i>`;
+    iconEl.innerHTML = needIcon(need.config);
     ringWrap.appendChild(iconEl);
 
     needEl.appendChild(ringWrap);
@@ -424,9 +425,8 @@ export class BroadcastHUD {
   }
 
   #applyNeedColor(element, config) {
-    if (!config?.color) return;
     element.classList.add('mn-broadcast__need--custom-color');
-    element.style.setProperty('--mn-need-color', config.color);
+    element.style.setProperty('--mn-need-color', needColor(config));
   }
 
   #appendGMControls(needEl, need) {

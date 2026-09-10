@@ -1,4 +1,5 @@
 import { Events } from '../constants.js';
+import { isResponsibleGM } from './access.js';
 
 export class TimeEngine {
   #eventBus;
@@ -43,7 +44,7 @@ export class TimeEngine {
   }
 
   async #onTimeAdvance(worldTime, dt) {
-    if (!game.user.isGM) return;
+    if (!isResponsibleGM()) return;
     if (dt <= 0) return;
 
     const configs = this.#store.getEnabledNeedConfigs();

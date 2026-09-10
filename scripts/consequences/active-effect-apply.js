@@ -1,5 +1,9 @@
 import { MODULE_ID } from '../constants.js';
 import { ConsequenceType, registerConsequenceType } from './consequence-type.js';
+import { attributeLabel } from '../core/attribute-label.js';
+import { escapeHTML } from '../core/consequence-identity.js';
+import { needIconPath } from '../ui/need-icons.js';
+import { effectChanges, effectChangeMode, effectChangeData } from '../core/effect-data.js';
 
 export class ActiveEffectApplyConsequence extends ConsequenceType {
   static TYPE = 'active-effect';
@@ -15,10 +19,18 @@ export class ActiveEffectApplyConsequence extends ConsequenceType {
       { value: '5', label: 'MORTAL_NEEDS.Consequences.ModeOverride' },
     ]},
     { key: 'changeValue', type: 'text', label: 'MORTAL_NEEDS.Consequences.ChangeValue' },
+    { key: 'stack', type: 'boolean', label: 'MORTAL_NEEDS.Dock.Stack', default: false },
   ];
 
   async apply(actor, needId, config) {
     if (!actor) return { success: false, reason: 'no-actor' };
+    if (this.adapter?.getCapabilities?.().hasActiveEffects === false) return { success: false, reason: 'system-does-not-support-active-effects' };
+    if (typeof config.changeKey !== 'string' || !config.changeKey.trim()
+      || config.changeKey.split('.').some(p => ['__proto__', 'constructor', 'prototype'].includes(p))) {
+      return { success: false, reason: 'invalid-change-key' };
+    }
+    const mode = Number(config.changeMode);
+    if (![2, 3, 4, 5].includes(mode) || String(config.changeValue ?? '').trim() === '') return { success: false, reason: 'invalid-change' };
 
     const sourceKey = `${needId}_${this.constructor.TYPE}_${config.consequenceId || 'default'}`;
 
@@ -27,28 +39,47 @@ export class ActiveEffectApplyConsequence extends ConsequenceType {
       e.flags?.[MODULE_ID]?.consequenceSource === sourceKey
     );
 
+    const recovery = config.reversible === false ? 'The GM decides when to remove this effect.'
+      : config.recoveryMode === 'immediate' ? `Removed when ${config.needLabel || needId} falls below ${config.threshold ?? 100}% stress.`
+      : config.recoveryMode === 'ask_gm' ? 'The GM is asked to remove this effect after recovery.' : 'The GM removes this effect after recovery.';
+    let changeValue = String(config.changeValue);
+    if (existing && (config.stack ?? true) && mode === 2) {
+      const currentValue = Number(effectChanges(existing)[0]?.value);
+      const delta = Number(config.changeValue);
+      if (!Number.isFinite(currentValue) || !Number.isFinite(delta)) return { success: false, reason: 'only-numeric-effects-can-stack' };
+      changeValue = String(currentValue + delta);
+    }
+    const description = `<p>${escapeHTML(config.needLabel || needId)}: ${escapeHTML(this.getDescription({ ...config, changeValue }))}</p><p>${escapeHTML(recovery)}</p>`;
     if (existing) {
-      // Stack: update the change value
-      const currentValue = parseFloat(existing.changes[0]?.value ?? 0);
-      const newValue = currentValue + parseFloat(config.changeValue);
+      if (effectChanges(existing)[0]?.key !== config.changeKey || effectChangeMode(effectChanges(existing)[0]) !== mode) {
+        return { success: false, reason: 'remove-before-changing-effect' };
+      }
       await existing.update({
-        changes: [{ key: config.changeKey, mode: parseInt(config.changeMode), value: String(newValue) }],
+        ...effectChangeData(config.changeKey, mode, changeValue),
+        description,
+        disabled: false,
       });
-      return { success: true, stacked: true, totalValue: newValue };
+      return { success: true, stacked: changeValue !== String(config.changeValue), description: this.getDescription({ ...config, changeValue }) };
     }
 
-    await actor.createEmbeddedDocuments('ActiveEffect', [{
+    const created = await actor.createEmbeddedDocuments('ActiveEffect', [{
       name: config.effectName || `Mortal Needs: ${needId}`,
-      icon: 'icons/svg/downgrade.svg',
-      changes: [{ key: config.changeKey, mode: parseInt(config.changeMode), value: config.changeValue }],
+      img: needIconPath(needId),
+      ...(Number(game.release?.generation ?? 13) < 13 ? { icon: needIconPath(needId) } : {}),
+      description,
+      origin: actor.uuid,
+      transfer: false,
+      ...effectChangeData(config.changeKey, mode, changeValue),
       flags: {
         [MODULE_ID]: {
           consequenceSource: sourceKey,
           sourceNeed: needId,
+          consequenceId: config.consequenceId,
         },
       },
     }]);
 
+    if (!created?.length) return { success: false, reason: 'system-rejected-active-effect' };
     return { success: true };
   }
 
@@ -70,7 +101,7 @@ export class ActiveEffectApplyConsequence extends ConsequenceType {
     if (!actor) return false;
     const sourceKey = `${needId}_${this.constructor.TYPE}_${config.consequenceId || 'default'}`;
     return actor.effects.some(e =>
-      e.flags?.[MODULE_ID]?.consequenceSource === sourceKey
+      e.flags?.[MODULE_ID]?.consequenceSource === sourceKey && !e.disabled
     );
   }
 
@@ -83,7 +114,11 @@ export class ActiveEffectApplyConsequence extends ConsequenceType {
     }[String(config.changeMode)];
     const modeLabel = modeKey ? game.i18n.localize(modeKey) : `Mode ${config.changeMode}`;
     const name = config.effectName || 'Active Effect';
-    return `${name}: ${modeLabel} ${config.changeValue ?? ''} → ${config.changeKey || '?'}`;
+    const label = attributeLabel(config.changeKey, this.adapter);
+    const value = Number(config.changeValue);
+    const change = Number(config.changeMode) === 2 && Number.isFinite(value)
+      ? `${value > 0 ? '+' : ''}${value}` : `${modeLabel} ${config.changeValue ?? ''}`;
+    return `${name}: ${label} ${change}`;
   }
 }
 

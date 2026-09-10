@@ -1,4 +1,6 @@
 import { MODULE_ID, Events } from '../../constants.js';
+import { needIcon } from '../need-icons.js';
+import { applyRecommendation, recommendationViews, renderRecommendations } from '../consequence-recommendations.js';
 import { NeedDisplayRule, isGMOnlyNeed, normalizeNeedDisplayRule } from '../../core/need-visibility.js';
 import {
   bringMortalNeedsWindowToFront,
@@ -40,6 +42,8 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
     actions: {
       'save': NeedsConfigDialog.#onSave,
       'edit-need': NeedsConfigDialog.#onEditNeed,
+      'apply-suggestion': NeedsConfigDialog.#onApplySuggestion,
+      'edit-recommendation': NeedsConfigDialog.#onEditRecommendation,
       'move-need-up': NeedsConfigDialog.#onMoveNeedUp,
       'move-need-down': NeedsConfigDialog.#onMoveNeedDown,
       'add-custom-need': NeedsConfigDialog.#onAddCustomNeed,
@@ -120,6 +124,7 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
       thresholdStep: CRITICAL_THRESHOLD_STEP,
       previewPercentage,
       previewSeverity,
+      recommendations: renderRecommendations(previewNeed),
       previewNeed: previewNeed ? {
         ...previewNeed,
         enabled: this.#getDraftEnabled(previewNeed),
@@ -415,8 +420,10 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
       statusBadge.classList.toggle('mn-badge--source', !enabled);
     }
 
-    const icon = this.element.querySelector('.mn-config-preview__ring-core i');
-    if (icon) icon.className = `fas ${config.icon}`;
+    const icon = this.element.querySelector('[data-preview-need-icon]');
+    if (icon) icon.innerHTML = needIcon(config);
+    const recommendations = this.element.querySelector('[data-recommendations]');
+    if (recommendations) recommendations.innerHTML = renderRecommendations(config);
 
     const ring = this.element.querySelector('.mn-config-preview__ring');
     ring?.style.setProperty('--mn-preview-percent', `${previewPercentage}%`);
@@ -588,6 +595,28 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
     const { NeedEditDialog } = await import('./need-edit-dialog.js');
     const dialog = new NeedEditDialog(needId, this.#store, this.#configManager, this.#eventBus);
     dialog.render(true);
+  }
+
+  static async #onApplySuggestion(event, target) {
+    const card = target.closest('[data-suggestion-index]');
+    if (!card) return;
+    target.disabled = true;
+    try {
+      await applyRecommendation({ store: this.#store, configManager: this.#configManager, eventBus: this.#eventBus,
+        needId: card.dataset.needId, index: Number(card.dataset.suggestionIndex) });
+      this.render(false);
+    } catch (error) {
+      ui.notifications.error('MORTAL_NEEDS.EffectConfig.SaveFailed', { localize: true });
+    } finally { target.disabled = false; }
+  }
+
+  static async #onEditRecommendation(event, target) {
+    const card = target.closest('[data-suggestion-index]');
+    const needId = card?.dataset.needId;
+    const view = recommendationViews(this.#store.getNeedConfig(needId)).find(item => item.index === Number(card?.dataset.suggestionIndex));
+    if (!view || view.existingIndex < 0) return;
+    const { EffectConfigDialog } = await import('./effect-config-dialog.js');
+    new EffectConfigDialog(needId, this.#store, this.#configManager, this.#eventBus, { editIndex: view.existingIndex }).render(true);
   }
 
   static async #onMoveNeedUp(event, target) {

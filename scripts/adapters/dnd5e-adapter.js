@@ -44,7 +44,12 @@ export class Dnd5eAdapter extends SystemAdapter {
       { key: 'skills.sur.total', label: 'DND5E.SkillSur', group: 'skills' },
     ];
 
-    return [...abilities, ...skills];
+    return [...abilities, ...skills,
+      { key: 'attributes.exhaustion', label: 'MORTAL_NEEDS.Needs.Exhaustion', group: 'attributes' },
+      { key: 'attributes.movement.walk', label: 'MORTAL_NEEDS.Dock.WalkingSpeed', group: 'attributes' },
+      { key: 'attributes.hp.max', label: 'MORTAL_NEEDS.Dock.MaximumHP', group: 'attributes' },
+      { key: 'attributes.hp.value', label: 'MORTAL_NEEDS.Dock.CurrentHP', group: 'attributes' },
+    ];
   }
 
   getAvailableDamageTypes() {

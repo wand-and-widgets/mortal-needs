@@ -1,16 +1,162 @@
 {
   "MORTAL_NEEDS": {
     "Title": "Mortal Needs",
-
+    "Dock": {
+      "Company": "Company",
+      "Personal": "Your condition",
+      "AtRisk": "critical",
+      "Configure": "Configure needs",
+      "Expand": "Expand dock",
+      "Collapse": "Collapse dock",
+      "Close": "Close",
+      "Character": "Character",
+      "ChooseCharacters": "Choose characters",
+      "EmptyGM": "Choose the characters whose needs you want to follow.",
+      "EmptyPlayer": "Your GM can add your character and choose which needs you can see.",
+      "Stress": "Stress",
+      "Relief": "Relief",
+      "History": "Recent changes",
+      "Broadcast": "Show or hide the company broadcast",
+      "OpenSheet": "Open character sheet",
+      "Narrate": "Narrate worst visible condition",
+      "NoNeeds": "No active needs",
+      "DragHint": "Drag a meter to adjust. Hold Shift for finer control. Escape cancels.",
+      "ExactValue": "Exact need value",
+      "Decrease": "Decrease by 1. Hold Shift for 5.",
+      "Increase": "Increase by 1. Hold Shift for 5.",
+      "Set": "Set",
+      "Effects": "Consequences",
+      "EffectFailed": "Could not apply",
+      "Active": "Applied",
+      "Inactive": "Not applied",
+      "StressWord": "stress",
+      "RemoveEffect": "Remove this consequence",
+      "NarrativeOnly": "No automatic penalty is configured for this need.",
+      "Recovery": "Recovery",
+      "AutomaticRecovery": "Lower this need's stress below its consequence threshold to remove reversible effects. Food, water, shelter, or reassurance can guide the adjustment.",
+      "AskRecovery": "After stress falls below the threshold, the GM is asked whether to remove reversible effects.",
+      "ManualRecovery": "After the character recovers, the GM can remove applied effects here. Lowering a need alone will not remove them.",
+      "HigherWorse": "Higher values mean greater strain.",
+      "LowerWorse": "Lower values mean greater strain.",
+      "EditRule": "Edit this need",
+      "Private": "GM only",
+      "ChangedDuringDrag": "This need changed while you were dragging. Its saved value was kept.",
+      "SaveFailed": "Mortal Needs could not save this change. Please try again.",
+      "CurrentCondition": "Current condition",
+      "ConditionSummary": "{need}: {state}.",
+      "Stack": "Add this penalty again on each repeat (numeric Add effects only)",
+      "WalkingSpeed": "Walking speed",
+      "MaximumHP": "Maximum hit points",
+      "CurrentHP": "Current hit points",
+      "UnsupportedEffect": "This system uses its own effect rules. Choose a condition or another consequence type."
+    },
+    "Conditions": {
+      "hunger": {
+        "safe": "Nourished",
+        "low": "Peckish",
+        "medium": "Hungry",
+        "high": "Famished",
+        "critical": "Starving"
+      },
+      "thirst": {
+        "safe": "Hydrated",
+        "low": "Thirsty",
+        "medium": "Parched",
+        "high": "Dehydrated",
+        "critical": "Desiccated"
+      },
+      "cold": {
+        "safe": "Warm",
+        "low": "Chilled",
+        "medium": "Shivering",
+        "high": "Numb",
+        "critical": "Freezing"
+      },
+      "heat": {
+        "safe": "Cool",
+        "low": "Warm",
+        "medium": "Overheated",
+        "high": "Sweltering",
+        "critical": "Scorched"
+      },
+      "fear": {
+        "safe": "Steady",
+        "low": "Uneasy",
+        "medium": "Afraid",
+        "high": "Terrified",
+        "critical": "Panicked"
+      },
+      "comfort": {
+        "safe": "Comfortable",
+        "low": "Restless",
+        "medium": "Uncomfortable",
+        "high": "Miserable",
+        "critical": "Wretched"
+      },
+      "exhaustion": {
+        "safe": "Rested",
+        "low": "Tired",
+        "medium": "Weary",
+        "high": "Exhausted",
+        "critical": "Spent"
+      },
+      "fatigue": {
+        "safe": "Fresh",
+        "low": "Winded",
+        "medium": "Drained",
+        "high": "Depleted",
+        "critical": "At the limit"
+      },
+      "sanity": {
+        "safe": "Grounded",
+        "low": "Unsettled",
+        "medium": "Troubled",
+        "high": "Distressed",
+        "critical": "Overwhelmed"
+      },
+      "morale": {
+        "safe": "Resolute",
+        "low": "Doubtful",
+        "medium": "Discouraged",
+        "high": "Despondent",
+        "critical": "Broken"
+      },
+      "pain": {
+        "safe": "Unhurt",
+        "low": "Aching",
+        "medium": "Hurting",
+        "high": "Suffering",
+        "critical": "In agony"
+      },
+      "radiation": {
+        "safe": "Clear",
+        "low": "Exposed",
+        "medium": "Contaminated",
+        "high": "Irradiated",
+        "critical": "Critical exposure"
+      },
+      "corruption": {
+        "safe": "Untouched",
+        "low": "Marked",
+        "medium": "Tainted",
+        "high": "Corrupted",
+        "critical": "Consumed"
+      },
+      "environmental": {
+        "safe": "Sheltered",
+        "low": "Exposed",
+        "medium": "Weathered",
+        "high": "Battered",
+        "critical": "Overwhelmed"
+      }
+    },
     "Controls": {
       "Toggle": "Toggle Mortal Needs Panel"
     },
-
     "Keybindings": {
       "TogglePanel": "Toggle Mortal Needs Panel",
       "TogglePanelHint": "Show or hide the Mortal Needs panel"
     },
-
     "Needs": {
       "Hunger": "Hunger",
       "Thirst": "Thirst",
@@ -24,16 +170,15 @@
       "Radiation": "Radiation",
       "Corruption": "Corruption",
       "Fatigue": "Fatigue",
-      "Environmental": "Environmental Stress"
+      "Environmental": "Environmental Stress",
+      "Fear": "Fear"
     },
-
     "Categories": {
       "Physical": "Physical",
       "Environmental": "Environmental",
       "Mental": "Mental",
       "Custom": "Custom"
     },
-
     "Severity": {
       "Safe": "Safe",
       "Low": "Low",
@@ -41,7 +186,6 @@
       "High": "High",
       "Critical": "Critical"
     },
-
     "Toolbar": {
       "Add": "Add",
       "AddActors": "Add Actors",
@@ -52,7 +196,6 @@
       "Configure": "Configure",
       "History": "History"
     },
-
     "Actions": {
       "Stress": "Stress",
       "Relieve": "Relieve",
@@ -60,14 +203,12 @@
       "Untrack": "Untrack",
       "ToggleDetails": "Toggle Details"
     },
-
     "EmptyState": {
       "Title": "No Characters Tracked",
       "Description": "Add actors to start tracking their survival needs.",
       "AddActors": "Add Actors",
       "PlayerWaiting": "Waiting for the GM to add characters..."
     },
-
     "Panel": {
       "ActorsTracked": "tracked",
       "Tracked": "Tracked",
@@ -106,7 +247,6 @@
       "ModeFocus": "Focus",
       "ModeCategory": "Categories"
     },
-
     "ActorSelection": {
       "Title": "Manage Tracked Characters",
       "FoundryActors": "Foundry Actors",
@@ -125,7 +265,6 @@
       "AddSelected": "Add Selected",
       "ApplyChanges": "Apply Changes"
     },
-
     "MultiStress": {
       "Title": "Stress All Characters",
       "RelieveTitle": "Relieve All Characters",
@@ -152,7 +291,6 @@
       "NoTargets": "No tracked characters.",
       "NoNeeds": "No enabled needs."
     },
-
     "Config": {
       "Title": "Configure Needs",
       "NeedsTab": "Needs",
@@ -227,7 +365,6 @@
       "PresetCategoryMix": "Category Mix",
       "PresetEnabledNeeds": "Enabled Needs"
     },
-
     "NeedEdit": {
       "Title": "Edit Need",
       "General": "General",
@@ -280,7 +417,6 @@
       "InvalidValueRange": "Check Min, Max, Default, Stress, Decay, and Movement values before saving.",
       "LivePreview": "Live Preview"
     },
-
     "EffectConfig": {
       "Title": "Configure Consequence",
       "Type": "Consequence Type",
@@ -291,7 +427,7 @@
       "Reversible": "Reversible when need recovers",
       "ThresholdHint": "When this need reaches this danger percentage, the consequence triggers. For inverted Needs, 80 means it fires when the resource is mostly depleted.",
       "TicksHint": "How many sustained stress checks happen before the consequence re-applies. Lower values are more punishing.",
-      "ReversibleHint": "If checked, this consequence is automatically removed when the need recovers below the threshold.",
+      "ReversibleHint": "Allows removal after recovery. The world setting chooses automatic removal, a GM prompt, or manual care.",
       "EditTitle": "Edit Consequence",
       "DeleteConfirm": "Remove this consequence?",
       "SuggestionsTitle": "Suggested for this system",
@@ -299,7 +435,7 @@
       "FiresAt": "Fires at",
       "RepeatsAfter": "Repeats after",
       "Checks": "checks",
-      "RemovesOnRecovery": "Removes on recovery",
+      "RemovesOnRecovery": "Eligible for recovery",
       "StaysUntilManual": "Stays until removed manually",
       "InvalidType": "Choose a valid consequence type.",
       "MissingConsequence": "This consequence no longer exists. Close the editor and reopen it.",
@@ -307,8 +443,19 @@
       "SaveFailed": "Failed to save consequence.",
       "AttributePathHint": "Path to the actor property. Use the dropdown to pick from your system's known attributes, or type a custom path."
     },
-
+    "Recommendations": {
+      "Title": "Recommended consequence",
+      "Use": "Use recommendation",
+      "Edit": "Edit rule",
+      "Configured": "Already configured",
+      "Trigger": "Triggers at {threshold}% stress",
+      "Recovery": "Recovery follows your world setting.",
+      "ManualRecovery": "Remove manually when appropriate.",
+      "Hint": "Saves immediately. Triggers when the need crosses its threshold.",
+      "SavedHint": "Your rule is saved. Edit it to adjust the effect or trigger."
+    },
     "Consequences": {
+      "CustomAttribute": "Custom attribute",
       "AttributeModify": "Modify Attribute",
       "ConditionApply": "Apply Condition",
       "ActiveEffectApply": "Apply Active Effect",
@@ -337,7 +484,6 @@
       "ModeUpgrade": "Upgrade (use higher)",
       "ModeOverride": "Override (replace)"
     },
-
     "History": {
       "Title": "Needs History",
       "Subtitle": "Review recent stress, recovery, decay, movement, and manual changes.",
@@ -373,7 +519,6 @@
       "SourceSocket": "Sync",
       "SourceRegistration": "New Need"
     },
-
     "Presets": {
       "Survival": "Survival",
       "SurvivalDesc": "Classic survival: hunger, thirst, exhaustion, cold, heat",
@@ -386,7 +531,6 @@
       "Minimalist": "Minimalist",
       "MinimalistDesc": "Simple survival: hunger and thirst only"
     },
-
     "Settings": {
       "DefaultStress": "Default Stress Amount",
       "DefaultStressHint": "The default amount of stress applied per click (1-50).",
@@ -456,7 +600,6 @@
       "FlavorBatchMode": "Batch Simultaneous Messages",
       "FlavorBatchModeHint": "Combine simultaneous threshold crossings into a single chat card."
     },
-
     "Chat": {
       "ConsequenceApplied": "Consequence Applied",
       "Need": "Need",
@@ -467,7 +610,6 @@
       "FlavorWorsening": "Worsening",
       "FlavorImproving": "Improving"
     },
-
     "Dialogs": {
       "RemoveConsequenceTitle": "Remove Consequence",
       "RemoveConsequenceContent": "<strong>{name}</strong>'s <em>{need}</em> has recovered. Remove <em>{consequence}</em>?",
@@ -483,7 +625,6 @@
       "Amount": "Amount",
       "QuickStressTitle": "Quick Stress"
     },
-
     "Broadcast": {
       "CycleDensity": "Cycle broadcast density",
       "ResetPosition": "Reset broadcast position",
@@ -491,7 +632,6 @@
       "StressNeed": "Stress {need}",
       "RelieveNeed": "Relieve {need}"
     },
-
     "SessionFlow": {
       "WidgetLabel": "Mortal Needs",
       "NoTracked": "No characters tracked. Use the toolbar to add actors.",
@@ -508,7 +648,6 @@
       "NoVisibleNeeds": "No visible needs.",
       "MoreNeeds": "Additional visible needs"
     },
-
     "Notifications": {
       "GMOnly": "Only the GM can perform this action.",
       "NoTokenSelected": "No token selected.",
@@ -532,16 +671,13 @@
       "ShortRestComplete": "Short rest complete — needs partially relieved.",
       "SceneModifierSet": "Scene modifier updated."
     },
-
     "Migration": {
       "Complete": "Mortal Needs has been upgraded to v2.0. Your data has been migrated automatically.",
       "Failed": "Mortal Needs migration failed. Check the console for details."
     },
-
     "API": {
       "Description": "Mortal Needs API — Use game.modules.get('mortal-needs').api for programmatic access."
     },
-
     "Flavor": {
       "Hunger": {
         "Worsening": {

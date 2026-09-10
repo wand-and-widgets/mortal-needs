@@ -1,4 +1,5 @@
 import { MODULE_ID, MODULE_TITLE, Events, DEFAULT_MOVEMENT_ADVANCEMENT } from '../constants.js';
+import { isResponsibleGM } from './access.js';
 
 const MOVEMENT_SOURCE = 'movement';
 const IGNORED_MOVEMENT_METHODS = new Set(['config', 'paste', 'undo']);
@@ -277,12 +278,7 @@ export class MovementEngine {
   }
 
   #isActiveGM() {
-    if (!game.user?.isGM) return false;
-    if (typeof game.user.isActiveGM === 'boolean') return game.user.isActiveGM;
-
-    const activeGMs = game.users?.filter?.(user => user.active && user.isGM) || [];
-    if (activeGMs.length === 0) return game.user.isGM;
-    return activeGMs[0]?.id === game.user.id;
+    return isResponsibleGM();
   }
 
   #toNumber(value, fallback = 0) {

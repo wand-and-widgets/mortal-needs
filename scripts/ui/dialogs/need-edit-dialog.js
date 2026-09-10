@@ -1,6 +1,8 @@
 import { MODULE_ID, Events, NeedCategory } from '../../constants.js';
 import { getAllConsequenceTypes, getConsequenceType, getConsequenceDescription } from '../../consequences/consequence-type.js';
 import { NeedsEngine } from '../../core/needs-engine.js';
+import { needIcon } from '../need-icons.js';
+import { applyRecommendation, recommendationViews, renderRecommendations } from '../consequence-recommendations.js';
 import {
   NeedDisplayRule,
   NeedVisibility,
@@ -44,6 +46,7 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       'edit-consequence': NeedEditDialog.#onEditConsequence,
       'delete-consequence': NeedEditDialog.#onDeleteConsequence,
       'apply-suggestion': NeedEditDialog.#onApplySuggestion,
+      'edit-recommendation': NeedEditDialog.#onEditRecommendation,
     },
   };
 
@@ -86,16 +89,6 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       };
     });
 
-    // Get adapter suggestions for this need
-    const api = game.modules.get(MODULE_ID)?.api;
-    const allSuggestions = api?.system?.effectSuggestions || {};
-    const needSuggestions = (allSuggestions[this.#needId] || []).map((s, idx) => ({
-      ...s,
-      index: idx,
-      description: getConsequenceDescription(s.type, s.config || {}),
-      iconClass: getConsequenceType(s.type)?.ICON || 'fas fa-bolt',
-    }));
-
     const baseConfig = config || {
       id: '', label: '', icon: 'fa-question', iconType: 'fa',
       enabled: true, category: NeedCategory.CUSTOM, custom: true,
@@ -129,8 +122,7 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       categories,
       consequenceTypes,
       enrichedConsequences,
-      suggestions: needSuggestions,
-      hasSuggestions: needSuggestions.length > 0,
+      recommendations: renderRecommendations(config),
       canDelete: !!config?.custom,
       previewPercentage,
       previewRiskPercentage,
@@ -242,10 +234,8 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const previewPercentage = Math.min(100, Math.max(0, NeedsEngine.getPercentage(previewValue, max)));
     const fallbackName = this.element.querySelector('[name="needId"]')?.value?.trim() || 'Need';
     const displayName = labelValue ? game.i18n.localize(labelValue) : fallbackName;
-    const iconClass = `fas ${iconValue}`;
-
     this.element.querySelectorAll('[data-live-hero-icon], [data-live-icon]').forEach(icon => {
-      icon.className = iconClass;
+      icon.innerHTML = needIcon({ ...this.#store.getNeedConfig(this.#needId), id: fallbackName, custom: this.#isNew || this.#store.getNeedConfig(this.#needId)?.custom, icon: iconValue });
     });
 
     this.element.querySelectorAll('[data-live-need-title], [data-live-preview-name]').forEach(node => {
@@ -575,31 +565,24 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 
   static async #onApplySuggestion(event, target) {
     if (!this.#needId || !this.#store.getNeedConfig(this.#needId)) return;
-    const index = parseInt(target.closest('[data-suggestion-index]')?.dataset.suggestionIndex);
-    if (isNaN(index)) return;
+    this.#captureFormDraft();
+    target.disabled = true;
+    try {
+      await applyRecommendation({ store: this.#store, configManager: this.#configManager, eventBus: this.#eventBus,
+        needId: this.#needId, index: Number(target.closest('[data-suggestion-index]')?.dataset.suggestionIndex) });
+      this.render(false);
+    } catch (error) {
+      ui.notifications.error('MORTAL_NEEDS.EffectConfig.SaveFailed', { localize: true });
+    } finally { target.disabled = false; }
+  }
 
-    const api = game.modules.get(MODULE_ID)?.api;
-    const allSuggestions = api?.system?.effectSuggestions || {};
-    const needSuggestions = allSuggestions[this.#needId] || [];
-    const suggestion = needSuggestions[index];
-    if (!suggestion) return;
-
-    const consequence = {
-      id: this.#createConsequenceId(),
-      type: suggestion.type,
-      threshold: suggestion.threshold ?? 100,
-      ticks: suggestion.ticks ?? 3,
-      reversible: suggestion.reversible ?? true,
-      config: { ...(suggestion.config || {}) },
-    };
-
-    const needConfig = this.#store.getNeedConfig(this.#needId);
-    if (!needConfig) return;
-    const consequences = [...(needConfig.consequences || []), consequence];
-    const allConfigs = this.#getConfigsWithConsequences(consequences);
-    await this.#configManager.saveNeedsConfig(allConfigs);
-    this.#store.setNeedConfigs(allConfigs);
-    this.#eventBus.emit(Events.CONFIG_CHANGED, { source: 'consequence-add', needId: this.#needId });
+  static async #onEditRecommendation(event, target) {
+    this.#captureFormDraft();
+    const view = recommendationViews(this.#store.getNeedConfig(this.#needId))
+      .find(item => item.index === Number(target.closest('[data-suggestion-index]')?.dataset.suggestionIndex));
+    if (!view || view.existingIndex < 0) return;
+    const { EffectConfigDialog } = await import('./effect-config-dialog.js');
+    new EffectConfigDialog(this.#needId, this.#store, this.#configManager, this.#eventBus, { editIndex: view.existingIndex }).render(true);
   }
 
   #getConfigsWithConsequences(consequences) {
@@ -608,8 +591,4 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     ));
   }
 
-  #createConsequenceId() {
-    return foundry.utils?.randomID?.(16)
-      ?? `mn-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
-  }
 }

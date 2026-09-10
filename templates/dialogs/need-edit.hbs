@@ -3,7 +3,7 @@
     <section class="mn-need-editor-hero mn-form-card">
       <div class="mn-need-editor-hero__summary">
         <span class="mn-need-editor-hero__icon">
-          <i class="fas {{config.icon}}" data-live-hero-icon></i>
+          <span data-live-hero-icon>{{mnIcon config}}</span>
         </span>
 
         <div class="mn-need-editor-hero__title">
@@ -246,23 +246,7 @@
           <span>{{localize "MORTAL_NEEDS.NeedEdit.AddConsequence"}}</span>
         </button>
 
-        {{#if hasSuggestions}}
-          <div class="mn-consequence-suggestions">
-            <div class="mn-consequence-suggestions__header">
-              <i class="fas fa-lightbulb"></i>
-              <span>{{localize "MORTAL_NEEDS.EffectConfig.SuggestionsTitle"}}</span>
-            </div>
-            {{#each suggestions}}
-              <div class="mn-consequence-suggestions__item" data-suggestion-index="{{index}}">
-                <i class="{{iconClass}} mn-consequence-suggestions__icon"></i>
-                <span class="mn-consequence-suggestions__desc">{{description}}</span>
-                <button type="button" class="mn-btn mn-btn--ghost mn-btn--xs" data-action="apply-suggestion" title="{{localize 'MORTAL_NEEDS.NeedEdit.AddConsequence'}}">
-                  <i class="fas fa-plus"></i>
-                </button>
-              </div>
-            {{/each}}
-          </div>
-        {{/if}}
+        {{{recommendations}}}
       </article>
     </section>
   </main>
@@ -277,7 +261,7 @@
 
     <div class="mn-need-preview__ring" data-severity="{{previewSeverity}}" style="--mn-preview-percent: {{previewPercentage}}%;{{#if config.color}} --mn-need-preview-color: {{config.color}};{{/if}}">
       <div class="mn-need-preview__ring-core">
-        <i class="fas {{config.icon}}" data-live-icon></i>
+        <span data-live-icon>{{mnIcon config}}</span>
         <strong data-live-percent>{{previewPercentage}}%</strong>
       </div>
     </div>

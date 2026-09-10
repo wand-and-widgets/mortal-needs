@@ -52,7 +52,7 @@
                 </label>
 
                 <div class="mn-config-need-cell">
-                  <span class="mn-config-need-cell__icon"><i class="fas {{icon}}"></i></span>
+                  <span class="mn-config-need-cell__icon">{{mnIcon this}}</span>
                   <div>
                     <strong>
                       {{#if hasCustomColor}}<span class="mn-config-color-dot" style="--mn-need-color: {{color}};"></span>{{/if}}
@@ -123,7 +123,7 @@
         {{#if previewNeed}}
           <div class="mn-config-preview__ring" data-severity="{{previewSeverity}}" style="--mn-preview-percent: {{previewPercentage}}%;{{#if previewNeed.color}} --mn-need-preview-color: {{previewNeed.color}};{{/if}}">
             <div class="mn-config-preview__ring-core">
-              <i class="fas {{previewNeed.icon}}"></i>
+              <span data-preview-need-icon>{{mnIcon previewNeed}}</span>
               <strong>{{previewPercentage}}%</strong>
             </div>
           </div>
@@ -150,6 +150,8 @@
                 <span class="mn-config-pill mn-config-pill--source"><span class="mn-config-color-dot" style="--mn-need-color: {{previewNeed.color}};"></span>{{localize "MORTAL_NEEDS.Config.CustomColorTrait"}}</span>
               {{/if}}
             </div>
+
+            <div data-recommendations>{{{recommendations}}}</div>
 
             <div class="mn-config-preview__facts">
               <div><i class="fas fa-bolt"></i><span class="mn-config-preview__stress">{{previewNeed.stressAmount}} {{localize "MORTAL_NEEDS.Config.StressPerClick"}}</span></div>

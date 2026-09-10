@@ -1,0 +1,9 @@
+{
+  "name": "mortal-needs",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "node scripts/check.mjs && node --test tests/*.test.js",
+    "test": "node --test tests/*.test.js"
+  }
+}

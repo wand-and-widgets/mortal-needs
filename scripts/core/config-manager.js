@@ -13,10 +13,12 @@ export class ConfigManager {
 
     game.settings.register(MODULE_ID, 'needsConfig', {
       scope: 'world', config: false, type: Array, default: [],
+      onChange: () => Hooks.callAll('mortalNeeds.settingsChanged', { key: 'needsConfig' }),
     });
 
     game.settings.register(MODULE_ID, 'trackedActors', {
       scope: 'world', config: false, type: Array, default: [],
+      onChange: () => Hooks.callAll('mortalNeeds.settingsChanged', { key: 'trackedActors' }),
     });
 
     game.settings.register(MODULE_ID, 'needsHistory', {
@@ -29,6 +31,12 @@ export class ConfigManager {
 
     game.settings.register(MODULE_ID, 'esCharacterNeeds', {
       scope: 'world', config: false, type: Object, default: {},
+      onChange: () => Hooks.callAll('mortalNeeds.settingsChanged', { key: 'esCharacterNeeds' }),
+    });
+
+    game.settings.register(MODULE_ID, 'broadcastState', {
+      scope: 'world', config: false, type: Object, default: { visible: false, flash: false },
+      onChange: () => Hooks.callAll('mortalNeeds.settingsChanged', { key: 'broadcastState' }),
     });
 
     game.settings.register(MODULE_ID, 'customPresets', {
@@ -47,6 +55,7 @@ export class ConfigManager {
     });
 
     game.settings.register(MODULE_ID, 'playerVisibility', {
+      onChange: () => Hooks.callAll('mortalNeeds.settingsChanged', { key: 'playerVisibility' }),
       name: 'MORTAL_NEEDS.Settings.PlayerVisibility',
       hint: 'MORTAL_NEEDS.Settings.PlayerVisibilityHint',
       scope: 'world', config: true, type: String,
@@ -59,6 +68,7 @@ export class ConfigManager {
     });
 
     game.settings.register(MODULE_ID, 'playerControl', {
+      onChange: () => Hooks.callAll('mortalNeeds.settingsChanged', { key: 'playerControl' }),
       name: 'MORTAL_NEEDS.Settings.PlayerControl',
       hint: 'MORTAL_NEEDS.Settings.PlayerControlHint',
       scope: 'world', config: true, type: Boolean,

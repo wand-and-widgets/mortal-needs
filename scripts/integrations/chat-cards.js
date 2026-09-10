@@ -1,6 +1,8 @@
 import { MODULE_ID, MODULE_TITLE, Events, mnRenderTemplate } from '../constants.js';
 import { NeedsEngine } from '../core/needs-engine.js';
 import { filterDisplayNeedsForEntity, filterNeedsForUser, isGMOnlyNeed } from '../core/need-visibility.js';
+import { isResponsibleGM, canViewEntity } from '../core/access.js';
+import { needIconPath } from '../ui/need-icons.js';
 
 /**
  * Chat card system for Mortal Needs.
@@ -20,7 +22,7 @@ export class ChatCards {
   }
 
   async #onConsequenceApplied({ entityId, needId, consequenceType, config, result }) {
-    if (!game.user.isGM) return;
+    if (!isResponsibleGM()) return;
     if (!game.settings.get(MODULE_ID, 'showConsequenceChat')) return;
 
     const entityInfo = this.#store.getTrackedEntityInfo(entityId);
@@ -41,8 +43,10 @@ export class ChatCards {
       actorImg: entityInfo.img,
       needName: game.i18n.localize(needConfig.label),
       needIcon: needConfig.icon,
+      needImage: needIconPath(needId),
       value, max, percentage, severity,
       severityLabel: `MORTAL_NEEDS.Severity.${severity.charAt(0).toUpperCase() + severity.slice(1)}`,
+      cardTitle: 'MORTAL_NEEDS.Chat.ConsequenceApplied',
       consequenceDescription: result?.description || consequenceType,
       flavor: null, // FlavorEngine handles flavor messages separately
     };
@@ -60,10 +64,11 @@ export class ChatCards {
     });
   }
 
-  async #onThresholdCritical({ entityId, needId, value, max, percentage, sustained }) {
-    if (!game.user.isGM) return;
+  async #onThresholdCritical({ entityId, needId, value, max, percentage, previousPercentage, sustained }) {
+    if (!isResponsibleGM()) return;
     if (!game.settings.get(MODULE_ID, 'notifyOnCritical')) return;
     if (sustained) return; // Only notify on first crossing
+    if (game.settings.get(MODULE_ID, 'flavorMessages')) return;
 
     const entityInfo = this.#store.getTrackedEntityInfo(entityId);
     if (!entityInfo) return;
@@ -85,11 +90,13 @@ export class ChatCards {
       actorImg: entityInfo.img,
       needName: game.i18n.localize(needConfig.label),
       needIcon: needConfig.icon,
+      needImage: needIconPath(needId),
       value: safeValue,
       max: safeMax,
       percentage: safePercentage,
       severity,
       severityLabel: `MORTAL_NEEDS.Severity.${severity.charAt(0).toUpperCase() + severity.slice(1)}`,
+      cardTitle: 'MORTAL_NEEDS.Severity.Critical',
       consequenceDescription: null,
       flavor: null, // FlavorEngine handles flavor messages separately
     };
@@ -117,7 +124,7 @@ export class ChatCards {
    */
   async sendSummary(entityId) {
     const entityInfo = this.#store.getTrackedEntityInfo(entityId);
-    if (!entityInfo) return;
+    if (!entityInfo || !canViewEntity(entityId, entityInfo)) return;
 
     const publicUser = { isGM: false };
     const entityNeeds = this.#store.getActorAllNeeds(entityId) || {};
@@ -138,6 +145,7 @@ export class ChatCards {
         id: config.id,
         label: config.label,
         icon: config.icon,
+        needImage: needIconPath(config.id),
         value, max, percentage, severity,
       };
     });

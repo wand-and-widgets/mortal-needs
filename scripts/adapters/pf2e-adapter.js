@@ -7,7 +7,8 @@ export class Pf2eAdapter extends SystemAdapter {
     return {
       hasExhaustion: true,
       hasConditions: true,
-      hasActiveEffects: true,
+      // PF2e uses condition/effect Items and rejects ordinary ActiveEffect creation.
+      hasActiveEffects: false,
       hasDamageTypes: true,
       supportsAttributeModifiers: true,
     };

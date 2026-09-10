@@ -2,23 +2,23 @@
 
 :root {
   /* === Surfaces === */
-  --mn-surface-base: #121212;
-  --mn-surface-elevated: #181818;
-  --mn-surface-card: #232323;
-  --mn-surface-hover: #2a2a2a;
-  --mn-surface-active: #333333;
+  --mn-surface-base: #131411;
+  --mn-surface-elevated: #1b1c17;
+  --mn-surface-card: #25251e;
+  --mn-surface-hover: #302c22;
+  --mn-surface-active: #3b3224;
   --mn-surface-overlay: rgba(0, 0, 0, 0.6);
 
   /* === Accent (Blood Red) === */
-  --mn-accent: #DC2626;
-  --mn-accent-hover: #EF4444;
-  --mn-accent-muted: rgba(220, 38, 38, 0.15);
-  --mn-accent-border: rgba(220, 38, 38, 0.3);
+  --mn-accent: #c79a57;
+  --mn-accent-hover: #efd09a;
+  --mn-accent-muted: rgba(199, 154, 87, 0.12);
+  --mn-accent-border: rgba(199, 154, 87, 0.35);
 
   /* === Text === */
-  --mn-text-primary: #ffffff;
-  --mn-text-secondary: #b3b3b3;
-  --mn-text-muted: #6a6a6a;
+  --mn-text-primary: #e7ddc8;
+  --mn-text-secondary: #c4b69d;
+  --mn-text-muted: #a79981;
   --mn-text-inverse: #121212;
 
   /* === Severity Palette === */
@@ -41,7 +41,7 @@
   --mn-border-strong: rgba(255, 255, 255, 0.15);
 
   /* === Typography === */
-  --mn-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --mn-font-family: 'MN Barlow', 'Segoe UI', sans-serif;
   --mn-font-size-xs: 0.6875rem;   /* 11px */
   --mn-font-size-sm: 0.75rem;     /* 12px */
   --mn-font-size-base: 0.8125rem; /* 13px */
@@ -63,9 +63,9 @@
 
   /* === Radius === */
   --mn-radius-sm: 4px;
-  --mn-radius-md: 8px;
-  --mn-radius-lg: 12px;
-  --mn-radius-pill: 9999px;
+  --mn-radius-md: 3px;
+  --mn-radius-lg: 4px;
+  --mn-radius-pill: 3px;
 
   /* === Shadows === */
   --mn-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);

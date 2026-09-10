@@ -1,6 +1,10 @@
 import { MODULE_ID, MODULE_TITLE, Events, SEVERITY_ORDER, mnRenderTemplate } from '../constants.js';
 import { NeedsEngine } from '../core/needs-engine.js';
 import { isGMOnlyNeed } from '../core/need-visibility.js';
+import { shouldDisplayNeed } from '../core/need-visibility.js';
+import { isResponsibleGM } from '../core/access.js';
+import { conditionView } from '../ui/condition-view.js';
+import { needIconPath } from '../ui/need-icons.js';
 
 /**
  * FlavorEngine — Severity-aware narrative flavor message system.
@@ -45,12 +49,40 @@ export class FlavorEngine {
     this.#store = store;
 
     this.#eventBus.on(Events.THRESHOLD_CROSSED, this.#onThresholdCrossed.bind(this));
+    for (const event of [Events.THRESHOLD_CRITICAL, Events.THRESHOLD_RECOVERED]) {
+      this.#eventBus.on(event, data => {
+        if (data.sustained) return;
+        this.#onThresholdCrossed({ ...data, crucial: true,
+          severity: NeedsEngine.getSeverity(data.percentage),
+          previousSeverity: NeedsEngine.getSeverity(data.previousPercentage) });
+      });
+    }
   }
 
   // --- Event Handler ---
 
+  getWorstVisibleNeed(entityId) {
+    const entity = this.#store.getTrackedEntityInfo(entityId);
+    if (!entity) return null;
+    return this.#store.getEnabledNeedConfigs()
+      .filter(config => shouldDisplayNeed(config, this.#store.getActorNeedState(entityId, config.id), { user: { isGM: false } }))
+      .map(config => ({ config, ...conditionView(config, this.#store.getActorNeedState(entityId, config.id)) }))
+      .sort((a, b) => b.stress - a.stress)[0] || null;
+  }
+
+  async narrateWorst(entityId) {
+    if (!game.user.isGM) return false;
+    const worst = this.getWorstVisibleNeed(entityId);
+    if (!worst) return false;
+    const pool = this.#getFlavorPool(worst.config.id, worst.severity, worst.severity === 'safe' ? 'improving' : 'worsening');
+    const flavorText = pool?.length ? game.i18n.localize(this.#shuffle([...pool])[0])
+      : game.i18n.format('MORTAL_NEEDS.Dock.ConditionSummary', { need: game.i18n.localize(worst.config.label), state: worst.label });
+    await this.#sendSingleCard({ entityId, needId: worst.config.id, ...worst, percentage: worst.stress, direction: 'current', flavorText });
+    return true;
+  }
+
   #onThresholdCrossed(data) {
-    if (!game.user.isGM) return;
+    if (!isResponsibleGM()) return;
     if (!game.settings.get(MODULE_ID, 'flavorMessages')) return;
 
     // Suppress system-generated changes
@@ -63,18 +95,22 @@ export class FlavorEngine {
     const oldOrder = SEVERITY_ORDER[previousSeverity];
     if (newOrder === undefined || oldOrder === undefined) return;
 
-    const direction = newOrder > oldOrder ? 'worsening' : 'improving';
+    const direction = data.percentage > data.previousPercentage ? 'worsening' : 'improving';
 
     // Check verbosity filter
-    if (!this.#passesVerbosityFilter(severity, previousSeverity, direction)) return;
+    if (!data.crucial && !this.#passesVerbosityFilter(severity, previousSeverity, direction)) return;
 
     // Check cooldown
     const cooldownKey = `${entityId}:${needId}`;
     const now = Date.now();
     const lastFlavor = this.#cooldowns.get(cooldownKey);
-    if (lastFlavor && (now - lastFlavor) < FlavorEngine.COOLDOWN_MS) return;
+    const critical = game.settings.get(MODULE_ID, 'criticalThreshold') ?? 80;
+    const crucial = data.crucial || severity === 'critical' || previousSeverity === 'critical'
+      || (data.percentage >= critical) !== (data.previousPercentage >= critical);
+    if (!crucial && lastFlavor && (now - lastFlavor) < FlavorEngine.COOLDOWN_MS) return;
 
     // Queue for batching
+    this.#pendingBatch = this.#pendingBatch.filter(entry => entry.entityId !== entityId || entry.needId !== needId);
     this.#pendingBatch.push({
       entityId, needId, severity, previousSeverity, direction,
       percentage: data.percentage,
@@ -85,7 +121,7 @@ export class FlavorEngine {
 
     // Debounce: reset timer on each new event
     if (this.#batchTimeout !== null) clearTimeout(this.#batchTimeout);
-    this.#batchTimeout = setTimeout(() => this.#flushBatch(), FlavorEngine.BATCH_DELAY);
+    this.#batchTimeout = setTimeout(() => this.#flushBatch().catch(error => console.error('Mortal Needs | Narration failed:', error)), FlavorEngine.BATCH_DELAY);
   }
 
   // --- Verbosity Filter ---
@@ -114,7 +150,7 @@ export class FlavorEngine {
   async #flushBatch() {
     this.#batchTimeout = null;
     const batch = this.#pendingBatch.splice(0);
-    if (batch.length === 0) return;
+    if (batch.length === 0 || !isResponsibleGM()) return;
 
     const useBatch = game.settings.get(MODULE_ID, 'flavorBatchMode');
 
@@ -130,8 +166,7 @@ export class FlavorEngine {
     const resolvedEntries = [];
     for (const [groupKey, events] of groups) {
       const { needId, severity, direction } = events[0];
-      const pool = this.#getFlavorPool(needId, severity, direction);
-      if (!pool || pool.length === 0) continue;
+      const pool = this.#getFlavorPool(needId, severity, direction) || [];
 
       // Get available messages (filter recently used)
       const recentKey = groupKey;
@@ -140,8 +175,9 @@ export class FlavorEngine {
 
       // Pick ONE shared flavor for the group
       const flavorKey = shuffled[0];
-      const flavorText = game.i18n.localize(flavorKey);
-      this.#markUsed(recentKey, flavorKey);
+      const flavorText = flavorKey ? game.i18n.localize(flavorKey)
+        : game.i18n.format('MORTAL_NEEDS.Dock.ConditionSummary', { need: game.i18n.localize(this.#store.getNeedConfig(needId)?.label || needId), state: game.i18n.localize(`MORTAL_NEEDS.Severity.${severity[0].toUpperCase() + severity.slice(1)}`) });
+      if (flavorKey) this.#markUsed(recentKey, flavorKey);
 
       for (const event of events) {
         // Mark cooldown
@@ -250,8 +286,8 @@ export class FlavorEngine {
     const needConfig = this.#store.getNeedConfig(entry.needId);
     if (!needConfig) return;
 
-    const directionIcon = entry.direction === 'worsening' ? 'fa-arrow-up' : 'fa-arrow-down';
-    const directionLabel = entry.direction === 'worsening'
+    const directionIcon = entry.direction === 'current' ? 'fa-feather-alt' : entry.direction === 'worsening' ? 'fa-arrow-up' : 'fa-arrow-down';
+    const directionLabel = entry.direction === 'current' ? 'MORTAL_NEEDS.Dock.CurrentCondition' : entry.direction === 'worsening'
       ? 'MORTAL_NEEDS.Chat.FlavorWorsening'
       : 'MORTAL_NEEDS.Chat.FlavorImproving';
     const severityLabel = `MORTAL_NEEDS.Severity.${entry.severity.charAt(0).toUpperCase() + entry.severity.slice(1)}`;
@@ -261,6 +297,7 @@ export class FlavorEngine {
       actorImg: entityInfo.img,
       needName: game.i18n.localize(needConfig.label),
       needIcon: needConfig.icon,
+      needImage: needIconPath(needConfig.id),
       directionIcon,
       directionLabel,
       severity: entry.severity,
@@ -318,6 +355,7 @@ export class FlavorEngine {
     const templateData = {
       needName: game.i18n.localize(needConfig.label),
       needIcon: needConfig.icon,
+      needImage: needIconPath(needConfig.id),
       directionIcon,
       directionLabel,
       severity: first.severity,

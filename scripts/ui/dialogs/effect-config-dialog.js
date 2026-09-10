@@ -47,6 +47,7 @@ export class EffectConfigDialog extends HandlebarsApplicationMixin(ApplicationV2
     this.#store = store;
     this.#configManager = configManager;
     this.#eventBus = eventBus;
+    if (editIndex == null && game.modules.get(MODULE_ID)?.api?.system?.capabilities.hasActiveEffects !== false) this.#selectedType = 'active-effect';
 
     // Edit mode: load existing consequence data
     if (editIndex != null) {
@@ -68,7 +69,8 @@ export class EffectConfigDialog extends HandlebarsApplicationMixin(ApplicationV2
   }
 
   async _prepareContext(options) {
-    const types = getAllConsequenceTypes();
+    const supportsEffects = game.modules.get(MODULE_ID)?.api?.system?.capabilities.hasActiveEffects !== false;
+    const types = getAllConsequenceTypes().filter(type => type.type !== 'active-effect' || supportsEffects || this.#editIndex != null);
     const isEdit = this.#editIndex != null;
     if (!types.some(type => type.type === this.#selectedType) && types[0]) {
       this.#selectedType = types[0].type;
@@ -266,6 +268,10 @@ export class EffectConfigDialog extends HandlebarsApplicationMixin(ApplicationV2
   }
 
   #validateConsequence(type, config, consequences) {
+    if (type === 'active-effect' && game.modules.get(MODULE_ID)?.api?.system?.capabilities.hasActiveEffects === false) {
+      ui.notifications.warn('MORTAL_NEEDS.Dock.UnsupportedEffect', { localize: true });
+      return false;
+    }
     if (!getConsequenceType(type)) {
       ui.notifications.warn('MORTAL_NEEDS.EffectConfig.InvalidType', { localize: true });
       return false;

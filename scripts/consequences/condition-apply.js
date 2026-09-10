@@ -16,16 +16,17 @@ export class ConditionApplyConsequence extends ConsequenceType {
     if (!statusId) return { success: false, reason: 'no-status-id' };
 
     // Check if already has this condition from this need
-    const existing = this.adapter.findAppliedCondition?.(actor, statusId, { sourceNeed: needId })
-      ?? actor.effects.find(e =>
+    const source = { sourceNeed: needId, consequenceId: config.consequenceId };
+    const existing = this.adapter.findAppliedCondition ? this.adapter.findAppliedCondition(actor, statusId, source)
+      : actor.effects.find(e =>
         e.statuses?.has(statusId) &&
         e.flags?.[MODULE_ID]?.sourceNeed === needId
       );
     if (existing) return { success: false, reason: 'already-active' };
 
     // Apply via adapter
-    const applied = await this.adapter.applyCondition(actor, statusId, { sourceNeed: needId });
-    if (!applied) return { success: false, reason: 'adapter-failed' };
+    const applied = await this.adapter.applyCondition(actor, statusId, source);
+    if (!applied) return { success: false, reason: this.adapter.findAppliedCondition?.(actor, statusId) ? 'external-condition' : 'adapter-failed' };
 
     return { success: true, statusId };
   }
@@ -34,7 +35,7 @@ export class ConditionApplyConsequence extends ConsequenceType {
     if (!actor) return false;
 
     if (typeof this.adapter.removeCondition === 'function') {
-      return this.adapter.removeCondition(actor, config.statusId, { sourceNeed: needId });
+      return this.adapter.removeCondition(actor, config.statusId, { sourceNeed: needId, consequenceId: config.consequenceId });
     }
 
     const effect = actor.effects.find(e =>
@@ -49,7 +50,7 @@ export class ConditionApplyConsequence extends ConsequenceType {
   async isActive(actor, needId, config) {
     if (!actor) return false;
     if (typeof this.adapter.findAppliedCondition === 'function') {
-      return !!this.adapter.findAppliedCondition(actor, config.statusId, { sourceNeed: needId });
+      return !!this.adapter.findAppliedCondition(actor, config.statusId, { sourceNeed: needId, consequenceId: config.consequenceId });
     }
 
     return actor.effects.some(e =>

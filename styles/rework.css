@@ -1,16 +1,16 @@
 /* Mortal Needs UX Rework */
 
 :root {
-  --mn-rw-bg: #101214;
-  --mn-rw-surface: #151719;
-  --mn-rw-surface-2: #1d2023;
-  --mn-rw-surface-3: #252a2f;
+  --mn-rw-bg: #141511;
+  --mn-rw-surface: #1b1c17;
+  --mn-rw-surface-2: #24241d;
+  --mn-rw-surface-3: #302b21;
   --mn-rw-border: rgba(255, 255, 255, 0.09);
   --mn-rw-border-strong: rgba(255, 184, 77, 0.28);
-  --mn-rw-gold: #f2a51a;
-  --mn-rw-text: #f5f5f2;
-  --mn-rw-muted: #9da3a8;
-  --mn-rw-dim: #636a70;
+  --mn-rw-gold: #cfaa6c;
+  --mn-rw-text: #e7ddc8;
+  --mn-rw-muted: #b8aa91;
+  --mn-rw-dim: #99876b;
 }
 
 .mortal-needs-panel {

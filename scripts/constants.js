@@ -103,6 +103,15 @@ function defaultMovementAdvancement() {
 
 export const DEFAULT_NEEDS = [
   {
+    id: 'fear', label: 'MORTAL_NEEDS.Needs.Fear', icon: 'fa-eye', iconType: 'fa',
+    enabled: false, category: NeedCategory.MENTAL, order: 13,
+    min: 0, max: 100, default: 0, custom: false, stressAmount: 10,
+    attribute: null, consequences: [],
+    decay: { enabled: false, rate: 5, interval: 3600 },
+    movement: defaultMovementAdvancement(),
+    flavor: {},
+  },
+  {
     id: 'hunger', label: 'MORTAL_NEEDS.Needs.Hunger', icon: 'fa-utensils', iconType: 'fa',
     enabled: true, category: NeedCategory.PHYSICAL, order: 0,
     min: 0, max: 100, default: 0, custom: false, stressAmount: 10,

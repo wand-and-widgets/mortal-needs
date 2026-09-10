@@ -2,11 +2,16 @@ import { MODULE_ID, Events, EntitySource } from '../constants.js';
 import { getConsequenceType } from '../consequences/consequence-type.js';
 import { NeedsEngine } from './needs-engine.js';
 import { watchNextMortalNeedsDialogRender } from '../ui/dialogs/window-layering.js';
+import { isResponsibleGM } from './access.js';
+import { consequenceId, escapeHTML } from './consequence-identity.js';
+import { effectChanges } from './effect-data.js';
 
 export class ConsequenceEngine {
   #eventBus;
   #store;
   #adapter;
+  #pending = new Map();
+  #failures = new Map();
 
   constructor(eventBus, store, adapter) {
     this.#eventBus = eventBus;
@@ -19,11 +24,20 @@ export class ConsequenceEngine {
     this.#eventBus.on(Events.NEED_SET, this.#onNeedChanged.bind(this));
   }
 
-  async #onNeedChanged({ entityId, needId, value, previousValue, max }) {
-    if (!game.user.isGM) return;
+  async #onNeedChanged(data) {
+    if (!isResponsibleGM()) return;
+    const previous = this.#pending.get(data.entityId) ?? Promise.resolve();
+    const operation = previous.catch(() => {}).then(() => this.#processChange(data));
+    this.#pending.set(data.entityId, operation);
+    try { return await operation; }
+    finally { if (this.#pending.get(data.entityId) === operation) this.#pending.delete(data.entityId); }
+  }
+
+  async #processChange({ entityId, needId, value, previousValue, max }) {
+    if (!isResponsibleGM()) return;
 
     const config = this.#store.getNeedConfig(needId);
-    if (!config?.consequences?.length) return;
+    if (!config) return;
 
     const entityInfo = this.#store.getTrackedEntityInfo(entityId);
     if (!entityInfo) return;
@@ -33,7 +47,16 @@ export class ConsequenceEngine {
     const oldPct = NeedsEngine.getStressPercentage(previousValue, max, config);
     const newPct = NeedsEngine.getStressPercentage(value, max, config);
 
-    for (const consequenceConfig of config.consequences) {
+    const saved = actor?.getFlag(MODULE_ID, 'appliedConsequences') || {};
+    const recovery = new Map((config.consequences || []).map(c => [this.#getConsequenceKey(needId, c), c]));
+    for (const [id, record] of Object.entries(saved)) {
+      if (record.needId === needId) recovery.set(id, record.consequence);
+    }
+    for (const consequenceConfig of recovery.values()) {
+      const threshold = this.#normalizeThreshold(consequenceConfig.threshold);
+      if (oldPct >= threshold && newPct < threshold) await this.#handleRecovery(actor, entityId, needId, consequenceConfig);
+    }
+    for (const consequenceConfig of config.consequences || []) {
       const threshold = this.#normalizeThreshold(consequenceConfig.threshold);
 
       if (oldPct < threshold && newPct >= threshold) {
@@ -42,15 +65,12 @@ export class ConsequenceEngine {
       } else if (oldPct >= threshold && newPct >= threshold && newPct > oldPct) {
         // Sustained at/above threshold and still increasing — tick
         await this.#handleConsequenceTick(actor, entityId, entityInfo, needId, consequenceConfig, newPct, oldPct, true);
-      } else if (oldPct >= threshold && newPct < threshold) {
-        // Dropped below this consequence's threshold — recovery
-        await this.#handleRecovery(actor, entityId, needId, consequenceConfig);
       }
     }
   }
 
   async #handleRecovery(actor, entityId, needId, consequenceConfig) {
-    if (!consequenceConfig.reversible) return;
+    if (consequenceConfig.reversible === false) return;
 
     const removalMode = game.settings.get(MODULE_ID, 'consequenceRemovalMode');
     if (removalMode === 'manual') return;
@@ -59,8 +79,7 @@ export class ConsequenceEngine {
     if (removalMode === 'ask_gm') {
       removed = await this.#showRemovalDialog(actor, entityId, needId, consequenceConfig);
     } else if (removalMode === 'immediate') {
-      await this.removeConsequence(actor, entityId, needId, consequenceConfig);
-      removed = true;
+      removed = await this.removeConsequence(actor, entityId, needId, consequenceConfig);
     }
 
     // Only reset ticks if the consequence was actually removed
@@ -115,51 +134,110 @@ export class ConsequenceEngine {
   }
 
   async applyConsequence(actor, entityId, needId, consequenceConfig) {
+    if (!game.user.isGM) return { success: false, reason: 'not-gm' };
     const ConsequenceClass = getConsequenceType(consequenceConfig.type);
     if (!ConsequenceClass) {
       console.warn(`Mortal Needs | Unknown consequence type: ${consequenceConfig.type}`);
-      return;
+      this.#reportFailure(entityId, needId, consequenceConfig, 'unknown-type');
+      return { success: false, reason: 'unknown-type' };
     }
 
     // Check if consequence requires an actor
     if (!actor && !['custom-callback', 'chat-notify', 'macro-execute'].includes(consequenceConfig.type)) {
+      this.#reportFailure(entityId, needId, consequenceConfig, 'no-linked-actor');
       console.warn(`Mortal Needs | Consequence "${consequenceConfig.type}" skipped for entity ${entityId} (no linked actor)`);
-      return;
+      return { success: false, reason: 'no-actor' };
     }
 
     const instance = new ConsequenceClass(this.#adapter);
     try {
-      const result = await instance.apply(actor, needId, this.#getRuntimeConfig(needId, consequenceConfig));
+      const runtime = this.#getRuntimeConfig(needId, consequenceConfig);
+      const result = await instance.apply(actor, needId, runtime);
       if (result?.success) {
+        result.description ||= instance.getDescription(runtime);
+        this.#failures.delete(`${entityId}:${runtime.consequenceId}`);
+        if (actor && !['custom-callback', 'chat-notify', 'macro-execute'].includes(consequenceConfig.type)) {
+          await actor.setFlag(MODULE_ID, `appliedConsequences.${runtime.consequenceId}`, {
+            needId, consequence: { ...consequenceConfig, id: runtime.consequenceId },
+            description: result.description,
+          });
+        }
         this.#eventBus.emit(Events.CONSEQUENCE_APPLIED, {
           entityId, needId,
           consequenceType: consequenceConfig.type,
           config: consequenceConfig,
           result,
         });
+      } else if (!['already-active', 'external-condition'].includes(result?.reason)) {
+        this.#reportFailure(entityId, needId, consequenceConfig, result?.reason || 'application-failed');
       }
+      return result;
     } catch (err) {
       console.error(`Mortal Needs | Failed to apply consequence "${consequenceConfig.type}":`, err);
+      this.#reportFailure(entityId, needId, consequenceConfig, err.message);
+      return { success: false, reason: err.message };
     }
   }
 
   async removeConsequence(actor, entityId, needId, consequenceConfig) {
+    if (!game.user.isGM) return false;
+    const id = this.#getConsequenceKey(needId, consequenceConfig);
+    consequenceConfig = actor?.getFlag(MODULE_ID, 'appliedConsequences')?.[id]?.consequence ?? consequenceConfig;
     const ConsequenceClass = getConsequenceType(consequenceConfig.type);
-    if (!ConsequenceClass || !actor) return;
+    if (!ConsequenceClass || !actor) return false;
 
     const instance = new ConsequenceClass(this.#adapter);
     try {
       const removed = await instance.remove(actor, needId, this.#getRuntimeConfig(needId, consequenceConfig));
       if (removed) {
+        await actor.unsetFlag(MODULE_ID, `appliedConsequences.${id}`);
         this.#eventBus.emit(Events.CONSEQUENCE_REMOVED, {
           entityId, needId,
           consequenceType: consequenceConfig.type,
           config: consequenceConfig,
         });
       }
+      return removed;
     } catch (err) {
       console.error(`Mortal Needs | Failed to remove consequence "${consequenceConfig.type}":`, err);
+      this.#reportFailure(entityId, needId, consequenceConfig, err.message);
+      return false;
     }
+  }
+
+  #reportFailure(entityId, needId, config, reason) {
+    this.#failures.set(`${entityId}:${this.#getConsequenceKey(needId, config)}`, reason);
+    ui.notifications?.warn(`Mortal Needs: ${this.#store.getTrackedEntityInfo(entityId)?.name || entityId}. Could not apply or remove ${game.i18n.localize(this.#store.getNeedConfig(needId)?.label || needId)}: ${reason}`);
+    this.#eventBus.emit(Events.ACTORS_REFRESHED, {});
+  }
+
+  async getConsequenceStatus(entityId, needId) {
+    const info = this.#store.getTrackedEntityInfo(entityId);
+    if (!info) return [];
+    const actor = this.#resolveActor(entityId, info);
+    const saved = actor?.getFlag(MODULE_ID, 'appliedConsequences') || {};
+    const configs = new Map((this.#store.getNeedConfig(needId)?.consequences || [])
+      .map(c => [this.#getConsequenceKey(needId, c), c]));
+    for (const [id, record] of Object.entries(saved)) {
+      if (record.needId === needId) configs.set(id, record.consequence);
+    }
+    return Promise.all([...configs].map(async ([id, config]) => {
+      const Type = getConsequenceType(config.type);
+      const instance = Type ? new Type(this.#adapter) : null;
+      const runtime = this.#getRuntimeConfig(needId, config);
+      const active = !!(actor && instance && await instance.isActive(actor, needId, runtime));
+      const effect = config.type === 'active-effect' ? actor?.effects.find(e => e.flags?.[MODULE_ID]?.consequenceId === id) : null;
+      const attribute = config.type === 'attribute-modify' ? actor?.getFlag(MODULE_ID, 'attributeConsequences')?.[runtime.consequenceId] : null;
+      const description = attribute ? instance.getDescription({ ...runtime, path: attribute.path, operation: 'add', amount: attribute.delta })
+        : effect ? instance.getDescription({ ...runtime, changeValue: effectChanges(effect)[0]?.value ?? runtime.changeValue })
+        : instance?.getDescription(runtime) || config.type;
+      return {
+        id, config, active, removable: active || !!saved[id], reversible: config.reversible !== false,
+        description: ['active-effect', 'attribute-modify'].includes(config.type) ? description : saved[id]?.description || description,
+        error: this.#failures.get(`${entityId}:${id}`) || null,
+        threshold: runtime.threshold, ticks: this.getTickProgress(entityId, needId, config),
+      };
+    }));
   }
 
   getTickProgress(entityId, needId, consequenceConfig) {
@@ -203,9 +281,9 @@ export class ConsequenceEngine {
     const confirmed = await foundry.applications.api.DialogV2.confirm({
       window: { title: game.i18n.localize('MORTAL_NEEDS.Dialogs.RemoveConsequenceTitle') },
       content: `<p>${game.i18n.format('MORTAL_NEEDS.Dialogs.RemoveConsequenceContent', {
-        name: entityName,
-        need: needName,
-        consequence: description,
+        name: escapeHTML(entityName),
+        need: escapeHTML(needName),
+        consequence: escapeHTML(description),
       })}</p>`,
       yes: { label: game.i18n.localize('MORTAL_NEEDS.Dialogs.Remove') },
       no: { label: game.i18n.localize('MORTAL_NEEDS.Dialogs.Keep') },
@@ -213,8 +291,7 @@ export class ConsequenceEngine {
     });
 
     if (confirmed) {
-      await this.removeConsequence(actor, entityId, needId, consequenceConfig);
-      return true;
+      return this.removeConsequence(actor, entityId, needId, consequenceConfig);
     }
     return false;
   }
@@ -226,6 +303,8 @@ export class ConsequenceEngine {
       threshold: this.#normalizeThreshold(consequenceConfig.threshold),
       ticks: this.#normalizeTicks(consequenceConfig.ticks),
       reversible: consequenceConfig.reversible ?? true,
+      recoveryMode: game.settings.get(MODULE_ID, 'consequenceRemovalMode'),
+      needLabel: game.i18n.localize(this.#store.getNeedConfig(needId)?.label || needId),
     };
   }
 
@@ -234,31 +313,7 @@ export class ConsequenceEngine {
   }
 
   #getConsequenceKey(needId, consequenceConfig) {
-    const threshold = this.#normalizeThreshold(consequenceConfig.threshold);
-    const fingerprint = this.#hashString(this.#stableStringify(consequenceConfig.config || {}));
-    const rawKey = consequenceConfig.id
-      ? String(consequenceConfig.id)
-      : `${needId}_${consequenceConfig.type}_${threshold}_${fingerprint}`;
-    return rawKey.replace(/[^A-Za-z0-9_-]/g, '_');
-  }
-
-  #stableStringify(value) {
-    if (!value || typeof value !== 'object') return String(value ?? '');
-    if (Array.isArray(value)) return `[${value.map(item => this.#stableStringify(item)).join(',')}]`;
-    const ordered = {};
-    for (const key of Object.keys(value).sort()) {
-      ordered[key] = this.#stableStringify(value[key]);
-    }
-    return JSON.stringify(ordered);
-  }
-
-  #hashString(value) {
-    let hash = 2166136261;
-    for (let i = 0; i < value.length; i += 1) {
-      hash ^= value.charCodeAt(i);
-      hash = Math.imul(hash, 16777619);
-    }
-    return (hash >>> 0).toString(36);
+    return consequenceId(needId, consequenceConfig);
   }
 
   #normalizeThreshold(value) {

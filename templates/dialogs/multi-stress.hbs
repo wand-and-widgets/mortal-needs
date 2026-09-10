@@ -56,7 +56,7 @@
             <div class="mn-batch-need__top">
               <label class="mn-batch-need__select">
                 <input type="checkbox" name="selectedNeeds" value="{{id}}" {{#if @first}}checked{{/if}}>
-                <span class="mn-batch-need__icon"><i class="fas {{icon}}"></i></span>
+                <span class="mn-batch-need__icon">{{mnIcon this}}</span>
                 <strong>{{localizedLabel}}</strong>
               </label>
               <span class="mn-batch-category mn-batch-category--{{category}}">{{category}}</span>

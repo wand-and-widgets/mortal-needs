@@ -1,9 +1,11 @@
 import { MODULE_ID, Events, Severity } from '../constants.js';
+import { canEditNeed } from './access.js';
 
 export class NeedsEngine {
   #store;
   #eventBus;
   #adapter;
+  #pending = new Map();
 
   constructor(store, eventBus, adapter) {
     this.#store = store;
@@ -34,26 +36,7 @@ export class NeedsEngine {
     }
 
     const signedAmount = NeedsEngine.isInvertedNeed(config) ? -adjustedAmount : adjustedAmount;
-    const result = this.#store.adjustNeedValue(entityId, needId, signedAmount, source);
-    if (!result) return null;
-
-    this.#eventBus.emit(Events.NEED_STRESSED, {
-      entityId, needId,
-      amount: adjustedAmount,
-      value: result.value,
-      previousValue: result.previousValue,
-      min: result.min,
-      max: result.max,
-      source,
-    });
-
-    // Evaluate thresholds
-    this.#evaluateThresholds(entityId, needId, result.previousValue, result.value, result.max, source);
-
-    // Persist
-    await this.#store.persistActor(entityId);
-
-    return result;
+    return this.#commit(entityId, needId, current => current + signedAmount, Events.NEED_STRESSED, source, adjustedAmount);
   }
 
   async relieveNeed(entityId, needId, amount, options = {}) {
@@ -63,50 +46,66 @@ export class NeedsEngine {
     const finalAmount = this.#resolveStressAmount(config, amount);
     const source = options.source || 'relieve';
     const signedAmount = NeedsEngine.isInvertedNeed(config) ? finalAmount : -finalAmount;
-    const result = this.#store.adjustNeedValue(entityId, needId, signedAmount, source);
-    if (!result) return null;
-
-    this.#eventBus.emit(Events.NEED_RELIEVED, {
-      entityId, needId,
-      amount: finalAmount,
-      value: result.value,
-      previousValue: result.previousValue,
-      min: result.min,
-      max: result.max,
-      source,
-    });
-
-    // Evaluate thresholds (recovery check)
-    this.#evaluateThresholds(entityId, needId, result.previousValue, result.value, result.max, source);
-
-    // Persist
-    await this.#store.persistActor(entityId);
-
-    return result;
+    return this.#commit(entityId, needId, current => current + signedAmount, Events.NEED_RELIEVED, source, finalAmount);
   }
 
   async setNeed(entityId, needId, value, options = {}) {
     const config = this.#store.getNeedConfig(needId);
     if (!config) return null;
 
-    const result = this.#store.setNeedValue(entityId, needId, value, options.source || 'manual');
-    if (!result) return null;
+    if (!Number.isFinite(Number(value))) return null;
+    return this.#commit(entityId, needId, () => Number(value), Events.NEED_SET, options.source || 'manual');
+  }
 
-    this.#eventBus.emit(Events.NEED_SET, {
-      entityId, needId,
-      value: result.value,
-      previousValue: result.previousValue,
-      min: result.min,
-      max: result.max,
+  async #commit(entityId, needId, calculate, event, source, amount) {
+    if (!canEditNeed(entityId, needId, this.#store)) return null;
+    const previous = this.#pending.get(entityId) ?? Promise.resolve();
+    const operation = previous.catch(() => {}).then(async () => {
+      if (!canEditNeed(entityId, needId, this.#store)) return null;
+      const config = this.#store.getNeedConfig(needId);
+      const current = this.#store.getActorNeedState(entityId, needId)?.value ?? config.default ?? 0;
+      const target = Math.max(config.min ?? 0, Math.min(config.max ?? 100, Math.round(calculate(current))));
+      if (!Number.isFinite(target) || target === current) return null;
+      const result = this.#store.setNeedValue(entityId, needId, target, source, { recordHistory: false });
+      try {
+        await this.#store.persistActor(entityId);
+      } catch (error) {
+        this.#store.setNeedValue(entityId, needId, current, 'rollback', { recordHistory: false });
+        this.#eventBus.emit(Events.ACTORS_REFRESHED, {});
+        throw error;
+      }
+      this.#store.recordCommittedChange(entityId, needId, current, target, source, result);
+      // Consequences have their own queue. Do not hold this write lock while a
+      // macro or callback may itself adjust another need on this actor.
+      this.#eventBus.emit(event, { entityId, needId, ...result, source, amount });
+      this.#evaluateThresholds(entityId, needId, result.previousValue, result.value, result.max, source);
+      return result;
     });
+    this.#pending.set(entityId, operation);
+    try { return await operation; }
+    finally { if (this.#pending.get(entityId) === operation) this.#pending.delete(entityId); }
+  }
 
-    // Evaluate thresholds
-    this.#evaluateThresholds(entityId, needId, result.previousValue, result.value, result.max, options.source || 'manual');
+  // Called only from Foundry's document hooks, never from an untrusted socket payload.
+  async ingestActorNeeds(actor) {
+    return this.ingestEntityNeeds(actor.id, () => this.#store.loadActorNeeds(actor));
+  }
 
-    // Persist
-    await this.#store.persistActor(entityId);
-
-    return result;
+  async ingestEntityNeeds(entityId, load) {
+    if (!this.#store.isTracked(entityId)) return;
+    const before = this.#store.getActorAllNeeds(entityId) || {};
+    await load();
+    for (const config of this.#store.getAllNeedConfigs()) {
+      const next = this.#store.getActorNeedState(entityId, config.id);
+      const previousValue = before[config.id]?.value ?? config.default ?? 0;
+      if (!next || next.value === previousValue) continue;
+      this.#store.recordCommittedChange(entityId, config.id, previousValue, next.value, 'document', next);
+      this.#eventBus.emit(Events.NEED_SET, {
+        entityId, needId: config.id, ...next, previousValue, source: 'document',
+      });
+      this.#evaluateThresholds(entityId, config.id, previousValue, next.value, next.max, 'document');
+    }
+    this.#eventBus.emit(Events.ACTORS_REFRESHED, {});
   }
 
   async resetNeed(entityId, needId) {
@@ -222,19 +221,19 @@ export class NeedsEngine {
       });
     }
 
-    // Reached critical (>= 100%)
-    if (newPct >= 100 && oldPct < 100) {
+    const criticalThreshold = game.settings?.get?.(MODULE_ID, 'criticalThreshold') ?? 80;
+    if (newPct >= criticalThreshold && oldPct < criticalThreshold) {
       this.#eventBus.emit(Events.THRESHOLD_CRITICAL, {
-        entityId, needId,
+        entityId, needId, source,
         value: newValue, max,
         percentage: newPct,
         previousPercentage: oldPct,
       });
     }
     // Still at critical but stressed further
-    else if (newPct >= 100 && oldPct >= 100 && newPct > oldPct) {
+    else if (newPct >= criticalThreshold && oldPct >= criticalThreshold && newPct > oldPct) {
       this.#eventBus.emit(Events.THRESHOLD_CRITICAL, {
-        entityId, needId,
+        entityId, needId, source,
         value: newValue, max,
         percentage: newPct,
         previousPercentage: oldPct,
@@ -243,10 +242,9 @@ export class NeedsEngine {
     }
 
     // Recovered from critical
-    const criticalThreshold = game.settings?.get?.(MODULE_ID, 'criticalThreshold') ?? 80;
     if (oldPct >= criticalThreshold && newPct < criticalThreshold) {
       this.#eventBus.emit(Events.THRESHOLD_RECOVERED, {
-        entityId, needId,
+        entityId, needId, source,
         value: newValue, max,
         percentage: newPct,
         previousPercentage: oldPct,
@@ -291,7 +289,9 @@ export class NeedsEngine {
 
   static getStressPercentage(value, max, config = {}) {
     if (!NeedsEngine.isInvertedNeed(config)) {
-      return NeedsEngine.getPercentage(value, max);
+      const min = NeedsEngine.normalizeNumber(config?.min, 0);
+      const range = NeedsEngine.normalizeNumber(max, 100) - min;
+      return range > 0 ? Math.max(0, Math.min(100, Math.round(((NeedsEngine.normalizeNumber(value, min) - min) / range) * 100))) : 0;
     }
 
     const safeValue = NeedsEngine.normalizeNumber(value, 0);

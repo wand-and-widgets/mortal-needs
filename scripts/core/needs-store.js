@@ -1,5 +1,7 @@
 import { MODULE_ID, Events, EntitySource, DEFAULT_MOVEMENT_ADVANCEMENT } from '../constants.js';
 import { isGMOnlyNeed, normalizeNeedDisplayRule, normalizeNeedVisibility } from './need-visibility.js';
+import { consequenceId } from './consequence-identity.js';
+import { isResponsibleGM } from './access.js';
 
 export class NeedsStore {
   #state = new Map();
@@ -11,6 +13,7 @@ export class NeedsStore {
   #maxHistoryPerEntity = 120;
   #maxHistoryTotal = 500;
   #historyPersistQueued = false;
+  #esPersistence = Promise.resolve();
 
   constructor(eventBus) {
     this.#eventBus = eventBus;
@@ -72,7 +75,7 @@ export class NeedsStore {
 
   // --- State Mutations ---
 
-  setNeedValue(entityId, needId, value, source = 'manual') {
+  setNeedValue(entityId, needId, value, source = 'manual', { recordHistory = true } = {}) {
     let entityNeeds = this.#state.get(entityId);
     if (!entityNeeds) {
       entityNeeds = new Map();
@@ -99,9 +102,13 @@ export class NeedsStore {
     this.#dirty.add(entityId);
 
     // Record history
-    this.#recordHistory(entityId, needId, previousValue, clamped, source, { min, max });
+    if (recordHistory) this.#recordHistory(entityId, needId, previousValue, clamped, source, { min, max });
 
     return { ...newState, previousValue };
+  }
+
+  recordCommittedChange(entityId, needId, previousValue, value, source, bounds = {}) {
+    if (isResponsibleGM()) this.#recordHistory(entityId, needId, previousValue, value, source, bounds);
   }
 
   adjustNeedValue(entityId, needId, delta, source = 'manual') {
@@ -191,6 +198,8 @@ export class NeedsStore {
   // --- Entity Tracking ---
 
   trackEntity(entityId, entityInfo) {
+    const existing = this.#trackedEntities.get(entityId);
+    if (existing && Object.keys({ ...existing, ...entityInfo }).every(key => existing[key] === entityInfo[key])) return;
     this.#trackedEntities.set(entityId, { ...entityInfo });
 
     // Initialize needs if not already present
@@ -257,14 +266,17 @@ export class NeedsStore {
 
     if (entityInfo.source === EntitySource.ACTOR) {
       const actor = game.actors.get(entityId);
-      if (actor) {
-        await actor.setFlag(MODULE_ID, 'needs', data);
-      }
+      if (!actor) throw new Error('The tracked character is no longer available.');
+      await actor.setFlag(MODULE_ID, 'needs', data);
     } else if (entityInfo.source === EntitySource.EXALTED_SCENES) {
       // ES characters: store in world settings
-      const esData = game.settings.get(MODULE_ID, 'esCharacterNeeds') || {};
-      esData[entityId] = data;
-      await game.settings.set(MODULE_ID, 'esCharacterNeeds', esData);
+      const save = this.#esPersistence.catch(() => {}).then(() => {
+        const esData = structuredClone(game.settings.get(MODULE_ID, 'esCharacterNeeds') || {});
+        esData[entityId] = data;
+        return game.settings.set(MODULE_ID, 'esCharacterNeeds', esData);
+      });
+      this.#esPersistence = save;
+      await save;
     }
 
     this.#dirty.delete(entityId);
@@ -452,7 +464,7 @@ export class NeedsStore {
 
   #persistHistorySoon() {
     if (typeof game === 'undefined') return;
-    if (!game.user?.isGM) return;
+    if (!isResponsibleGM()) return;
     if (this.#historyPersistQueued) return;
 
     this.#historyPersistQueued = true;
@@ -466,7 +478,7 @@ export class NeedsStore {
       } catch (err) {
         console.warn('Mortal Needs | Failed to persist history:', err);
       }
-    }, 75);
+    }, 750);
   }
 
   // --- Serialization helpers ---
@@ -536,7 +548,8 @@ export class NeedsStore {
       color: this.#normalizeColor(config.color),
       inverted: config.inverted === true,
       enabled: config.enabled !== false,
-      consequences: Array.isArray(config.consequences) ? config.consequences : [],
+      consequences: Array.isArray(config.consequences)
+        ? config.consequences.map(c => ({ ...c, id: consequenceId(config.id, c) })) : [],
       decay: {
         ...decay,
         enabled: !!decay.enabled,

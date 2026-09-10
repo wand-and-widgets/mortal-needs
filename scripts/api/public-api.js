@@ -3,13 +3,15 @@ import { NeedsEngine } from '../core/needs-engine.js';
 import { filterDisplayNeedsForEntity, filterNeedsForUser, isNeedVisibleToUser } from '../core/need-visibility.js';
 import { registerConsequenceType, getAllConsequenceTypes, getConsequenceType } from '../consequences/consequence-type.js';
 import { CustomCallbackConsequence } from '../consequences/custom-callback.js';
+import { canViewEntity } from '../core/access.js';
 
 export function createPublicAPI(store, engine, consequenceEngine, eventBus, configManager, adapter, app) {
   const publicUser = Object.freeze({ isGM: false });
   const getCurrentUser = () => globalThis.game?.user;
   const canAccessNeed = needId => isNeedVisibleToUser(store.getNeedConfig(needId), getCurrentUser());
+  const canAccessEntity = entityId => canViewEntity(entityId, store.getTrackedEntityInfo(entityId));
   const filterEntityForUser = (entity, user = getCurrentUser()) => {
-    if (!entity) return entity;
+    if (!entity || !canViewEntity(entity.id, entity, user)) return null;
     const visibleNeedIds = new Set(filterNeedsForUser(store.getAllNeedConfigs(), user).map(config => config.id));
     const needs = {};
     for (const [needId, state] of Object.entries(entity.needs || {})) {
@@ -19,11 +21,11 @@ export function createPublicAPI(store, engine, consequenceEngine, eventBus, conf
   };
   const filterHistoryForUser = entries => {
     const visibleNeedIds = new Set(filterNeedsForUser(store.getAllNeedConfigs(), getCurrentUser()).map(config => config.id));
-    return entries.filter(entry => visibleNeedIds.has(entry.needId));
+    return entries.filter(entry => visibleNeedIds.has(entry.needId) && canAccessEntity(entry.entityId));
   };
 
   const api = {
-    version: '2.3.2',
+    version: '3.0.0',
 
     // --- Needs ---
     needs: {
@@ -40,7 +42,7 @@ export function createPublicAPI(store, engine, consequenceEngine, eventBus, conf
         return engine.setNeed(entityId, needId, value, options);
       },
       get(entityId, needId) {
-        if (!canAccessNeed(needId)) return null;
+        if (!canAccessNeed(needId) || !canAccessEntity(entityId)) return null;
         return store.getActorNeedState(entityId, needId);
       },
       getAll(entityId) {
@@ -49,7 +51,7 @@ export function createPublicAPI(store, engine, consequenceEngine, eventBus, conf
           id: entityId,
           needs: store.getActorAllNeeds(entityId) || {},
           ...(entityInfo || {}),
-        }).needs;
+        })?.needs || {};
       },
       async reset(entityId, needId) {
         if (!canAccessNeed(needId)) return null;
@@ -130,13 +132,13 @@ export function createPublicAPI(store, engine, consequenceEngine, eventBus, conf
     // --- Actor/Entity Tracking ---
     actors: {
       getTracked() {
-        return store.getAllTrackedActors().map(entity => filterEntityForUser(entity));
+        return store.getAllTrackedActors().map(entity => filterEntityForUser(entity)).filter(Boolean);
       },
       getTrackedActors() {
-        return store.getTrackedEntitiesBySource(EntitySource.ACTOR);
+        return store.getTrackedEntitiesBySource(EntitySource.ACTOR).filter(e => canAccessEntity(e.id));
       },
       getTrackedESChars() {
-        return store.getTrackedEntitiesBySource(EntitySource.EXALTED_SCENES);
+        return store.getTrackedEntitiesBySource(EntitySource.EXALTED_SCENES).filter(e => canAccessEntity(e.id));
       },
       async track(entityId, source) {
         if (!game.user.isGM) {
@@ -204,7 +206,7 @@ export function createPublicAPI(store, engine, consequenceEngine, eventBus, conf
         }
       },
       isTracked(entityId) {
-        return store.isTracked(entityId);
+        return canAccessEntity(entityId) && store.isTracked(entityId);
       },
     },
 
@@ -248,7 +250,7 @@ export function createPublicAPI(store, engine, consequenceEngine, eventBus, conf
       actorsAboveThreshold(needId, threshold = 80) {
         if (!canAccessNeed(needId)) return [];
         const config = store.getNeedConfig(needId);
-        const tracked = store.getAllTrackedActors();
+        const tracked = store.getAllTrackedActors().map(e => filterEntityForUser(e)).filter(Boolean);
         return tracked.filter(entity => {
           const need = entity.needs[needId];
           if (!need) return false;
@@ -259,7 +261,7 @@ export function createPublicAPI(store, engine, consequenceEngine, eventBus, conf
       actorsWithSeverity(needId, severity) {
         if (!canAccessNeed(needId)) return [];
         const config = store.getNeedConfig(needId);
-        const tracked = store.getAllTrackedActors();
+        const tracked = store.getAllTrackedActors().map(e => filterEntityForUser(e)).filter(Boolean);
         return tracked.filter(entity => {
           const need = entity.needs[needId];
           if (!need) return false;
@@ -270,7 +272,7 @@ export function createPublicAPI(store, engine, consequenceEngine, eventBus, conf
       },
       criticalActors() {
         const critThreshold = game.settings?.get?.(MODULE_ID, 'criticalThreshold') ?? 80;
-        const tracked = store.getAllTrackedActors().map(entity => filterEntityForUser(entity));
+        const tracked = store.getAllTrackedActors().map(entity => filterEntityForUser(entity)).filter(Boolean);
         return tracked.filter(entity => {
           return Object.entries(entity.needs).some(([needId, need]) => {
             const config = store.getNeedConfig(needId);
@@ -421,46 +423,25 @@ export function createPublicAPI(store, engine, consequenceEngine, eventBus, conf
 
     // --- Broadcast (Show/Flash to Players) ---
     broadcast: {
-      show() {
+      async show() {
         if (!game.user.isGM) return;
-        const payload = api.broadcast._buildPayload();
-        game.socket.emit(`module.${MODULE_ID}`, {
-          action: 'showNeeds',
-          senderId: game.user.id,
-          ...payload,
-        });
-        Hooks.callAll('mortalNeeds.broadcast.show', payload);
+        await game.settings.set(MODULE_ID, 'broadcastState', { visible: true, flash: false, revision: Date.now() });
       },
       update() {
-        if (!game.user.isGM) return;
         const payload = api.broadcast._buildPayload();
-        game.socket.emit(`module.${MODULE_ID}`, {
-          action: 'updateNeeds',
-          senderId: game.user.id,
-          ...payload,
-        });
         Hooks.callAll('mortalNeeds.broadcast.update', payload);
       },
-      hide() {
+      async hide() {
         if (!game.user.isGM) return;
-        game.socket.emit(`module.${MODULE_ID}`, {
-          action: 'hideNeeds',
-          senderId: game.user.id,
-        });
-        Hooks.callAll('mortalNeeds.broadcast.hide', {});
+        await game.settings.set(MODULE_ID, 'broadcastState', { visible: false, flash: false, revision: Date.now() });
       },
-      flash() {
+      async flash() {
         if (!game.user.isGM) return;
-        const payload = api.broadcast._buildPayload();
-        game.socket.emit(`module.${MODULE_ID}`, {
-          action: 'flashNeeds',
-          senderId: game.user.id,
-          ...payload,
-        });
-        Hooks.callAll('mortalNeeds.broadcast.flash', payload);
+        const previous = game.settings.get(MODULE_ID, 'broadcastState') || {};
+        await game.settings.set(MODULE_ID, 'broadcastState', { visible: !!previous.visible, flash: true, revision: Date.now() });
       },
       _buildPayload() {
-        const tracked = store.getAllTrackedActors();
+        const tracked = store.getAllTrackedActors().filter(e => canAccessEntity(e.id));
         const enabledNeeds = filterNeedsForUser(store.getEnabledNeedConfigs(), publicUser);
         const usedNeedConfigs = new Map();
         const actors = tracked.map(entity => {
@@ -486,6 +467,8 @@ export function createPublicAPI(store, engine, consequenceEngine, eventBus, conf
               id: n.id,
               label: n.label,
               icon: n.icon,
+              iconType: n.iconType,
+              custom: n.custom,
               color: n.color || null,
               order: n.order ?? 0,
               min: n.min ?? 0,

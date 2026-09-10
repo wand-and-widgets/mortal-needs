@@ -1,0 +1,124 @@
+@font-face{font-family:'MN Pirata';src:url('../assets/fonts/PirataOne-Regular.ttf') format('truetype');font-weight:400;font-display:swap}
+@font-face{font-family:'MN Cinzel';src:url('../assets/fonts/Cinzel%5Bwght%5D.ttf') format('truetype');font-weight:400 900;font-display:swap}
+@font-face{font-family:'MN Barlow';src:url('../assets/fonts/BarlowCondensed-Regular.ttf') format('truetype');font-weight:400;font-display:swap}
+@font-face{font-family:'MN Barlow';src:url('../assets/fonts/BarlowCondensed-SemiBold.ttf') format('truetype');font-weight:600 900;font-display:swap}
+
+:is(.mn-embers-dock,.mn-condition-inspector){--ink:#111210;--surface:#1b1b17;--bone:#e7ddc8;--muted:#b4aa95;--metal:#b38b50;--line:#514534;--need-color:#c89a54;position:fixed;box-sizing:border-box;color:var(--bone);font:16px/1.3 'MN Barlow',sans-serif;background:linear-gradient(118deg,#22211c,#151614 72%);border:1px solid #715639;outline:2px solid #0b0c0a;box-shadow:0 9px 32px #0009,inset 0 0 0 2px #0a0b0980;z-index:61;color-scheme:dark;text-align:left}
+:is(.mn-embers-dock,.mn-condition-inspector) *{box-sizing:border-box}
+:is(.mn-embers-dock,.mn-condition-inspector) button{border:1px solid transparent;border-radius:2px;background:transparent;color:#c0ad8e;font:inherit;min-height:26px;line-height:1;box-shadow:none;text-shadow:none;cursor:pointer;padding:4px 7px;margin:0;width:auto;flex:none;transition:background .12s,color .12s}
+:is(.mn-embers-dock,.mn-condition-inspector) button:hover{background:#b9905420;color:#fff1d1;border-color:#806443}
+:is(.mn-embers-dock,.mn-condition-inspector) button:focus-visible,:is(.mn-embers-dock,.mn-condition-inspector) [tabindex]:focus-visible{outline:2px solid #dfb56f;outline-offset:2px}
+:is(.mn-embers-dock,.mn-condition-inspector) button:disabled{opacity:.45;cursor:wait}
+:is(.mn-embers-dock,.mn-condition-inspector) img{border:0;border-radius:0;object-fit:contain}
+:is(.mn-embers-dock,.mn-condition-inspector) h3,:is(.mn-embers-dock,.mn-condition-inspector) h4{border:0;color:inherit;margin:0;text-shadow:none;font-family:'MN Cinzel',serif}
+:is(.mn-embers-dock,.mn-condition-inspector) input,:is(.mn-embers-dock,.mn-condition-inspector) select{background:#0f100e;border:1px solid #645136;border-radius:2px;color:#efe2c7;font:inherit;min-height:30px;box-shadow:none}
+.mn-embers-dock{width:402px;max-width:calc(100vw - 16px);max-height:calc(100vh - 16px);display:flex;flex-direction:column;border-radius:2px 2px 7px 2px;overflow:visible}
+.mn-dock-header{display:flex;align-items:center;min-height:47px;padding:5px 8px 5px 9px;gap:3px;cursor:grab;border-bottom:1px solid #76604466;touch-action:none;user-select:none;background:linear-gradient(0deg,transparent,#50422a1c);flex-shrink:0}
+.mn-dock-seal{width:24px;height:29px;filter:drop-shadow(0 1px 2px #000);margin-right:4px}
+.mn-dock-heading{min-width:0;flex:1;display:flex;flex-direction:column;gap:2px;align-items:flex-start}
+.mn-dock-wordmark{font:25px/1 'MN Pirata',Georgia,serif;letter-spacing:.2px;white-space:nowrap;color:#e1c497;text-shadow:0 2px 0 #090a08}
+.mn-dock-caption{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#a59982;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.mn-dock-header button{font-size:11px;padding:5px;min-width:23px}
+.mn-dock-company{padding:2px 9px 3px;overflow-y:auto;overscroll-behavior:contain;max-height:min(490px,calc(100vh - 110px));scrollbar-width:thin;scrollbar-color:#725634 #171713}
+.mn-dock-actor{display:flex;gap:10px;padding:6px 2px;border-bottom:1px solid #59472b66;align-items:center;min-height:70px}
+.mn-dock-actor:last-child{border-bottom:0}
+.mn-dock-portrait{width:41px;flex:none;position:relative;align-self:center}
+.mn-dock-portrait>button:first-child{width:41px;height:46px;border:1px solid #957449;padding:0;background:#090a08;box-shadow:0 0 0 2px #0b0b09;overflow:hidden;clip-path:polygon(0 0,88% 0,100% 10%,100% 100%,9% 100%,0 91%)}
+.mn-dock-portrait>button:first-child img{width:100%;height:100%;object-fit:cover;filter:saturate(.78) contrast(1.08)}
+.mn-dock-portrait>button[data-action=narrate]{position:absolute;right:-6px;bottom:-5px;min-height:20px;height:20px;width:22px;padding:3px;border:1px solid #9b7544;background:#181610;color:#dbc291;font-size:10px;box-shadow:0 1px 3px #000}
+.mn-dock-portrait>button[data-action=narrate]:hover{background:#664a2b;color:#fff0d0}
+.mn-dock-actor-body{flex:1;min-width:0}
+.mn-dock-name{display:flex;gap:7px;align-items:baseline;justify-content:space-between;margin-bottom:3px;min-width:0}
+.mn-dock-name strong{font:600 11px/1.3 'MN Cinzel',serif;letter-spacing:.35px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mn-dock-name>span{font:13px/1 'MN Barlow',sans-serif;white-space:nowrap;color:#b1a38c}
+.mn-dock-name>.mn-state-critical{color:#f09b79}.mn-dock-name>.mn-state-high{color:#d8b175}
+.mn-dock-needs{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:1px 0 0;min-height:34px}
+.mn-dock-need{width:40px;flex:none;position:relative;border-bottom:1px solid transparent;border-radius:2px}
+.mn-dock-need-button{display:block;position:relative;width:100%!important;height:30px;min-height:0!important;padding:0!important;overflow:visible}
+.mn-dock-need-button .mn-need-icon{width:30px;height:30px;vertical-align:middle;filter:drop-shadow(0 0 3px color-mix(in srgb,var(--need-color) 27%,transparent));transition:filter .15s,transform .15s}
+.mn-dock-need.is-selected .mn-dock-need-button,.mn-dock-need-button:hover{background:color-mix(in srgb,var(--need-color) 8%,transparent);border-color:color-mix(in srgb,var(--need-color) 40%,transparent)}
+.mn-dock-need.mn-state-high .mn-need-icon,.mn-dock-need.mn-state-critical .mn-need-icon{filter:drop-shadow(0 0 4px color-mix(in srgb,var(--need-color) 47%,transparent))}
+.mn-private-mark{position:absolute;left:1px;bottom:2px;font-size:8px;color:#b49b74}
+.mn-need-critical-mark{position:absolute;right:-1px;top:1px;font:bold 11px/1 'MN Barlow';color:#ffe3b7;text-shadow:0 0 3px #8e2e1a}
+.mn-dock-meter{height:13px;position:relative;padding-top:4px;touch-action:none;user-select:none;--fill:0%}
+.mn-dock-meter::before{content:'';position:absolute;top:4px;left:1px;right:1px;height:5px;background:#050704;outline:1px solid #514533}
+.mn-dock-meter>span{display:block;position:relative;height:5px;width:clamp(0%,var(--fill),100%);background:linear-gradient(90deg,color-mix(in srgb,var(--need-color),#322713 35%),var(--need-color));box-shadow:0 0 5px color-mix(in srgb,var(--need-color) 18%,transparent);max-width:100%;border:1px solid #0c0d0980}
+.mn-dock-meter>b{position:absolute;top:3px;left:clamp(1px,var(--fill),calc(100% - 3px));width:3px;height:7px;background:#e8d4ac;opacity:0}
+.mn-dock-meter[data-scrub]{cursor:ew-resize}.mn-dock-meter[data-scrub]:hover>b,.mn-dock-meter[data-scrub]:focus>b{opacity:1}
+.mn-dock-meter[data-preview]::after{content:attr(data-preview);position:absolute;bottom:17px;left:50%;transform:translateX(-50%);font:600 17px/1 'MN Barlow';padding:5px 8px;background:#14130f;border:1px solid var(--need-color);color:#fff2d5;box-shadow:0 4px 8px #0009;z-index:4;pointer-events:none}
+.mn-dock-footer{display:flex;gap:4px;align-items:center;padding:5px 7px;border-top:1px solid #755b374d;min-height:31px;background:#0c0e0b66;flex-shrink:0}
+.mn-dock-footer button{font-size:12px;min-height:22px;padding:4px 8px}.mn-dock-footer button:first-child{margin-right:auto}
+.mn-dock-empty{text-align:center;padding:13px 12px 17px;color:#c3b398}.mn-dock-empty p{font-size:15px;margin:4px 0 10px}.mn-dock-empty button{border-color:#735937;background:#6c51242b;font-size:14px}
+.mn-personal-select{display:flex;gap:8px;align-items:center;padding:6px 10px;color:#bda781;font-size:13px}.mn-personal-select select{flex:1;min-width:0;height:26px;min-height:26px}
+.mn-embers-dock--personal{width:298px}.mn-embers-dock--personal .mn-dock-header{min-height:35px;padding:3px 7px}.mn-embers-dock--personal .mn-dock-wordmark{font-size:20px}.mn-embers-dock--personal .mn-dock-seal{width:19px;height:23px}.mn-embers-dock--personal .mn-dock-caption{display:none}.mn-embers-dock--personal .mn-dock-actor{min-height:69px;padding:8px 0}.mn-embers-dock--personal .mn-dock-needs{gap:4px}.mn-embers-dock--personal .mn-dock-need{width:34px}.mn-embers-dock--personal .mn-dock-need-button .mn-need-icon{width:27px;height:27px}
+.mn-embers-dock.is-collapsed .mn-dock-header{border-bottom:0}.mn-embers-dock.is-dragging,.mn-embers-dock.is-dragging *{user-select:none}.mn-embers-dock.is-dragging .mn-dock-header{cursor:grabbing}
+
+.mn-condition-inspector{width:324px;max-width:calc(100vw - 16px);max-height:calc(100vh - 16px);overflow-y:auto;overscroll-behavior:contain;border-top:2px solid var(--need-color);padding:14px 16px;z-index:62;scrollbar-width:thin;scrollbar-color:#735b36 #171713;animation:mn-inspect-in .12s ease-out}
+.mn-condition-inspector>header{display:flex;align-items:center;gap:10px;margin-bottom:12px}.mn-condition-inspector>header .mn-need-icon{width:40px;height:40px;filter:drop-shadow(0 0 6px color-mix(in srgb,var(--need-color) 25%,transparent))}.mn-condition-inspector>header div{flex:1}.mn-condition-inspector>header small{color:#b39f80;font-size:12px}.mn-condition-inspector h3{font-size:18px;line-height:1.5}.mn-condition-inspector h4{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#c3a36e;margin-bottom:8px}
+.mn-condition-state{display:flex;align-items:center;justify-content:space-between;gap:10px}.mn-condition-state strong{color:var(--need-color);font:600 18px/1.3 'MN Cinzel'}.mn-condition-state>span{font-size:25px;color:#f0e5ce}.mn-condition-state small{font-size:14px;color:#a89a85}
+.mn-condition-track{height:5px;background:#0b0d09;border:1px solid #584b35;margin:9px 0 6px}.mn-condition-track span{display:block;height:100%;width:var(--fill);background:var(--need-color)}
+.mn-condition-direction,.mn-condition-hint{font-size:12px;color:#b5a58d;margin:5px 0 10px}.mn-condition-hint{font-size:11px;margin-bottom:16px}
+.mn-condition-controls{display:flex;gap:6px;align-items:center;margin-top:12px}.mn-condition-controls input{width:67px;flex:1;text-align:center;height:31px;font-size:18px}.mn-condition-controls button{border:1px solid #665134;background:#4e3d2325;min-width:31px;height:31px}.mn-condition-controls button[type=submit]{padding:5px 12px}
+.mn-condition-effects{padding:13px 0;border-top:1px solid #58472c99}.mn-condition-effect{display:flex;align-items:flex-start;gap:9px;margin:9px 0;color:#b8ad9b}.mn-condition-effect>div{flex:1;min-width:0}.mn-condition-effect strong{font-size:15px;font-weight:400;display:block;overflow-wrap:anywhere}.mn-condition-effect small{display:block;font-size:11px;color:#ae9d82;margin-top:2px}.mn-condition-effect.is-active strong{color:#ecdec3}.mn-effect-dot{width:6px;height:6px;margin-top:7px;border:1px solid #8a795c;transform:rotate(45deg);flex:none}.is-active>.mn-effect-dot{background:var(--need-color);border-color:var(--need-color);box-shadow:0 0 5px color-mix(in srgb,var(--need-color) 30%,transparent)}
+.mn-condition-effects p,.mn-condition-recovery p{font-size:15px;color:#c0b39b;line-height:1.5;margin:0}.mn-condition-recovery{border-top:1px solid #59472980;padding:13px 0 9px}.mn-condition-inspector>footer{border-top:1px solid #57462c80;display:flex;align-items:center;justify-content:space-between;padding-top:9px}.mn-condition-inspector>footer button{font-size:13px;padding-left:0}.mn-condition-inspector>footer small{font-size:11px;color:#baa47c}
+@keyframes mn-inspect-in{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.mn-condition-inspector{animation:none}:is(.mn-embers-dock,.mn-condition-inspector) *{transition:none!important}}
+@media(max-width:420px){.mn-dock-caption{display:none}.mn-dock-needs{gap:5px}.mn-dock-need{width:36px}.mn-dock-wordmark{font-size:23px}.mn-dock-footer button{padding:4px 6px}}
+
+/* Configuration, narration, and shared displays use the same ink and metal. */
+.mn-recommendations{margin:12px 0;padding-top:10px;border-top:1px solid #78613c66;text-align:left}
+.mn-recommendations h4{font:600 11px/1.4 'MN Cinzel',serif;color:#d8b77d;margin:0 0 8px;letter-spacing:.3px}
+.mn-recommendation{display:flex;flex-direction:column;gap:4px;padding:10px;background:#b89b5310;border:1px solid #9c7b424d;border-radius:2px;margin-bottom:6px}
+.mn-recommendation>strong{font:600 17px/1.25 'MN Barlow',sans-serif;color:#efe0c1}
+.mn-recommendation>span{font:14px/1.3 'MN Barlow',sans-serif;color:#cbbb9f}
+.mn-recommendation>small,.mn-recommendations>p{font:12px/1.35 'MN Barlow',sans-serif;color:#bbaa8f;margin:0}
+.mn-recommendation .mn-btn{margin-top:4px;min-height:34px;width:100%;white-space:normal;font-size:14px;line-height:1.2}
+.mn-recommendation>.mn-recommendation__saved{color:#aac7a6;font-size:12px}
+.mn-config-preview{overflow-y:auto;min-height:0}
+.mortal-needs-panel .mn-config-preview__ring{width:90px;height:90px;margin:10px auto}
+.mortal-needs-panel .mn-config-preview__ring-core{width:72px;height:72px;gap:3px}
+.mortal-needs-panel .mn-config-preview__ring-core strong{font-size:20px}
+.mortal-needs-panel.mn-dialog{border-radius:3px;border:1px solid #87683f;outline:2px solid #0b0d09;box-shadow:0 16px 50px #000b;font-family:'MN Barlow',sans-serif;max-width:calc(100vw - 24px)}
+.mortal-needs-panel.mn-dialog .window-header{background:linear-gradient(110deg,#2b271c,#151712);border-bottom:1px solid #8e6b3d;min-height:42px}
+.mortal-needs-panel.mn-dialog .window-header .window-title{font:24px/1.1 'MN Pirata',serif;letter-spacing:.4px;color:#e5cca0}
+.mortal-needs-panel.mn-dialog :is(h2,h3,.mn-config-preview__name,.mn-need-editor-hero__title>strong){font-family:'MN Cinzel',serif;color:#e0ca9e}
+.mortal-needs-panel.mn-dialog :is(input,select,textarea){font-family:'MN Barlow',sans-serif;font-size:15px;border-radius:2px;background-color:#10130f;border-color:#635237;color:#e7ddc8}
+.mortal-needs-panel.mn-dialog :is(button:not(.icon),.mn-btn){font-family:'MN Barlow',sans-serif;border-radius:2px}
+.mortal-needs-panel.mn-dialog :is(.mn-config-rail,.mn-config-preview,.mn-need-edit-preview){background:linear-gradient(110deg,#1e2019,#161811)}
+.mortal-needs-panel.mn-dialog :is(.mn-form-card,.mn-need-editor-hero,.mn-preset-card,.mn-config-table,.mn-config-need-cell__icon){border-radius:3px}
+.mortal-needs-panel.mn-dialog .mn-config-need-cell__icon{background:#11140f;border-color:#615134}
+.mortal-needs-panel.mn-dialog .mn-need-icon{width:30px;height:30px;object-fit:contain;border:0;border-radius:0;vertical-align:middle;filter:drop-shadow(0 0 4px #d2ab551c)}
+.mortal-needs-panel.mn-dialog :is(.mn-need-editor-hero__icon,.mn-config-preview__icon) .mn-need-icon{width:39px;height:39px}
+.mortal-needs-panel.mn-dialog .mn-config-need-cell strong{font-family:'MN Cinzel',serif;font-size:12px;letter-spacing:.2px}
+.mortal-needs-panel.mn-dialog .mn-config-need-cell>div>span{color:#a9997d}
+.mortal-needs-panel.mn-dialog :is(.mn-need-config-row.is-selected,.mn-dialog__tab.is-active){background:#77603520;border-color:#a8884f}
+.mn-chat-card{background:linear-gradient(125deg,#24251d,#131610);color:#e7ddc8;border:1px solid #846338;border-radius:2px;box-shadow:0 3px 10px #0005;font:15px/1.45 'MN Barlow',sans-serif}
+.mn-chat-card__header{background:#11150fd9;border-bottom:1px solid #6f542d80;padding:10px;gap:9px}.mn-chat-card__need-image{height:34px;width:34px;object-fit:contain;border:0;border-radius:0;filter:drop-shadow(0 0 4px #cba45b22)}
+.mn-chat-card__title{font:600 12px/1.4 'MN Cinzel',serif;color:#e6cea5}.mn-chat-card__title small{display:block;font:12px/1.4 'MN Barlow',sans-serif;color:#ac9c7e;margin-top:2px}
+.mn-chat-card__severity{border-radius:2px;font:12px/1.2 'MN Barlow',sans-serif;padding:3px 5px}.mn-chat-card__actor-img{border-radius:2px;border:1px solid #997442;width:34px;height:38px}.mn-chat-card__actor-name{font:600 13px/1.3 'MN Cinzel',serif;color:#e7dac0}
+.mn-chat-card__flavor{background:transparent;border:0;border-top:1px solid #6c552e66;border-radius:0;font:16px/1.5 'MN Barlow',sans-serif;font-style:normal;color:#ddcdae;padding:10px 0 0}.mn-chat-card__bar{height:3px;border-radius:0}.mn-chat-card__bar-fill{border-radius:0}
+:is(.mn-broadcast,.mn-flash__content){font-family:'MN Barlow',sans-serif;background:linear-gradient(115deg,#24251c,#131610);border-color:#8c6b3e;border-radius:3px;color:#e7dac1}
+.mn-broadcast__actor-name{font-family:'MN Cinzel',serif;font-size:11px}.mn-broadcast__portrait{border-radius:2px;border-color:#957243}.mn-broadcast__title{font-family:'MN Pirata',serif;font-size:21px;color:#e4c69a}
+
+:is(.mn-broadcast,.mn-flash__content) .mn-need-icon{width:22px;height:22px;object-fit:contain;border:0;vertical-align:middle}
+.mn-broadcast__radial-icon .mn-need-icon,.mn-flash__radial-icon .mn-need-icon{width:24px;height:24px}
+.mn-chat-card__summary-item .mn-chat-card__need-image{width:25px;height:25px}
+
+.mortal-needs-panel.mn-dialog .window-content .mn-btn--primary{background:#b98b4b;border:1px solid #d4ad70;color:#171811}
+.mortal-needs-panel.mn-dialog .window-content .mn-btn--primary:hover{background:#d4b47c;color:#11140e}
+.mortal-needs-panel.mn-dialog .mn-config-toggle input:checked+span{background:#a68049;border-color:#bc965e;color:#fff0d1;border-radius:2px}
+.mortal-needs-panel.mn-dialog .mn-need-config-row.is-selected{box-shadow:inset 3px 0 #bd985c}
+.mortal-needs-panel.mn-dialog .window-content{background:#161813}
+
+.mn-broadcast .mn-broadcast__need-icon{width:22px;display:grid;place-items:center;line-height:1}
+.mn-broadcast .mn-need-icon{max-width:none;width:20px;height:20px}
+.mn-broadcast--density-micro .mn-need-icon{width:15px;height:15px}
+.mn-flash .mn-need-icon{width:25px;height:25px;object-fit:contain;vertical-align:middle;border:0}
+@media(min-width:900px) and (max-width:1080px){
+  .mortal-needs-panel.mn-dialog .mn-config-shell{grid-template-columns:166px minmax(0,1fr);width:100%;min-height:0;height:calc(100vh - 86px)}
+  .mortal-needs-panel.mn-dialog .mn-config-rail{padding:10px;border-right:1px solid #66513766;border-bottom:0}
+  .mortal-needs-panel.mn-dialog .mn-config-tab--needs{grid-template-columns:minmax(0,1fr) 200px;grid-template-rows:minmax(0,1fr) 52px}
+  .mortal-needs-panel.mn-dialog .mn-config-preview{margin:10px 10px 8px 0;padding:10px;overflow-y:auto}
+  .mortal-needs-panel.mn-dialog .mn-config-table__head,.mortal-needs-panel.mn-dialog .mn-need-config-row{grid-template-columns:26px minmax(110px,1fr) 70px 58px 82px;column-gap:5px}
+  .mortal-needs-panel.mn-dialog .mn-config-need-cell strong{font-size:10px}
+}

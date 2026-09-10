@@ -1,5 +1,6 @@
 import { MODULE_ID } from '../constants.js';
 import { NeedsEngine } from '../core/needs-engine.js';
+import { needIcon, needColor } from './need-icons.js';
 
 const FLASH_DURATION_MS = 3500;
 const FLASH_EXIT_MS = 400;
@@ -151,7 +152,7 @@ export class FlashPopup {
 
     const icon = document.createElement('span');
     icon.className = 'mn-flash__need-icon';
-    icon.innerHTML = `<i class="fas ${config.icon}"></i>`;
+    icon.innerHTML = needIcon(config);
     needEl.appendChild(icon);
 
     const track = document.createElement('div');
@@ -182,7 +183,7 @@ export class FlashPopup {
     const icon = document.createElement('span');
     icon.className = 'mn-flash__need-icon';
     icon.dataset.severity = severity;
-    icon.innerHTML = `<i class="fas ${config.icon}"></i>`;
+    icon.innerHTML = needIcon(config);
     needEl.appendChild(icon);
 
     const track = document.createElement('div');
@@ -242,7 +243,7 @@ export class FlashPopup {
 
     const iconEl = document.createElement('span');
     iconEl.className = 'mn-flash__radial-icon';
-    iconEl.innerHTML = `<i class="fas ${config.icon}"></i>`;
+    iconEl.innerHTML = needIcon(config);
     ringWrap.appendChild(iconEl);
 
     needEl.appendChild(ringWrap);

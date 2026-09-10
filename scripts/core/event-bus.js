@@ -22,7 +22,7 @@ export class EventBus {
   once(event, callback) {
     const wrapper = (data) => {
       this.off(event, wrapper);
-      callback(data);
+      return callback(data);
     };
     return this.on(event, wrapper);
   }
@@ -32,7 +32,9 @@ export class EventBus {
     if (listeners) {
       for (const cb of listeners) {
         try {
-          cb(data);
+          Promise.resolve(cb(data)).catch(err => {
+            console.error(`Mortal Needs | EventBus error in listener for ${event}:`, err);
+          });
         } catch (err) {
           console.error(`Mortal Needs | EventBus error in listener for ${event}:`, err);
         }
@@ -40,6 +42,16 @@ export class EventBus {
     }
     // Also emit as Foundry Hook for external module integration
     Hooks.callAll(event, data);
+  }
+
+  async emitAsync(event, data) {
+    const listeners = [...(this.#listeners.get(event) ?? [])];
+    const results = await Promise.allSettled(listeners.map(cb => Promise.resolve().then(() => cb(data))));
+    for (const result of results) {
+      if (result.status === 'rejected') console.error(`Mortal Needs | EventBus error in listener for ${event}:`, result.reason);
+    }
+    Hooks.callAll(event, data);
+    return results;
   }
 
   removeAllListeners(event) {

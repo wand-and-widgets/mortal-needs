@@ -1,16 +1,162 @@
 {
   "MORTAL_NEEDS": {
     "Title": "Necessidades Mortais",
-
+    "Dock": {
+      "Company": "Companhia",
+      "Personal": "Sua condição",
+      "AtRisk": "crítico",
+      "Configure": "Configurar necessidades",
+      "Expand": "Expandir barra",
+      "Collapse": "Recolher barra",
+      "Close": "Fechar",
+      "Character": "Personagem",
+      "ChooseCharacters": "Escolher personagens",
+      "EmptyGM": "Escolha os personagens cujas necessidades você deseja acompanhar.",
+      "EmptyPlayer": "O narrador pode adicionar seu personagem e escolher quais necessidades você pode ver.",
+      "Stress": "Agravar",
+      "Relief": "Aliviar",
+      "History": "Mudanças recentes",
+      "Broadcast": "Mostrar ou ocultar a transmissão da companhia",
+      "OpenSheet": "Abrir ficha",
+      "Narrate": "Narrar a pior condição visível",
+      "NoNeeds": "Sem necessidades ativas",
+      "DragHint": "Arraste a barra para ajustar. Segure Shift para maior precisão. Escape cancela.",
+      "ExactValue": "Valor exato da necessidade",
+      "Decrease": "Diminuir 1. Segure Shift para 5.",
+      "Increase": "Aumentar 1. Segure Shift para 5.",
+      "Set": "Aplicar",
+      "Effects": "Consequências",
+      "EffectFailed": "Não foi possível aplicar",
+      "Active": "Aplicada",
+      "Inactive": "Não aplicada",
+      "StressWord": "pressão",
+      "RemoveEffect": "Remover esta consequência",
+      "NarrativeOnly": "Esta necessidade não tem penalidades automáticas configuradas.",
+      "Recovery": "Recuperação",
+      "AutomaticRecovery": "Reduza a pressão abaixo do limite da consequência para remover efeitos reversíveis. Comida, água, abrigo ou tranquilidade podem orientar o ajuste.",
+      "AskRecovery": "Quando a pressão cair abaixo do limite, o narrador decide se os efeitos reversíveis devem ser removidos.",
+      "ManualRecovery": "Após a recuperação do personagem, o narrador pode remover os efeitos aqui. Reduzir a necessidade não os remove automaticamente.",
+      "HigherWorse": "Valores maiores indicam maior desgaste.",
+      "LowerWorse": "Valores menores indicam maior desgaste.",
+      "EditRule": "Editar necessidade",
+      "Private": "Só narrador",
+      "ChangedDuringDrag": "Esta necessidade mudou durante o ajuste. O valor salvo foi mantido.",
+      "SaveFailed": "Não foi possível salvar esta mudança. Tente novamente.",
+      "CurrentCondition": "Condição atual",
+      "ConditionSummary": "{need}: {state}.",
+      "Stack": "Somar esta penalidade a cada repetição (apenas efeitos numéricos de adição)",
+      "WalkingSpeed": "Deslocamento",
+      "MaximumHP": "Pontos de vida máximos",
+      "CurrentHP": "Pontos de vida atuais",
+      "UnsupportedEffect": "Este sistema usa suas próprias regras de efeitos. Escolha uma condição ou outro tipo de consequência."
+    },
+    "Conditions": {
+      "hunger": {
+        "safe": "Nutrido",
+        "low": "Apetite",
+        "medium": "Faminto",
+        "high": "Esfomeado",
+        "critical": "Inanição"
+      },
+      "thirst": {
+        "safe": "Hidratado",
+        "low": "Com sede",
+        "medium": "Sedento",
+        "high": "Desidratado",
+        "critical": "Ressequido"
+      },
+      "cold": {
+        "safe": "Aquecido",
+        "low": "Com frio",
+        "medium": "Tremendo",
+        "high": "Entorpecido",
+        "critical": "Congelando"
+      },
+      "heat": {
+        "safe": "Fresco",
+        "low": "Aquecido",
+        "medium": "Superaquecido",
+        "high": "Sufocado",
+        "critical": "Escaldado"
+      },
+      "fear": {
+        "safe": "Firme",
+        "low": "Inquieto",
+        "medium": "Assustado",
+        "high": "Aterrorizado",
+        "critical": "Em pânico"
+      },
+      "comfort": {
+        "safe": "Confortável",
+        "low": "Inquieto",
+        "medium": "Desconfortável",
+        "high": "Miserável",
+        "critical": "Arrasado"
+      },
+      "exhaustion": {
+        "safe": "Descansado",
+        "low": "Cansado",
+        "medium": "Desgastado",
+        "high": "Exausto",
+        "critical": "Esgotado"
+      },
+      "fatigue": {
+        "safe": "Disposto",
+        "low": "Ofegante",
+        "medium": "Drenado",
+        "high": "Exaurido",
+        "critical": "No limite"
+      },
+      "sanity": {
+        "safe": "Equilibrado",
+        "low": "Perturbado",
+        "medium": "Aflito",
+        "high": "Angustiado",
+        "critical": "Sobrecarregado"
+      },
+      "morale": {
+        "safe": "Resoluto",
+        "low": "Hesitante",
+        "medium": "Desanimado",
+        "high": "Abatido",
+        "critical": "Derrotado"
+      },
+      "pain": {
+        "safe": "Ileso",
+        "low": "Dolorido",
+        "medium": "Com dor",
+        "high": "Sofrendo",
+        "critical": "Em agonia"
+      },
+      "radiation": {
+        "safe": "Seguro",
+        "low": "Exposto",
+        "medium": "Contaminado",
+        "high": "Irradiado",
+        "critical": "Exposição crítica"
+      },
+      "corruption": {
+        "safe": "Intocado",
+        "low": "Marcado",
+        "medium": "Maculado",
+        "high": "Corrompido",
+        "critical": "Consumido"
+      },
+      "environmental": {
+        "safe": "Abrigado",
+        "low": "Exposto",
+        "medium": "Desgastado",
+        "high": "Castigado",
+        "critical": "Sobrecarregado"
+      }
+    },
     "Controls": {
       "Toggle": "Alternar Painel de Necessidades Mortais"
     },
-
     "Keybindings": {
       "TogglePanel": "Alternar Painel de Necessidades",
       "TogglePanelHint": "Mostrar ou ocultar o painel de Necessidades Mortais"
     },
-
     "Needs": {
       "Hunger": "Fome",
       "Thirst": "Sede",
@@ -24,16 +170,15 @@
       "Radiation": "Radiação",
       "Corruption": "Corrupção",
       "Fatigue": "Fadiga",
-      "Environmental": "Estresse Ambiental"
+      "Environmental": "Estresse Ambiental",
+      "Fear": "Medo"
     },
-
     "Categories": {
       "Physical": "Físicas",
       "Environmental": "Ambientais",
       "Mental": "Mentais",
       "Custom": "Personalizadas"
     },
-
     "Severity": {
       "Safe": "Seguro",
       "Low": "Baixo",
@@ -41,7 +186,6 @@
       "High": "Alto",
       "Critical": "Crítico"
     },
-
     "Toolbar": {
       "Add": "Adicionar",
       "AddActors": "Adicionar Atores",
@@ -52,7 +196,6 @@
       "Configure": "Configurar",
       "History": "Histórico"
     },
-
     "Actions": {
       "Stress": "Estressar",
       "Relieve": "Aliviar",
@@ -60,14 +203,12 @@
       "Untrack": "Parar Rastreamento",
       "ToggleDetails": "Alternar detalhes"
     },
-
     "EmptyState": {
       "Title": "Nenhum Personagem Rastreado",
       "Description": "Adicione atores para começar a rastrear suas necessidades de sobrevivência.",
       "AddActors": "Adicionar Atores",
       "PlayerWaiting": "Aguardando o Mestre adicionar personagens..."
     },
-
     "Panel": {
       "ActorsTracked": "rastreados",
       "Tracked": "Rastreados",
@@ -106,7 +247,6 @@
       "ModeFocus": "Foco",
       "ModeCategory": "Categorias"
     },
-
     "ActorSelection": {
       "Title": "Gerenciar Personagens Rastreados",
       "FoundryActors": "Atores do Foundry",
@@ -125,7 +265,6 @@
       "AddSelected": "Adicionar Selecionados",
       "ApplyChanges": "Aplicar Mudanças"
     },
-
     "MultiStress": {
       "Title": "Estressar Todos os Personagens",
       "RelieveTitle": "Aliviar Todos os Personagens",
@@ -152,7 +291,6 @@
       "NoTargets": "Nenhum personagem rastreado.",
       "NoNeeds": "Nenhuma necessidade ativada."
     },
-
     "Config": {
       "Title": "Configurar Necessidades",
       "NeedsTab": "Necessidades",
@@ -170,26 +308,26 @@
       "Import": "Importar",
       "ImportJSON": "Importar Configuração",
       "ImportPlaceholder": "Cole a configuração JSON aqui...",
-      "ImportExportHint": "Exporte um backup ou cole um JSON de configura\u00e7\u00e3o para substituir a configura\u00e7\u00e3o atual.",
-      "ExportHint": "Baixe a configura\u00e7\u00e3o atual das necessidades como backup JSON.",
-      "ImportHint": "Cole um JSON de configura\u00e7\u00e3o do Mortal Needs e revise antes de importar.",
-      "ExportPayload": "Inclui estados ativos, necessidades personalizadas, comportamento invertido, decaimento, avanço por movimento, consequ\u00eancias e limites.",
+      "ImportExportHint": "Exporte um backup ou cole um JSON de configuração para substituir a configuração atual.",
+      "ExportHint": "Baixe a configuração atual das necessidades como backup JSON.",
+      "ImportHint": "Cole um JSON de configuração do Mortal Needs e revise antes de importar.",
+      "ExportPayload": "Inclui estados ativos, necessidades personalizadas, comportamento invertido, decaimento, avanço por movimento, consequências e limites.",
       "MetricNeeds": "Necessidades",
       "MetricEnabled": "Ativas",
       "MetricCustom": "Personalizadas",
       "JsonOnly": "Apenas JSON",
-      "ReplacesCurrentConfig": "A importa\u00e7\u00e3o substitui a configura\u00e7\u00e3o atual de necessidades.",
+      "ReplacesCurrentConfig": "A importação substitui a configuração atual de necessidades.",
       "FormatImportJSON": "Formatar JSON",
       "ClearImportJSON": "Limpar JSON",
       "ImportStatusEmpty": "Aguardando JSON",
-      "ImportStatusEmptyHint": "Cole uma configura\u00e7\u00e3o exportada para valid\u00e1-la aqui.",
-      "ImportStatusValid": "JSON v\u00e1lido",
-      "ImportStatusValidHint": "A configura\u00e7\u00e3o inclui uma lista de necessidades e est\u00e1 pronta para importa\u00e7\u00e3o.",
-      "ImportStatusInvalid": "JSON inv\u00e1lido",
+      "ImportStatusEmptyHint": "Cole uma configuração exportada para validá-la aqui.",
+      "ImportStatusValid": "JSON válido",
+      "ImportStatusValidHint": "A configuração inclui uma lista de necessidades e está pronta para importação.",
+      "ImportStatusInvalid": "JSON inválido",
       "ImportStatusInvalidHint": "Corrija a sintaxe do JSON antes de importar.",
       "SearchPlaceholder": "Buscar necessidades...",
       "SidebarOverview": "Resumo",
-      "SidebarSections": "Se\u00e7\u00f5es",
+      "SidebarSections": "Seções",
       "EnabledCount": "Ativas",
       "CustomCount": "Personalizadas",
       "DecayCount": "Decaimento",
@@ -227,7 +365,6 @@
       "PresetCategoryMix": "Mix de Categorias",
       "PresetEnabledNeeds": "Necessidades Ativadas"
     },
-
     "NeedEdit": {
       "Title": "Editar Necessidade",
       "General": "Geral",
@@ -280,7 +417,6 @@
       "InvalidValueRange": "Confira Mín, Máx, Padrão, Estresse, Decaimento e Movimento antes de salvar.",
       "LivePreview": "Preview ao Vivo"
     },
-
     "EffectConfig": {
       "Title": "Configurar Consequência",
       "Type": "Tipo de Consequência",
@@ -291,7 +427,7 @@
       "Reversible": "Reversível quando necessidade se recupera",
       "ThresholdHint": "Quando esta necessidade atinge esta porcentagem de perigo, a consequência dispara. Para necessidades invertidas, 80 significa que dispara quando o recurso está quase esgotado.",
       "TicksHint": "Quantas verificações de estresse sustentado acontecem antes de reaplicar. Valores menores são mais punitivos.",
-      "ReversibleHint": "Se marcado, a consequência é removida automaticamente quando a necessidade se recupera abaixo do limite.",
+      "ReversibleHint": "Permite a remoção após a recuperação. A configuração do mundo define remoção automática, confirmação do narrador ou cuidado manual.",
       "EditTitle": "Editar Consequência",
       "DeleteConfirm": "Remover esta consequência?",
       "SuggestionsTitle": "Sugestões para este sistema",
@@ -299,7 +435,7 @@
       "FiresAt": "Dispara em",
       "RepeatsAfter": "Repete após",
       "Checks": "checagens",
-      "RemovesOnRecovery": "Remove na recuperação",
+      "RemovesOnRecovery": "Pode ser removido na recuperação",
       "StaysUntilManual": "Permanece até remoção manual",
       "InvalidType": "Escolha um tipo de consequência válido.",
       "MissingConsequence": "Esta consequência não existe mais. Feche o editor e abra novamente.",
@@ -307,8 +443,19 @@
       "SaveFailed": "Falha ao salvar consequência.",
       "AttributePathHint": "Caminho para a propriedade do ator. Use o dropdown para escolher entre atributos conhecidos do sistema, ou digite um caminho personalizado."
     },
-
+    "Recommendations": {
+      "Title": "Consequência recomendada",
+      "Use": "Usar recomendação",
+      "Edit": "Editar regra",
+      "Configured": "Já configurada",
+      "Trigger": "Ativa em {threshold}% de estresse",
+      "Recovery": "A recuperação segue a configuração do mundo.",
+      "ManualRecovery": "Remova manualmente quando apropriado.",
+      "Hint": "Salva imediatamente. Ativa quando a necessidade cruza o limite.",
+      "SavedHint": "Sua regra está salva. Edite para ajustar o efeito ou o limite."
+    },
     "Consequences": {
+      "CustomAttribute": "Atributo personalizado",
       "AttributeModify": "Modificar Atributo",
       "ConditionApply": "Aplicar Condição",
       "ActiveEffectApply": "Aplicar Efeito Ativo",
@@ -337,7 +484,6 @@
       "ModeUpgrade": "Aumentar (usar maior)",
       "ModeOverride": "Substituir (sobrescrever)"
     },
-
     "History": {
       "Title": "Histórico de Necessidades",
       "Subtitle": "Revise estresse, recuperação, decaimento, movimento e ajustes manuais recentes.",
@@ -373,7 +519,6 @@
       "SourceSocket": "Sincronia",
       "SourceRegistration": "Nova Necessidade"
     },
-
     "Presets": {
       "Survival": "Sobrevivência",
       "SurvivalDesc": "Sobrevivência clássica: fome, sede, exaustão, frio, calor",
@@ -386,7 +531,6 @@
       "Minimalist": "Minimalista",
       "MinimalistDesc": "Sobrevivência simples: apenas fome e sede"
     },
-
     "Settings": {
       "DefaultStress": "Quantidade de Estresse Padrão",
       "DefaultStressHint": "A quantidade padrão de estresse aplicado por clique (1-50).",
@@ -421,23 +565,23 @@
       "PanelDisplayCompact": "Compacto",
       "PanelDisplayFocus": "Foco na Pior Necessidade",
       "PanelDisplayCategory": "Agrupado por Categoria",
-      "BroadcastLayout": "Layout do HUD de Transmiss\u00e3o",
-      "BroadcastLayoutHint": "Escolha o estilo de barras usado apenas no HUD de transmiss\u00e3o, ou herde o estilo do painel principal.",
+      "BroadcastLayout": "Layout do HUD de Transmissão",
+      "BroadcastLayoutHint": "Escolha o estilo de barras usado apenas no HUD de transmissão, ou herde o estilo do painel principal.",
       "BroadcastLayoutInherit": "Herdar Estilo do Painel",
-      "BroadcastDensity": "Densidade do HUD de Transmiss\u00e3o",
-      "BroadcastDensityHint": "Controla quanto espa\u00e7o de tela o HUD de transmiss\u00e3o usa.",
+      "BroadcastDensity": "Densidade do HUD de Transmissão",
+      "BroadcastDensityHint": "Controla quanto espaço de tela o HUD de transmissão usa.",
       "BroadcastDensityNormal": "Normal",
       "BroadcastDensityCompact": "Compacto",
       "BroadcastDensityMicro": "Doca Micro",
-      "BroadcastContentMode": "Conte\u00fado do HUD de Transmiss\u00e3o",
+      "BroadcastContentMode": "Conteúdo do HUD de Transmissão",
       "BroadcastContentModeHint": "Escolha se o HUD mostra todas as necessidades, apenas a pior de cada personagem, ou necessidades em crise.",
       "BroadcastContentAll": "Todas as Necessidades",
       "BroadcastContentWorst": "Apenas Pior Necessidade",
-      "BroadcastContentCrisis": "Foco em Alto e Cr\u00edtico",
-      "BroadcastAutoFade": "Transpar\u00eancia Autom\u00e1tica do HUD",
-      "BroadcastAutoFadeHint": "Faz o HUD de transmiss\u00e3o ficar transparente quando inativo e voltar \u00e0 opacidade total em hover ou foco.",
+      "BroadcastContentCrisis": "Foco em Alto e Crítico",
+      "BroadcastAutoFade": "Transparência Automática do HUD",
+      "BroadcastAutoFadeHint": "Faz o HUD de transmissão ficar transparente quando inativo e voltar à opacidade total em hover ou foco.",
       "BroadcastIdleOpacity": "Opacidade Inativa do Broadcast",
-      "BroadcastIdleOpacityHint": "Opacidade usada pelo HUD de transmiss\u00e3o enquanto estiver inativo.",
+      "BroadcastIdleOpacityHint": "Opacidade usada pelo HUD de transmissão enquanto estiver inativo.",
       "UIScale": "Escala da Interface",
       "UIScaleHint": "Ajuste o tamanho do painel de necessidades (80-200%).",
       "CompactMode": "Modo Compacto",
@@ -456,7 +600,6 @@
       "FlavorBatchMode": "Agrupar Mensagens Simultâneas",
       "FlavorBatchModeHint": "Combinar cruzamentos simultâneos de limiar em um único card no chat."
     },
-
     "Chat": {
       "ConsequenceApplied": "Consequência Aplicada",
       "Need": "Necessidade",
@@ -467,7 +610,6 @@
       "FlavorWorsening": "Piorando",
       "FlavorImproving": "Melhorando"
     },
-
     "Dialogs": {
       "RemoveConsequenceTitle": "Remover Consequência",
       "RemoveConsequenceContent": "<strong>{name}</strong> se recuperou de <em>{need}</em>. Remover <em>{consequence}</em>?",
@@ -483,15 +625,13 @@
       "Amount": "Quantidade",
       "QuickStressTitle": "Estresse Rápido"
     },
-
     "Broadcast": {
-      "CycleDensity": "Alternar densidade da transmiss\u00e3o",
-      "ResetPosition": "Resetar posi\u00e7\u00e3o da transmiss\u00e3o",
+      "CycleDensity": "Alternar densidade da transmissão",
+      "ResetPosition": "Resetar posição da transmissão",
       "OpenPanel": "Abrir painel de Necessidades Mortais",
       "StressNeed": "Estressar {need}",
       "RelieveNeed": "Aliviar {need}"
     },
-
     "SessionFlow": {
       "WidgetLabel": "Necessidades Mortais",
       "NoTracked": "Nenhum personagem rastreado. Use a barra de ferramentas para adicionar.",
@@ -505,10 +645,9 @@
       "FlashTitle": "Necessidades Mortais",
       "ResetAll": "Resetar Todas as Necessidades",
       "ResetActor": "Resetar Necessidades",
-      "NoVisibleNeeds": "Nenhuma necessidade vis\u00edvel.",
-      "MoreNeeds": "Necessidades vis\u00edveis adicionais"
+      "NoVisibleNeeds": "Nenhuma necessidade visível.",
+      "MoreNeeds": "Necessidades visíveis adicionais"
     },
-
     "Notifications": {
       "GMOnly": "Apenas o Mestre pode realizar esta ação.",
       "NoTokenSelected": "Nenhum token selecionado.",
@@ -520,28 +659,25 @@
       "ConfigExported": "Configuração exportada.",
       "ConfigImported": "Configuração importada com sucesso.",
       "ImportEmpty": "Nenhum dado para importar.",
-      "ImportFormatted": "JSON de importa\u00e7\u00e3o formatado.",
+      "ImportFormatted": "JSON de importação formatado.",
       "ImportFailed": "Falha ao importar configuração.",
       "PresetApplied": "Predefinição aplicada.",
       "PresetSaved": "Predefinição salva.",
       "ActorTrackingUpdated": "Personagens rastreados atualizados. Adicionados {added}, removidos {removed}.",
       "ResetAllTrackedComplete": "Necessidades resetadas para {count} personagens rastreados.",
-      "BroadcastActionFailed": "Falha ao atualizar a necessidade pelo HUD de transmiss\u00e3o.",
-      "WidgetActionFailed": "Falha ao atualizar a a\u00e7\u00e3o do widget SessionFlow.",
+      "BroadcastActionFailed": "Falha ao atualizar a necessidade pelo HUD de transmissão.",
+      "WidgetActionFailed": "Falha ao atualizar a ação do widget SessionFlow.",
       "LongRestComplete": "Descanso longo completo — todas as necessidades resetadas.",
       "ShortRestComplete": "Descanso curto completo — necessidades parcialmente aliviadas.",
       "SceneModifierSet": "Modificador de cena atualizado."
     },
-
     "Migration": {
       "Complete": "Necessidades Mortais foi atualizado para v2.0. Seus dados foram migrados automaticamente.",
       "Failed": "Falha na migração do Necessidades Mortais. Verifique o console para detalhes."
     },
-
     "API": {
       "Description": "API do Necessidades Mortais — Use game.modules.get('mortal-needs').api para acesso programático."
     },
-
     "Flavor": {
       "Hunger": {
         "Worsening": {

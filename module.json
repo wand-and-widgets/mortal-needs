@@ -1,8 +1,8 @@
 {
   "id": "mortal-needs",
   "title": "Mortal Needs",
-  "description": "A survival needs management system for Foundry VTT. Track hunger, thirst, exhaustion, temperature, sanity, and other mortal necessities with a modern Spotify-inspired UI. System-agnostic with adapters for D&D 5e, PF2e, SWADE, and WFRP4e. Rich public API for module integration.",
-  "version": "2.3.2",
+  "description": "Bring everyday needs into the story with a compact gothic dock, personal player views, direct adjustments, narrative chat cards, and configurable consequences. Includes original SVG icons and system adapters.",
+  "version": "3.0.0",
   "compatibility": {
     "minimum": "12",
     "verified": "14",
@@ -47,10 +47,10 @@
   "socket": true,
   "url": "https://github.com/wand-and-widgets/mortal-needs",
   "manifest": "https://github.com/wand-and-widgets/mortal-needs/releases/latest/download/module.json",
-  "download": "https://github.com/wand-and-widgets/mortal-needs/releases/latest/download/mortal-needs.zip",
+  "download": "https://github.com/wand-and-widgets/mortal-needs/releases/download/v3.0.0/mortal-needs.zip",
   "license": "LICENSE",
-  "readme": "README.md",
+  "readme": "https://github.com/wand-and-widgets/mortal-needs/blob/v3.0.0/README.md",
   "bugs": "https://github.com/wand-and-widgets/mortal-needs/issues",
-  "changelog": "CHANGELOG.md",
+  "changelog": "https://github.com/wand-and-widgets/mortal-needs/releases/tag/v3.0.0",
   "protected": false
 }

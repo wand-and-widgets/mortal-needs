@@ -27,6 +27,18 @@ export class SystemAdapter {
 
   async applyCondition(actor, statusId, flags = {}) {
     try {
+      const source = flags.consequenceId || flags.sourceNeed;
+      const current = this._getActorConditionDocuments(actor, statusId).filter(doc => !doc.disabled);
+      if (this.findAppliedCondition(actor, statusId, flags)) return true;
+      if (current.length) {
+        const owned = current.find(doc => doc.flags?.[MODULE_ID]?.sourceNeed);
+        // A condition created by another module or by the GM is never ours to remove.
+        if (!owned) return false;
+        const sources = this._conditionSources(owned);
+        sources[source] = flags.sourceNeed;
+        await owned.setFlag(MODULE_ID, 'conditionSources', sources);
+        return true;
+      }
       const existingIds = new Set(
         this._getActorConditionDocuments(actor, statusId)
           .map(doc => doc.id)
@@ -48,14 +60,16 @@ export class SystemAdapter {
         }]);
       }
 
-      // Tag the effect with our flags
+      // Claim only the document created by this application.
       if (flags.sourceNeed) {
         const conditionDocs = this._getActorConditionDocuments(actor, statusId);
-        const effect = conditionDocs.find(doc => !existingIds.has(doc.id) && !doc.flags?.[MODULE_ID]?.sourceNeed)
-          ?? conditionDocs.find(doc => !doc.flags?.[MODULE_ID]?.sourceNeed);
+        const effect = conditionDocs.find(doc => !existingIds.has(doc.id));
         if (effect) {
-          await effect.setFlag(MODULE_ID, 'sourceNeed', flags.sourceNeed);
-        }
+          await effect.update({
+            [`flags.${MODULE_ID}.sourceNeed`]: flags.sourceNeed,
+            [`flags.${MODULE_ID}.conditionSources`]: { [source]: flags.sourceNeed },
+          });
+        } else return false;
       }
       return true;
     } catch (err) {
@@ -87,18 +101,38 @@ export class SystemAdapter {
   }
 
   findAppliedCondition(actor, statusId, flags = {}) {
-    const docs = this._getActorConditionDocuments(actor, statusId);
+    const docs = this._getActorConditionDocuments(actor, statusId).filter(doc => flags.includeDisabled || !doc.disabled);
     if (flags.sourceNeed) {
-      return docs.find(doc => doc.flags?.[MODULE_ID]?.sourceNeed === flags.sourceNeed) ?? null;
+      return docs.find(doc => {
+        const sources = doc.flags?.[MODULE_ID]?.conditionSources;
+        if (sources) return flags.consequenceId ? sources[flags.consequenceId] === flags.sourceNeed
+          : Object.values(sources).includes(flags.sourceNeed);
+        return doc.flags?.[MODULE_ID]?.sourceNeed === flags.sourceNeed;
+      }) ?? null;
     }
     return docs[0] ?? null;
   }
 
   async removeCondition(actor, statusId, flags = {}) {
-    const condition = this.findAppliedCondition(actor, statusId, flags);
+    const condition = this.findAppliedCondition(actor, statusId, { ...flags, includeDisabled: true });
     if (!condition || typeof condition.delete !== 'function') return false;
+    const sources = this._conditionSources(condition);
+    const key = flags.consequenceId && sources[flags.consequenceId] ? flags.consequenceId : flags.sourceNeed;
+    delete sources[key];
+    if (Object.keys(sources).length) {
+      await condition.update({
+        [`flags.${MODULE_ID}.conditionSources.-=${key}`]: null,
+        [`flags.${MODULE_ID}.sourceNeed`]: Object.values(sources)[0],
+      });
+      return true;
+    }
     await condition.delete();
     return true;
+  }
+
+  _conditionSources(doc) {
+    const flags = doc.flags?.[MODULE_ID] || {};
+    return { ...(flags.conditionSources || (flags.sourceNeed ? { [flags.sourceNeed]: flags.sourceNeed } : {})) };
   }
 
   _buildConditionList(...sources) {

@@ -46,6 +46,7 @@ tests/
 docs/drafts/
 *.draft.md
 CHANGELOG-*.md
+!CHANGELOG-3.0.0.md
 mockups/
 
 # Local development
@@ -63,3 +64,19 @@ RELEASE-POST-v2.md
 
 # Foundry VTT specific
 packs/*.db.lock
+
+# Keep the regression suite with the module source.
+!tests/
+!tests/**
+!*.test.js
+
+# Local release artifacts and production work
+releases/
+launch/
+promo/
+tests/evidence/
+tests/foundry/
+ANALYSIS-REPORT.md
+DARKEST-DUNGEON-PLAN.md
+IMPLEMENTATION-*.md
+TESTING-*.md
