@@ -70,7 +70,8 @@ export class EffectConfigDialog extends HandlebarsApplicationMixin(ApplicationV2
 
   async _prepareContext(options) {
     const supportsEffects = game.modules.get(MODULE_ID)?.api?.system?.capabilities.hasActiveEffects !== false;
-    const types = getAllConsequenceTypes().filter(type => type.type !== 'active-effect' || supportsEffects || this.#editIndex != null);
+    const configuredType = this.#store.getNeedConfig(this.#needId)?.consequences?.[this.#editIndex]?.type;
+    const types = getAllConsequenceTypes().filter(type => type.type !== 'active-effect' || supportsEffects || configuredType === 'active-effect');
     const isEdit = this.#editIndex != null;
     if (!types.some(type => type.type === this.#selectedType) && types[0]) {
       this.#selectedType = types[0].type;
@@ -85,7 +86,7 @@ export class EffectConfigDialog extends HandlebarsApplicationMixin(ApplicationV2
 
     // Get available attributes for datalist autocomplete
     const api = game.modules.get(MODULE_ID)?.api;
-    const availableAttributes = api?.system?.availableAttributes || [];
+    const availableAttributes = api?.system?.consequenceAttributes?.(this.#selectedType) || api?.system?.availableAttributes || [];
 
     const selectedTypeInfo = types.find(type => type.type === this.#selectedType) || types[0] || null;
     const existingValues = existingConfig?.type === this.#selectedType ? existingConfig.config : null;

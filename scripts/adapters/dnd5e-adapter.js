@@ -60,6 +60,20 @@ export class Dnd5eAdapter extends SystemAdapter {
     }));
   }
 
+  resolveActiveEffectKey(key) {
+    // Skill totals are rebuilt during preparation. Modify the check bonus that
+    // actually feeds the roll instead, including rules saved by older versions.
+    const path = super.resolveActiveEffectKey(key);
+    return typeof path === 'string' ? path.replace(/^system\.skills\.([^.]+)\.total$/, 'system.skills.$1.bonuses.check') : path;
+  }
+
+  getConsequenceAttributes(type) {
+    const attributes = super.getConsequenceAttributes(type);
+    return type === 'active-effect'
+      ? attributes.map(attribute => ({ ...attribute, key: this.resolveActiveEffectKey(attribute.key) }))
+      : attributes.filter(attribute => !attribute.key.startsWith('system.skills.'));
+  }
+
   getModifierTable() {
     return [
       { maxScore: 6, multiplier: 1.5 },

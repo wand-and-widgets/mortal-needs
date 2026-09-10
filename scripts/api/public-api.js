@@ -25,7 +25,7 @@ export function createPublicAPI(store, engine, consequenceEngine, eventBus, conf
   };
 
   const api = {
-    version: '3.0.0',
+    version: '3.0.1',
 
     // --- Needs ---
     needs: {
@@ -329,6 +329,9 @@ export function createPublicAPI(store, engine, consequenceEngine, eventBus, conf
       },
       get availableAttributes() {
         return adapter.getAvailableAttributes();
+      },
+      consequenceAttributes(type) {
+        return adapter.getConsequenceAttributes(type);
       },
       get availableConditions() {
         return adapter.getAvailableConditions();

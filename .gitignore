@@ -47,6 +47,7 @@ docs/drafts/
 *.draft.md
 CHANGELOG-*.md
 !CHANGELOG-3.0.0.md
+!CHANGELOG-3.0.1.md
 mockups/
 
 # Local development
@@ -77,6 +78,7 @@ promo/
 tests/evidence/
 tests/foundry/
 ANALYSIS-REPORT.md
+AUDIT-*.md
 DARKEST-DUNGEON-PLAN.md
 IMPLEMENTATION-*.md
 TESTING-*.md

@@ -25,6 +25,7 @@ export class ActiveEffectApplyConsequence extends ConsequenceType {
   async apply(actor, needId, config) {
     if (!actor) return { success: false, reason: 'no-actor' };
     if (this.adapter?.getCapabilities?.().hasActiveEffects === false) return { success: false, reason: 'system-does-not-support-active-effects' };
+    config = { ...config, changeKey: this.adapter?.resolveActiveEffectKey?.(config.changeKey) ?? config.changeKey };
     if (typeof config.changeKey !== 'string' || !config.changeKey.trim()
       || config.changeKey.split('.').some(p => ['__proto__', 'constructor', 'prototype'].includes(p))) {
       return { success: false, reason: 'invalid-change-key' };
@@ -51,7 +52,8 @@ export class ActiveEffectApplyConsequence extends ConsequenceType {
     }
     const description = `<p>${escapeHTML(config.needLabel || needId)}: ${escapeHTML(this.getDescription({ ...config, changeValue }))}</p><p>${escapeHTML(recovery)}</p>`;
     if (existing) {
-      if (effectChanges(existing)[0]?.key !== config.changeKey || effectChangeMode(effectChanges(existing)[0]) !== mode) {
+      const existingKey = effectChanges(existing)[0]?.key;
+      if ((this.adapter?.resolveActiveEffectKey?.(existingKey) ?? existingKey) !== config.changeKey || effectChangeMode(effectChanges(existing)[0]) !== mode) {
         return { success: false, reason: 'remove-before-changing-effect' };
       }
       await existing.update({

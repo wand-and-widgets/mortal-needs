@@ -1,7 +1,7 @@
 # Mortal Needs
 
 ![Foundry VTT](https://img.shields.io/badge/Foundry%20VTT-v12--v14-informational)
-![Version](https://img.shields.io/badge/Version-3.0.0-blue)
+![Version](https://img.shields.io/badge/Version-3.0.1-blue)
 [![Patreon](https://img.shields.io/badge/Patreon-Wand%20%26%20Widgets-orange)](https://www.patreon.com/WandAndWidgets)
 
 Bring everyday needs into the story. Mortal Needs helps you track hunger, thirst, cold, fear, comfort, and other pressures in Foundry VTT, with a small interface that leaves room for the game itself.
@@ -20,6 +20,8 @@ Bring everyday needs into the story. Mortal Needs helps you track hunger, thirst
 - Fear as an optional built-in need, disabled until you choose to use it.
 
 Read the [full 3.0.0 changelog](CHANGELOG-3.0.0.md).
+
+The [3.0.1 maintenance update](CHANGELOG-3.0.1.md) fixes repeated consequences at maximum stress, temporary effect paths, and system-specific attribute choices.
 
 ## Installation
 
@@ -59,9 +61,9 @@ English and Brazilian Portuguese translations are included. Fonts load locally w
 
 ## Compatibility
 
-The manifest allows Foundry VTT 12 through 14. Live testing for this update covers **Foundry 14.360 with D&D 5e 5.3.3**, including GM and player sessions. Older Foundry versions have not received the same live testing for 3.0.
+The manifest allows Foundry VTT 12 through 14. Live checks cover **Foundry 14.360 with D&D 5e 5.3.3**, **Foundry 13.351 with D&D 5e 5.1.5**, and **Foundry 14.360 with Pathfinder 2e 8.1.2**. D&D follows the world's 2014 or 2024 rules setting. The D&D checks include separate GM and player sessions.
 
-Adapters are included for D&D 5e, Pathfinder 2e, Savage Worlds, and WFRP 4e, with a generic adapter for other systems. Available consequences depend on the system. Other adapters and the optional SessionFlow and Exalted Scenes integrations still need separate live validation for this update.
+Adapters are included for D&D 5e, Pathfinder 2e, Savage Worlds, and WFRP 4e, with a generic adapter for other systems. Available consequences depend on the system. Foundry 12, newer Pathfinder releases, other adapters, and the optional SessionFlow and Exalted Scenes integrations have not received the same live validation for this update.
 
 Existing tracked characters, values, custom needs, and rules are retained. Older direct attribute penalties may need manual review because previous versions did not record their original changes. The module does not guess those missing amounts.
 

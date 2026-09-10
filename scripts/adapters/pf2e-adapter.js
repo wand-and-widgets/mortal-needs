@@ -33,6 +33,12 @@ export class Pf2eAdapter extends SystemAdapter {
     }));
   }
 
+  getConsequenceAttributes() {
+    // Ability modifiers are derived from the character build. They are useful
+    // for stress scaling, but cannot be changed by an Actor.update penalty.
+    return [{ key: 'system.attributes.hp.value', label: 'MORTAL_NEEDS.Dock.CurrentHP', group: 'attributes' }];
+  }
+
   getAvailableConditions() {
     const iconDir = CONFIG.PF2E?.statusEffects?.iconDir ?? 'systems/pf2e/icons/conditions/';
     const conditionTypes = Object.entries(CONFIG.PF2E?.conditionTypes ?? {}).map(([id, label]) => ({

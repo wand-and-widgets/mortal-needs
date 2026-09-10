@@ -22,6 +22,7 @@ export class ConsequenceEngine {
     this.#eventBus.on(Events.NEED_STRESSED, this.#onNeedChanged.bind(this));
     this.#eventBus.on(Events.NEED_RELIEVED, this.#onNeedChanged.bind(this));
     this.#eventBus.on(Events.NEED_SET, this.#onNeedChanged.bind(this));
+    this.#eventBus.on(Events.NEED_CHECKED, this.#onNeedChanged.bind(this));
   }
 
   async #onNeedChanged(data) {
@@ -33,7 +34,7 @@ export class ConsequenceEngine {
     finally { if (this.#pending.get(data.entityId) === operation) this.#pending.delete(data.entityId); }
   }
 
-  async #processChange({ entityId, needId, value, previousValue, max }) {
+  async #processChange({ entityId, needId, value, previousValue, max, sustained = false }) {
     if (!isResponsibleGM()) return;
 
     const config = this.#store.getNeedConfig(needId);
@@ -62,8 +63,8 @@ export class ConsequenceEngine {
       if (oldPct < threshold && newPct >= threshold) {
         // First time crossing this consequence's threshold — apply immediately
         await this.#handleConsequenceTick(actor, entityId, entityInfo, needId, consequenceConfig, newPct, oldPct, false);
-      } else if (oldPct >= threshold && newPct >= threshold && newPct > oldPct) {
-        // Sustained at/above threshold and still increasing — tick
+      } else if (oldPct >= threshold && newPct >= threshold && (newPct > oldPct || sustained)) {
+        // Increasing stress or a positive stress check at the clamped boundary.
         await this.#handleConsequenceTick(actor, entityId, entityInfo, needId, consequenceConfig, newPct, oldPct, true);
       }
     }

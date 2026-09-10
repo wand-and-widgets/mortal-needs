@@ -6,7 +6,7 @@ export class ConditionApplyConsequence extends ConsequenceType {
   static LABEL = 'MORTAL_NEEDS.Consequences.ConditionApply';
   static ICON = 'fas fa-exclamation-triangle';
   static CONFIG_SCHEMA = [
-    { key: 'statusId', type: 'select', label: 'MORTAL_NEEDS.Consequences.Condition', options: 'adapter:conditions' },
+    { key: 'statusId', type: 'select', label: 'MORTAL_NEEDS.Consequences.ConditionId', options: 'adapter:conditions' },
   ];
 
   async apply(actor, needId, config) {

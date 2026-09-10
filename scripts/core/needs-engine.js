@@ -1,11 +1,12 @@
 import { MODULE_ID, Events, Severity } from '../constants.js';
-import { canEditNeed } from './access.js';
+import { canEditNeed, isResponsibleGM, resolveEntityActor } from './access.js';
 
 export class NeedsEngine {
   #store;
   #eventBus;
   #adapter;
   #pending = new Map();
+  #lastChecks = new Map();
 
   constructor(store, eventBus, adapter) {
     this.#store = store;
@@ -65,7 +66,14 @@ export class NeedsEngine {
       const config = this.#store.getNeedConfig(needId);
       const current = this.#store.getActorNeedState(entityId, needId)?.value ?? config.default ?? 0;
       const target = Math.max(config.min ?? 0, Math.min(config.max ?? 100, Math.round(calculate(current))));
-      if (!Number.isFinite(target) || target === current) return null;
+      if (!Number.isFinite(target)) return null;
+      if (target === current) {
+        if (event === Events.NEED_STRESSED && amount > 0 && config.enabled
+          && config.consequences?.length && NeedsEngine.getStressPercentage(current, config.max, config) === 100) {
+          return this.#sustainedCheck(entityId, needId, current, amount, source);
+        }
+        return null;
+      }
       const result = this.#store.setNeedValue(entityId, needId, target, source, { recordHistory: false });
       try {
         await this.#store.persistActor(entityId);
@@ -86,7 +94,43 @@ export class NeedsEngine {
     finally { if (this.#pending.get(entityId) === operation) this.#pending.delete(entityId); }
   }
 
+  async #sustainedCheck(entityId, needId, value, amount, source) {
+    const info = this.#store.getTrackedEntityInfo(entityId);
+    const actor = resolveEntityActor(entityId, info);
+    if (!actor && (info?.source === 'actor' || info?.linkedActorId)) throw new Error('The tracked character is no longer available.');
+    const check = { id: foundry.utils.randomID?.() ?? `${Date.now()}-${Math.random()}`, entityId, needId, value, amount, source };
+    // An actual document update lets the responsible GM receive player/other-GM
+    // checks even when the need's clamped value cannot change. No history entry.
+    if (actor) await actor.setFlag(MODULE_ID, 'stressCheck', check);
+    else if (!isResponsibleGM()) return null;
+    this.#emitStressCheck(check);
+    return { value, previousValue: value, max: this.#store.getNeedConfig(needId).max, sustained: true };
+  }
+
   // Called only from Foundry's document hooks, never from an untrusted socket payload.
+  ingestStressCheck(actor, check, userId) {
+    if (!isResponsibleGM() || userId === game.user.id || typeof check?.id !== 'string'
+      || !Number.isFinite(check.value) || !Number.isFinite(check.amount)) return;
+    const user = game.users.get?.(userId) ?? [...game.users].find(user => user.id === userId);
+    if (!user) return;
+    const info = this.#store.getTrackedEntityInfo(check.entityId);
+    const config = this.#store.getNeedConfig(check.needId);
+    if (!config?.enabled || resolveEntityActor(check.entityId, info)?.id !== actor.id
+      || !canEditNeed(check.entityId, check.needId, this.#store, user) || !(check.amount > 0)) return;
+    const value = info.source === 'actor' ? actor.getFlag(MODULE_ID, 'needs')?.[check.needId]
+      : this.#store.getActorNeedState(check.entityId, check.needId)?.value;
+    if (value !== check.value || NeedsEngine.getStressPercentage(value, config.max, config) !== 100) return;
+    this.#emitStressCheck(check);
+  }
+
+  #emitStressCheck(check) {
+    const key = `${check.entityId}:${check.needId}`;
+    if (this.#lastChecks.get(key) === check.id) return;
+    this.#lastChecks.set(key, check.id);
+    this.#eventBus.emit(Events.NEED_CHECKED, { ...check, previousValue: check.value,
+      max: this.#store.getNeedConfig(check.needId).max, sustained: true });
+  }
+
   async ingestActorNeeds(actor) {
     return this.ingestEntityNeeds(actor.id, () => this.#store.loadActorNeeds(actor));
   }

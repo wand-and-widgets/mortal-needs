@@ -1,4 +1,5 @@
 import { MODULE_ID } from '../constants.js';
+import { effectChanges, effectChangeMode, effectChangeData } from '../core/effect-data.js';
 
 export class SystemAdapter {
   static get systemId() { return 'generic'; }
@@ -19,6 +20,30 @@ export class SystemAdapter {
 
   getAvailableAttributes() {
     return [];
+  }
+
+  getConsequenceAttributes(type) {
+    return this.getAvailableAttributes().map(attribute => ({ ...attribute,
+      key: attribute.key.startsWith('system.') ? attribute.key : `system.${attribute.key}`,
+    }));
+  }
+
+  resolveActiveEffectKey(key) {
+    if (typeof key !== 'string') return key;
+    const path = key.trim();
+    if (path.startsWith('system.') || path.startsWith('flags.')) return path;
+    return this.getAvailableAttributes().some(attribute => attribute.key === path) ? `system.${path}` : path;
+  }
+
+  async repairActiveEffectKeys(actor) {
+    for (const effect of actor.effects ?? []) {
+      const flags = effect.flags?.[MODULE_ID];
+      if (!flags?.sourceNeed || !flags.consequenceSource) continue;
+      const changes = effectChanges(effect);
+      if (changes.length !== 1) continue;
+      const key = this.resolveActiveEffectKey(changes[0].key);
+      if (key !== changes[0].key) await effect.update(effectChangeData(key, effectChangeMode(changes[0]), changes[0].value));
+    }
   }
 
   getAvailableConditions() {

@@ -3,7 +3,7 @@ import { normalizeAttributePath } from './consequence-identity.js';
 /** Resolve the same field name for configuration, chat, and applied consequences. */
 export function attributeLabel(path, adapter) {
   const normalized = normalizeAttributePath(path);
-  const attribute = (adapter?.getAvailableAttributes?.() || [])
+  const attribute = [...(adapter?.getAvailableAttributes?.() || []), ...(adapter?.getConsequenceAttributes?.('active-effect') || [])]
     .find(item => normalizeAttributePath(item.key) === normalized);
   if (attribute?.label) {
     const label = game.i18n.localize(attribute.label);

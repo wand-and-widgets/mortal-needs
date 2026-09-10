@@ -61,7 +61,7 @@ class MortalNeeds {
   }
 
   async initialize() {
-    console.log(`${MODULE_TITLE} | Initializing v3.0.0...`);
+    console.log(`${MODULE_TITLE} | Initializing v3.0.1...`);
 
     // 1. Create event bus
     this.eventBus = new EventBus();
@@ -141,6 +141,10 @@ class MortalNeeds {
           img: actor.img || actor.prototypeToken?.texture?.src || 'icons/svg/mystery-man.svg',
         });
         await this.store.loadActorNeeds(actor);
+        if (isResponsibleGM()) {
+          try { await this.adapter.repairActiveEffectKeys(actor); }
+          catch (error) { console.warn(`${MODULE_TITLE} | Could not repair an existing effect for ${actor.name}:`, error); }
+        }
       }
     }
 
@@ -197,7 +201,10 @@ class MortalNeeds {
   }
 
   #registerActorHooks() {
-    Hooks.on('updateActor', (actor, changes) => {
+    Hooks.on('updateActor', (actor, changes, options, userId) => {
+      const check = foundry.utils.getProperty(changes, `flags.${MODULE_ID}.stressCheck`);
+      // Foundry may send only the changed check id on subsequent updates.
+      if (check?.id) this.engine.ingestStressCheck(actor, actor.getFlag(MODULE_ID, 'stressCheck'), userId);
       if (this.store.isTracked(actor.id)) {
         // Refresh entity info (name/img might have changed)
         this.store.trackEntity(actor.id, {

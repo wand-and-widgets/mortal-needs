@@ -89,7 +89,7 @@ export function environment() {
   globalThis.Hooks = {
     on(name, fn) { const list = hookListeners.get(name) || []; list.push(fn); hookListeners.set(name, list); return fn; },
     off() {},
-    callAll(name, data) { hooks.push({ name, data }); for (const fn of hookListeners.get(name) || []) fn(data); },
+    callAll(name, ...args) { hooks.push({ name, data: args[0] }); for (const fn of hookListeners.get(name) || []) fn(...args); },
   };
   globalThis.game = {
     user: gm, users, actors: new Map(), scenes: { active: null },

@@ -6,6 +6,7 @@ export const Events = Object.freeze({
   NEED_RELIEVED:       'mortalNeeds.need.relieved',
   NEED_SET:            'mortalNeeds.need.set',
   NEED_RESET:          'mortalNeeds.need.reset',
+  NEED_CHECKED:        'mortalNeeds.need.checked',
 
   THRESHOLD_CROSSED:   'mortalNeeds.threshold.crossed',
   THRESHOLD_CRITICAL:  'mortalNeeds.threshold.critical',
