@@ -7,7 +7,7 @@
 
       <label class="mn-effect-type-select">
         <span class="mn-effect-type-select__icon">
-          <i class="{{selectedTypeIcon}}"></i>
+          {{mnControlIcon selectedTypeIcon}}
         </span>
         <span class="mn-effect-type-select__copy">
           <strong>{{selectedTypeLabel}}</strong>
@@ -20,13 +20,13 @@
             </option>
           {{/each}}
         </select>
-        <i class="fas fa-chevron-down mn-effect-type-select__chevron" aria-hidden="true"></i>
+        <i class="mn-icon fa-chevron-down mn-effect-type-select__chevron" aria-hidden="true"></i>
       </label>
 
       <div class="mn-effect-type-chips" aria-hidden="true">
         {{#each typeChips}}
           <span class="mn-effect-type-chip {{#if selected}}is-selected{{/if}}">
-            <i class="{{icon}}"></i>
+            {{mnControlIcon icon}}
             <span>{{label}}</span>
           </span>
         {{/each}}
@@ -58,7 +58,7 @@
                 {{#if useAttributeDatalist}}
                   <div class="mn-effect-input-with-icon">
                     <input type="text" name="config.{{key}}" value="{{value}}" list="mn-attribute-list" placeholder="{{placeholderText}}">
-                    <i class="fas fa-list"></i>
+                    <i class="mn-icon fa-list" aria-hidden="true"></i>
                   </div>
                   <span class="mn-field-hint">{{localize "MORTAL_NEEDS.EffectConfig.AttributePathHint"}}</span>
                 {{else}}
@@ -132,10 +132,10 @@
     </div>
 
     <div class="mn-effect-summary">
-      <div><i class="fas fa-bolt"></i><span data-effect-summary-threshold>{{localize "MORTAL_NEEDS.EffectConfig.FiresAt"}} {{threshold}}%</span></div>
-      <div><i class="fas fa-rotate"></i><span data-effect-summary-ticks>{{localize "MORTAL_NEEDS.EffectConfig.RepeatsAfter"}} {{ticks}} {{localize "MORTAL_NEEDS.EffectConfig.Checks"}}</span></div>
+      <div><i class="mn-icon fa-bolt" aria-hidden="true"></i><span data-effect-summary-threshold>{{localize "MORTAL_NEEDS.EffectConfig.FiresAt"}} {{threshold}}%</span></div>
+      <div><i class="mn-icon fa-rotate" aria-hidden="true"></i><span data-effect-summary-ticks>{{localize "MORTAL_NEEDS.EffectConfig.RepeatsAfter"}} {{ticks}} {{localize "MORTAL_NEEDS.EffectConfig.Checks"}}</span></div>
       <div>
-        <i class="fas fa-undo"></i>
+        <i class="mn-icon fa-undo" aria-hidden="true"></i>
         <span data-effect-summary-reversible>
           {{#if reversible}}{{localize "MORTAL_NEEDS.EffectConfig.RemovesOnRecovery"}}{{else}}{{localize "MORTAL_NEEDS.EffectConfig.StaysUntilManual"}}{{/if}}
         </span>
@@ -153,12 +153,12 @@
 
   <footer class="mn-dialog__footer mn-effect-config-footer">
     <button class="mn-btn mn-btn--secondary" type="button" data-action="cancel-consequence">
-      <i class="fas fa-times"></i>
+      <i class="mn-icon fa-times" aria-hidden="true"></i>
       <span>{{localize "Cancel"}}</span>
     </button>
     <span class="mn-flex-spacer"></span>
     <button class="mn-btn mn-btn--primary" type="button" data-action="save-consequence">
-      <i class="fas fa-save"></i>
+      <i class="mn-icon fa-save" aria-hidden="true"></i>
       <span>{{localize "Save"}}</span>
     </button>
   </footer>

@@ -9,7 +9,7 @@
               stroke-dashoffset="{{dashOffset}}" />
     </svg>
     <span class="mn-need-bar__radial-icon" data-severity="{{severity}}">
-      <i class="fas {{icon}}"></i>
+      {{mnIcon this}}
     </span>
   </div>
 
@@ -21,16 +21,16 @@
             data-action="relieve"
             data-entity-id="{{entityId}}"
             data-need-id="{{id}}"
-            data-tooltip="{{localize 'MORTAL_NEEDS.Actions.Relieve'}}">
-      <i class="fas fa-minus"></i>
+            data-tooltip="{{localize 'MORTAL_NEEDS.Actions.Relieve'}}" aria-label="{{localize 'MORTAL_NEEDS.Actions.Relieve'}}">
+      <i class="mn-icon fa-minus" aria-hidden="true"></i>
     </button>
     <button type="button"
             class="mn-need-bar__btn mn-need-bar__btn--stress"
             data-action="stress"
             data-entity-id="{{entityId}}"
             data-need-id="{{id}}"
-            data-tooltip="{{localize 'MORTAL_NEEDS.Actions.Stress'}}">
-      <i class="fas fa-plus"></i>
+            data-tooltip="{{localize 'MORTAL_NEEDS.Actions.Stress'}}" aria-label="{{localize 'MORTAL_NEEDS.Actions.Stress'}}">
+      <i class="mn-icon fa-plus" aria-hidden="true"></i>
     </button>
   </div>
 </div>

@@ -3,7 +3,7 @@ import { ConsequenceType, registerConsequenceType } from './consequence-type.js'
 export class MacroExecuteConsequence extends ConsequenceType {
   static TYPE = 'macro-execute';
   static LABEL = 'MORTAL_NEEDS.Consequences.MacroExecute';
-  static ICON = 'fas fa-terminal';
+  static ICON = 'mn-icon fa-terminal';
   static CONFIG_SCHEMA = [
     { key: 'macroId', type: 'select', label: 'MORTAL_NEEDS.Consequences.MacroSelect', options: 'game:macros' },
   ];

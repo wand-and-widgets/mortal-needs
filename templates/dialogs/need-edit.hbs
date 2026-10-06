@@ -210,14 +210,14 @@
 
         {{#if isNew}}
           <div class="mn-need-editor-empty">
-            <i class="fas fa-save"></i>
+            <i class="mn-icon fa-save" aria-hidden="true"></i>
             <span>{{localize "MORTAL_NEEDS.NeedEdit.SaveBeforeConsequences"}}</span>
           </div>
         {{else if enrichedConsequences.length}}
           <div class="mn-consequence-list">
             {{#each enrichedConsequences}}
               <div class="mn-consequence-item" data-index="{{index}}">
-                <i class="mn-consequence-item__icon {{iconClass}}"></i>
+                <i class="mn-consequence-item__icon {{mnControlClass iconClass}}" aria-hidden="true"></i>
                 <div class="mn-consequence-item__info">
                   <span class="mn-consequence-item__label">{{localizedLabel}}</span>
                   <span class="mn-consequence-item__desc">{{description}}</span>
@@ -225,10 +225,10 @@
                 <span class="mn-consequence-item__badge">{{threshold}}%</span>
                 <div class="mn-consequence-item__actions">
                   <button type="button" class="mn-consequence-item__btn" data-action="edit-consequence" title="{{localize 'MORTAL_NEEDS.NeedEdit.EditConsequence'}}">
-                    <i class="fas fa-pencil"></i>
+                    <i class="mn-icon fa-pencil" aria-hidden="true"></i>
                   </button>
                   <button type="button" class="mn-consequence-item__btn mn-consequence-item__btn--danger" data-action="delete-consequence" title="{{localize 'MORTAL_NEEDS.NeedEdit.DeleteConsequence'}}">
-                    <i class="fas fa-trash"></i>
+                    <i class="mn-icon fa-trash" aria-hidden="true"></i>
                   </button>
                 </div>
               </div>
@@ -236,13 +236,13 @@
           </div>
         {{else}}
           <div class="mn-need-editor-empty">
-            <i class="fas fa-balance-scale"></i>
+            <i class="mn-icon fa-balance-scale" aria-hidden="true"></i>
             <span>{{localize "MORTAL_NEEDS.NeedEdit.NoConsequences"}}</span>
           </div>
         {{/if}}
 
         <button type="button" class="mn-btn mn-btn--secondary mn-btn--sm mn-need-editor-add" data-action="add-consequence" {{#if isNew}}disabled data-tooltip="{{localize 'MORTAL_NEEDS.NeedEdit.SaveBeforeConsequences'}}"{{/if}}>
-          <i class="fas fa-plus"></i>
+          <i class="mn-icon fa-plus" aria-hidden="true"></i>
           <span>{{localize "MORTAL_NEEDS.NeedEdit.AddConsequence"}}</span>
         </button>
 
@@ -291,13 +291,13 @@
   <footer class="mn-dialog__footer mn-need-edit-footer">
     {{#if canDelete}}
       <button type="button" class="mn-btn mn-btn--danger mn-btn--sm" data-action="delete-need">
-        <i class="fas fa-trash"></i>
+        <i class="mn-icon fa-trash" aria-hidden="true"></i>
         <span>{{localize "MORTAL_NEEDS.NeedEdit.Delete"}}</span>
       </button>
     {{/if}}
     <span class="mn-flex-spacer"></span>
     <button type="button" class="mn-btn mn-btn--primary" data-action="save-need">
-      <i class="fas fa-save"></i>
+      <i class="mn-icon fa-save" aria-hidden="true"></i>
       <span>{{localize "Save"}}</span>
     </button>
   </footer>

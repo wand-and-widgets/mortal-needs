@@ -69,7 +69,7 @@ export class FlashPopup {
     // Title
     const title = document.createElement('div');
     title.className = 'mn-flash__title';
-    title.innerHTML = `<i class="fas fa-heartbeat"></i> ${game.i18n.localize('MORTAL_NEEDS.SessionFlow.FlashTitle')}`;
+    title.innerHTML = `<i class="mn-icon fa-heartbeat" aria-hidden="true"></i> ${game.i18n.localize('MORTAL_NEEDS.SessionFlow.FlashTitle')}`;
     content.appendChild(title);
 
     // Actors

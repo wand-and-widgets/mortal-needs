@@ -16,7 +16,7 @@ export class MultiStressDialog extends HandlebarsApplicationMixin(ApplicationV2)
     tag: 'div',
     window: {
       title: 'MORTAL_NEEDS.MultiStress.Title',
-      icon: 'fas fa-arrows-alt-v',
+      icon: 'mn-icon fa-arrows-alt-v',
       resizable: false,
     },
     position: {
@@ -43,9 +43,9 @@ export class MultiStressDialog extends HandlebarsApplicationMixin(ApplicationV2)
 
     if (this.#mode === 'relieve') {
       this.options.window.title = 'MORTAL_NEEDS.MultiStress.RelieveTitle';
-      this.options.window.icon = 'fas fa-arrow-down';
+      this.options.window.icon = 'mn-icon fa-arrow-down';
     } else {
-      this.options.window.icon = 'fas fa-arrow-up';
+      this.options.window.icon = 'mn-icon fa-arrow-up';
     }
   }
 

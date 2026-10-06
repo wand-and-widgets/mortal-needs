@@ -4,7 +4,7 @@ import { ConsequenceType, registerConsequenceType } from './consequence-type.js'
 export class ConditionApplyConsequence extends ConsequenceType {
   static TYPE = 'condition-apply';
   static LABEL = 'MORTAL_NEEDS.Consequences.ConditionApply';
-  static ICON = 'fas fa-exclamation-triangle';
+  static ICON = 'mn-icon fa-exclamation-triangle';
   static CONFIG_SCHEMA = [
     { key: 'statusId', type: 'select', label: 'MORTAL_NEEDS.Consequences.ConditionId', options: 'adapter:conditions' },
   ];

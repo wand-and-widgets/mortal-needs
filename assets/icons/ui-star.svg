@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+<title>Favorite</title>
+<g id="star-ink"><polygon fill="#11120f" points="62,12 66,9 80,49 116,50 120,52 88,72 98,112 97,115 64,95 32,115 30,114 40,78 12,56 10,52 49,49 52,46"/></g>
+<g id="gold-star-face"><polygon fill="#ab884c" points="65,15 72,42 77,54 82,52 115,53 78,65 82,88 88,104 73,92 67,90 61,84 49,93 41,98 33,111 46,77 44,74 15,54 49,52 54,47 52,48"/></g>
+<g id="bone-upper-left-plane"><polygon fill="#e1d2b2" points="65,15 65,35 59,45 55,59 48,58 35,59 15,54 49,52 54,47 52,48"/><polygon fill="#e1d2b2" points="44,74 47,77 42,93 33,111 37,94 39,91"/></g>
+</svg>

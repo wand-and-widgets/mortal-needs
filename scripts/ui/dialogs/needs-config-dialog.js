@@ -1,3 +1,4 @@
+import { controlIconClass } from '../control-icons.js';
 import { MODULE_ID, Events } from '../../constants.js';
 import { needIcon } from '../need-icons.js';
 import { applyRecommendation, recommendationViews, renderRecommendations } from '../consequence-recommendations.js';
@@ -32,7 +33,7 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
     tag: 'div',
     window: {
       title: 'MORTAL_NEEDS.Config.Title',
-      icon: 'fas fa-cog',
+      icon: 'mn-icon fa-cog',
       resizable: true,
     },
     position: {
@@ -540,7 +541,7 @@ export class NeedsConfigDialog extends HandlebarsApplicationMixin(ApplicationV2)
 
     status.dataset.state = state;
     const statusIcon = status.querySelector('i');
-    if (statusIcon) statusIcon.className = `fas ${icon}`;
+    if (statusIcon) statusIcon.className = controlIconClass(icon);
 
     const label = status.querySelector('strong');
     if (label) label.textContent = game.i18n.localize(labelKey);

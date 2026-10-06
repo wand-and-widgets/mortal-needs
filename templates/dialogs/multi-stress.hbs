@@ -13,7 +13,7 @@
       <span>{{localize "MORTAL_NEEDS.MultiStress.Changes"}}</span>
     </div>
     <span class="mn-batch-mode">
-      <i class="fas {{#if isStress}}fa-arrow-up{{else}}fa-arrow-down{{/if}}"></i>
+      {{#if isStress}}{{mnControlIcon "fa-arrow-up"}}{{else}}{{mnControlIcon "fa-arrow-down"}}{{/if}}
       {{#if isStress}}{{localize "MORTAL_NEEDS.Actions.Stress"}}{{else}}{{localize "MORTAL_NEEDS.Actions.Relieve"}}{{/if}}
     </span>
   </header>
@@ -96,7 +96,7 @@
           <li class="mn-batch-preview__empty">{{localize "MORTAL_NEEDS.MultiStress.EmptyPreview"}}</li>
         </ul>
         <p class="mn-batch-preview__note">
-          <i class="fas fa-bolt"></i>
+          <i class="mn-icon fa-bolt" aria-hidden="true"></i>
           <span>{{#if isStress}}{{localize "MORTAL_NEEDS.MultiStress.StressAppliedImmediately"}}{{else}}{{localize "MORTAL_NEEDS.MultiStress.RelieveAppliedImmediately"}}{{/if}}</span>
         </p>
       </div>
@@ -108,7 +108,7 @@
       <span>{{localize "MORTAL_NEEDS.Dialogs.Cancel"}}</span>
     </button>
     <button type="button" class="mn-btn mn-btn--primary" data-action="apply">
-      <i class="fas fa-check"></i>
+      <i class="mn-icon fa-check" aria-hidden="true"></i>
       <span>{{#if isStress}}{{localize "MORTAL_NEEDS.MultiStress.ApplyStress"}}{{else}}{{localize "MORTAL_NEEDS.MultiStress.ApplyRelieve"}}{{/if}}</span>
     </button>
   </footer>

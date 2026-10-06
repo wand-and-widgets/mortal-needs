@@ -6,7 +6,7 @@ import { attributeLabel } from '../core/attribute-label.js';
 export class AttributeModifyConsequence extends ConsequenceType {
   static TYPE = 'attribute-modify';
   static LABEL = 'MORTAL_NEEDS.Consequences.AttributeModify';
-  static ICON = 'fas fa-chart-line';
+  static ICON = 'mn-icon fa-chart-line';
   static CONFIG_SCHEMA = [
     { key: 'path', type: 'text', label: 'MORTAL_NEEDS.Consequences.AttributePath', placeholder: 'system.attributes.hp.value' },
     { key: 'operation', type: 'select', label: 'MORTAL_NEEDS.Consequences.Operation', options: [

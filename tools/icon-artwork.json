@@ -1,0 +1,533 @@
+{
+  "date": "2026-10-06",
+  "assets": [
+    {
+      "id": "ui-arrow-down",
+      "version": "v001",
+      "path": "assets/icons/ui-arrow-down.svg",
+      "sha256": "8ad0d30b88302a52ee8e93eb45dfb5e89b9d941850a6bee3f43591dbbd94ba5b"
+    },
+    {
+      "id": "ui-cog",
+      "version": "v001",
+      "path": "assets/icons/ui-cog.svg",
+      "sha256": "4ed44ac377949113c2253ffaf8cdd02da166998560400be8dd0ab08ab3572bf1"
+    },
+    {
+      "id": "ui-campground",
+      "version": "v002",
+      "path": "assets/icons/ui-campground.svg",
+      "sha256": "e4c4f92c5d6275e82914c829b2180ab3334026300463172d4bd990d2c8a669ab"
+    },
+    {
+      "id": "hunger",
+      "version": "v002",
+      "path": "assets/icons/hunger.svg",
+      "sha256": "43e7e1322866ba01386b6bb9794b3c374effb89558786c05a7d5bed9c94272d5"
+    },
+    {
+      "id": "fear",
+      "version": "v002",
+      "path": "assets/icons/fear.svg",
+      "sha256": "42950c56eff1726ffd0830e0791f1f6217042207277146fc3278348376945925"
+    },
+    {
+      "id": "seal",
+      "version": "v002",
+      "path": "assets/icons/seal.svg",
+      "sha256": "783a5b6496ad031c2d6caafd7e7a35f1de2758fc2a906d9a209c8709c9e6c94d"
+    },
+    {
+      "id": "thirst",
+      "version": "v001",
+      "path": "assets/icons/thirst.svg",
+      "sha256": "e33fadab18989c0447a8cd5569fc4b8ef2ca2bddec70ea623db629f6db74a209"
+    },
+    {
+      "id": "cold",
+      "version": "v001",
+      "path": "assets/icons/cold.svg",
+      "sha256": "9c807e1ec49de2b56aeadbd9c5023c2c2f811031b4a5d764d9f3b56c4f4928ff"
+    },
+    {
+      "id": "heat",
+      "version": "v001",
+      "path": "assets/icons/heat.svg",
+      "sha256": "988c97d46354ad5ad9e9cc026ff7a9f84be44e5fcc10d642c4257970a1533e67"
+    },
+    {
+      "id": "fatigue",
+      "version": "v002",
+      "path": "assets/icons/fatigue.svg",
+      "sha256": "d25326961aae18aa708b69bad18e0e78601a363a2007e6c7a4a1dd5c41ccbc6a"
+    },
+    {
+      "id": "sanity",
+      "version": "v001",
+      "path": "assets/icons/sanity.svg",
+      "sha256": "f860b6e00897b2e708c3dd6a17986d6c6140b27b03954b48fb54a41cecdaefbf"
+    },
+    {
+      "id": "morale",
+      "version": "v002",
+      "path": "assets/icons/morale.svg",
+      "sha256": "db747a6d318b512a31129b978d5b9482cfe2212d1fcb0fcb2fc2adff0d67afb4"
+    },
+    {
+      "id": "corruption",
+      "version": "v002",
+      "path": "assets/icons/corruption.svg",
+      "sha256": "4d2d373058dc4663910482bc68b83a4de8a9b960f63c9f4f275631fb7a79cd26"
+    },
+    {
+      "id": "ui-align-left",
+      "version": "v001",
+      "path": "assets/icons/ui-align-left.svg",
+      "sha256": "0e454ec811276c244da3b6a0ef2b5731a4a7420a293445697263cb8cf2444c3a"
+    },
+    {
+      "id": "ui-arrow-up",
+      "version": "v001",
+      "path": "assets/icons/ui-arrow-up.svg",
+      "sha256": "55a35d2215718630ce358d9c7a3ed383ad34fb4aab0d641102b70f432ae3ed15"
+    },
+    {
+      "id": "ui-arrows-alt-v",
+      "version": "v002",
+      "path": "assets/icons/ui-arrows-alt-v.svg",
+      "sha256": "96d040eb81c0d897f1d60eb429afc65e240f93f4c03270b0c223c351175ae7b7"
+    },
+    {
+      "id": "ui-balance-scale",
+      "version": "v001",
+      "path": "assets/icons/ui-balance-scale.svg",
+      "sha256": "2e92486843af068e9c7e5f3efa6c146db952a5feb00de0283c659056554a0def"
+    },
+    {
+      "id": "ui-bolt",
+      "version": "v002",
+      "path": "assets/icons/ui-bolt.svg",
+      "sha256": "71ab89074e3df682b7de7f451533777fb96d209a8d7ecbfddddced618b4a88d0"
+    },
+    {
+      "id": "ui-bullhorn",
+      "version": "v001",
+      "path": "assets/icons/ui-bullhorn.svg",
+      "sha256": "ababe2e0451ac5d03c561be981a4cb85f2c9d1b8ac2fae6a3ad30882f1fad947"
+    },
+    {
+      "id": "ui-chart-bar",
+      "version": "v001",
+      "path": "assets/icons/ui-chart-bar.svg",
+      "sha256": "e0f19bc117ab6b0de06ccf6a96cd81e46b982fa1e01184235dd8f3e08153d11c"
+    },
+    {
+      "id": "ui-chart-line",
+      "version": "v002",
+      "path": "assets/icons/ui-chart-line.svg",
+      "sha256": "e10595de2ddc765f6b61d25774ccbbb8a4ad1dbc2182e3397105d3423932fd67"
+    },
+    {
+      "id": "ui-check",
+      "version": "v002",
+      "path": "assets/icons/ui-check.svg",
+      "sha256": "6b969bff2f1ff4a960605712a721b14a04987381da9ea07735d2c0c8b86c5d58"
+    },
+    {
+      "id": "ui-check-circle",
+      "version": "v001",
+      "path": "assets/icons/ui-check-circle.svg",
+      "sha256": "fa5ecd8677704bcf8a4ee8ec418585bf82ad07be47a31678fa5d2fac3d49e9d2"
+    },
+    {
+      "id": "ui-check-square",
+      "version": "v001",
+      "path": "assets/icons/ui-check-square.svg",
+      "sha256": "da3f599a1f5b4a6c628e85b85627a4bea94d9182d4e355d6e497086b6895b4ac"
+    },
+    {
+      "id": "ui-chevron-down",
+      "version": "v002",
+      "path": "assets/icons/ui-chevron-down.svg",
+      "sha256": "d2b99f910512f1a36d3aec9984916c691a53b3d30690477a6f020c21142a70db"
+    },
+    {
+      "id": "ui-chevron-right",
+      "version": "v002",
+      "path": "assets/icons/ui-chevron-right.svg",
+      "sha256": "dcfec88b2c035892904fccaac2876bca8f6539a9a9605c0094165f67a6ceb2f6"
+    },
+    {
+      "id": "ui-chevron-up",
+      "version": "v002",
+      "path": "assets/icons/ui-chevron-up.svg",
+      "sha256": "1ad9368df4549e8134878c072665a74bbd903fd4712f14432385ca2ce9028057"
+    },
+    {
+      "id": "ui-circle-info",
+      "version": "v002",
+      "path": "assets/icons/ui-circle-info.svg",
+      "sha256": "171fb70cf98bf47dea6e12c373ff8d71146b686965c485f331082892f9200a0e"
+    },
+    {
+      "id": "ui-clock",
+      "version": "v002",
+      "path": "assets/icons/ui-clock.svg",
+      "sha256": "3378ab4cf457bb71f9bcbe6511d5f0a9c2517eb7f0ee694ab8a80bc2210a82b4"
+    },
+    {
+      "id": "ui-code",
+      "version": "v002",
+      "path": "assets/icons/ui-code.svg",
+      "sha256": "a50afe53d89ddbe51a29c6494c9b0ce3f3e4d952eaf7ba046b1a6de948a07248"
+    },
+    {
+      "id": "ui-link",
+      "version": "v001",
+      "path": "assets/icons/ui-link.svg",
+      "sha256": "559639432e5a64bc6e98b6dbd9fcac6608c17acd07916043a5d70440ac5a8a0b"
+    },
+    {
+      "id": "ui-list",
+      "version": "v001",
+      "path": "assets/icons/ui-list.svg",
+      "sha256": "35064641cecde4e6b592e6650caae6ea87455d94141017a029f61f2cf53b863f"
+    },
+    {
+      "id": "ui-magic",
+      "version": "v001",
+      "path": "assets/icons/ui-magic.svg",
+      "sha256": "b9182bc7bef44b89575aec0887c3fc67bebea785171e0bfeebe586383d8eb2ea"
+    },
+    {
+      "id": "ui-minus",
+      "version": "v001",
+      "path": "assets/icons/ui-minus.svg",
+      "sha256": "36c1b1f87ecabad7b6a1f1c0118b83ee84b563819283976b79310f72b25bfc81"
+    },
+    {
+      "id": "ui-mountain",
+      "version": "v002",
+      "path": "assets/icons/ui-mountain.svg",
+      "sha256": "ae2f8b0ae76fcc0659c7bd70c9d2c084c05f001ab43b84ee257b4f85d9a14716"
+    },
+    {
+      "id": "ui-plus",
+      "version": "v001",
+      "path": "assets/icons/ui-plus.svg",
+      "sha256": "e3a15432a8183e11ccef68eb9677c127fb119acfa6bc30b6a9a322f593b3c842"
+    },
+    {
+      "id": "ui-question",
+      "version": "v001",
+      "path": "assets/icons/ui-question.svg",
+      "sha256": "185d989dd34e3cfa07dd530f8c6bb12f6b54316ede34eac3890434316db48548"
+    },
+    {
+      "id": "ui-comment-alt",
+      "version": "v001",
+      "path": "assets/icons/ui-comment-alt.svg",
+      "sha256": "b0a10341b016255ecffde669213195217927b23a96d05d8ee0acf0f628b6f607"
+    },
+    {
+      "id": "ui-compress-arrows-alt",
+      "version": "v001",
+      "path": "assets/icons/ui-compress-arrows-alt.svg",
+      "sha256": "3dd21233d07da71aeee5e9b3428c812a992bfea6b4799372d501c6af05b7d16a"
+    },
+    {
+      "id": "ui-crosshairs",
+      "version": "v001",
+      "path": "assets/icons/ui-crosshairs.svg",
+      "sha256": "2ac66ada58465fd01a40f50d8d68533467bbeefd90f93410da3bf9619788f3d9"
+    },
+    {
+      "id": "ui-download",
+      "version": "v001",
+      "path": "assets/icons/ui-download.svg",
+      "sha256": "f897787c56b79526d2d048275b08eec02e154e1ee22c04e63350a07bf19a51fd"
+    },
+    {
+      "id": "ui-eraser",
+      "version": "v001",
+      "path": "assets/icons/ui-eraser.svg",
+      "sha256": "2eb931de181da04ac57b8445939326090e787083f84aa5e149ac0ebdcdd3e4bc"
+    },
+    {
+      "id": "ui-exclamation-triangle",
+      "version": "v001",
+      "path": "assets/icons/ui-exclamation-triangle.svg",
+      "sha256": "8978f80468bff644495505c35b172f34137ba56920bb21133bcfd4243ce5e05c"
+    },
+    {
+      "id": "ui-eye-slash",
+      "version": "v002",
+      "path": "assets/icons/ui-eye-slash.svg",
+      "sha256": "048d52c4d09ceb68aa2fe30f1eed01d43b9ba73737cc16a67cbc8e2258409e52"
+    },
+    {
+      "id": "ui-feather-alt",
+      "version": "v001",
+      "path": "assets/icons/ui-feather-alt.svg",
+      "sha256": "b04da3af0d4d47544c01cff888e1b24a2d2d8fb2c7566f6941706ae268271e2d"
+    },
+    {
+      "id": "ui-file-code",
+      "version": "v001",
+      "path": "assets/icons/ui-file-code.svg",
+      "sha256": "324c920fff19f56abd68a1ffd5bcc9fdafc0633783bf068b267fc9e1bef1a86b"
+    },
+    {
+      "id": "ui-file-export",
+      "version": "v001",
+      "path": "assets/icons/ui-file-export.svg",
+      "sha256": "ad5bf508bdc62f7cd25b153f2c6d16ad9cb2dbb67fc3c24f58da1fd6e2daac9d"
+    },
+    {
+      "id": "ui-file-import",
+      "version": "v001",
+      "path": "assets/icons/ui-file-import.svg",
+      "sha256": "82222da871aaad79904cf239ea999d4bb4ee62141e9545b9b7a1bacc9618a038"
+    },
+    {
+      "id": "ui-filter",
+      "version": "v001",
+      "path": "assets/icons/ui-filter.svg",
+      "sha256": "ced9adf8a72a2da2ddc6fbf4a3e989913ac6a03e41b5ca0935157d634d2eeea5"
+    },
+    {
+      "id": "ui-fire",
+      "version": "v002",
+      "path": "assets/icons/ui-fire.svg",
+      "sha256": "a9c012f7184cbb53994dff438b04c8a16c6b8a304e913e80f8586a13fee64c9b"
+    },
+    {
+      "id": "ui-heartbeat",
+      "version": "v002",
+      "path": "assets/icons/ui-heartbeat.svg",
+      "sha256": "d6a769453aa97a12e042f807322bb17d5abec652dc0724977fb23c0d330d63ce"
+    },
+    {
+      "id": "ui-history",
+      "version": "v002",
+      "path": "assets/icons/ui-history.svg",
+      "sha256": "686df7a249868a0d0ab6abef2927e115a19d985abb3a75ad156dc501225cb4b5"
+    },
+    {
+      "id": "ui-hourglass-half",
+      "version": "v002",
+      "path": "assets/icons/ui-hourglass-half.svg",
+      "sha256": "cb18d9dc9fe4423d5a7543af15df9fb67d8ca8b7d89523408a493715c58744dd"
+    },
+    {
+      "id": "comfort",
+      "version": "v004",
+      "path": "assets/icons/comfort.svg",
+      "sha256": "e0b845f5dd87b95c1d86d873fffd451eb9c94ac8b20a14aaf82de697aa426980"
+    },
+    {
+      "id": "exhaustion",
+      "version": "v005",
+      "path": "assets/icons/exhaustion.svg",
+      "sha256": "10d132fbddeaf8ad3e73037f558e39a2fb1b3513cb3fd3fe7224eb190127225f"
+    },
+    {
+      "id": "pain",
+      "version": "v004",
+      "path": "assets/icons/pain.svg",
+      "sha256": "6690de7e1219f4a671bd6e3ee4ccdc03a5f7a15c9ed332ae35882704590d55a3"
+    },
+    {
+      "id": "radiation",
+      "version": "v004",
+      "path": "assets/icons/radiation.svg",
+      "sha256": "7a1a0f91b366ad83056fdfbb800eb3beb690516aa6e49d83644321c04c00d605"
+    },
+    {
+      "id": "environmental",
+      "version": "v005",
+      "path": "assets/icons/environmental.svg",
+      "sha256": "c05e530f27123eca45424e80bd9abbcc459cd5c5561f4849385359a505fb45b8"
+    },
+    {
+      "id": "ui-rocket",
+      "version": "v003",
+      "path": "assets/icons/ui-rocket.svg",
+      "sha256": "0931f8749cae6504ac0ce3f102a21ac9a687e4eaa65fcf39fe019fa87ac3932d"
+    },
+    {
+      "id": "ui-rotate",
+      "version": "v001",
+      "path": "assets/icons/ui-rotate.svg",
+      "sha256": "7bff1497e8de5407fec312e5a29485bccbd4574d835054f8b2ef6b027da38641"
+    },
+    {
+      "id": "ui-route",
+      "version": "v002",
+      "path": "assets/icons/ui-route.svg",
+      "sha256": "2c03decb9a2e246215b686e1accd0cadad54d0c171d69f72f202d583682eca44"
+    },
+    {
+      "id": "ui-save",
+      "version": "v003",
+      "path": "assets/icons/ui-save.svg",
+      "sha256": "a26963f71ba212a8946d4762a5bd9350df2504d53bad2c063bc3c1bd769f76e7"
+    },
+    {
+      "id": "ui-search",
+      "version": "v002",
+      "path": "assets/icons/ui-search.svg",
+      "sha256": "0facd03ab0e9e9a06a2a2377196090a8d57f84ba7f993e6f7641da4b67b5bb4a"
+    },
+    {
+      "id": "ui-shield-alt",
+      "version": "v002",
+      "path": "assets/icons/ui-shield-alt.svg",
+      "sha256": "d0465a851511f5be34b6cda97ec97a84d85c11ed4ec6d5e4b67973cf0e470f0f"
+    },
+    {
+      "id": "ui-shoe-prints",
+      "version": "v002",
+      "path": "assets/icons/ui-shoe-prints.svg",
+      "sha256": "241ec047d3b314d04363beb23942f85fbff6a4044fdc2fd2666a5c95e4aa719e"
+    },
+    {
+      "id": "ui-sign-in-alt",
+      "version": "v002",
+      "path": "assets/icons/ui-sign-in-alt.svg",
+      "sha256": "bbe75fd97ab9fb9c4a25af93a447d61e9933824f6edfe96a0531db66a318fd0a"
+    },
+    {
+      "id": "ui-skull",
+      "version": "v003",
+      "path": "assets/icons/ui-skull.svg",
+      "sha256": "2fe1d1b671afa7dd44bbaf77ed4a923dd706b07c7c31f49cf2502603530d585b"
+    },
+    {
+      "id": "ui-hourglass-start",
+      "version": "v003",
+      "path": "assets/icons/ui-hourglass-start.svg",
+      "sha256": "80567876f908d5231d59b9f5323d479190fef25a05ab8b72ca8878146b81b6a8"
+    },
+    {
+      "id": "ui-lock",
+      "version": "v003",
+      "path": "assets/icons/ui-lock.svg",
+      "sha256": "895339e654ace830189adc8549457256c35cf2666272ce65c92848c271896e14"
+    },
+    {
+      "id": "ui-pen",
+      "version": "v003",
+      "path": "assets/icons/ui-pen.svg",
+      "sha256": "f289439efcd1136fa33633f418316f0bda80111d3d83030cf46e6a97a9f47f7a"
+    },
+    {
+      "id": "ui-sliders-h",
+      "version": "v001",
+      "path": "assets/icons/ui-sliders-h.svg",
+      "sha256": "905de5915b1026057cdd90db6b1e946df1792b92b06aea0c9579189736bbe371"
+    },
+    {
+      "id": "ui-star",
+      "version": "v001",
+      "path": "assets/icons/ui-star.svg",
+      "sha256": "9d8634d90f79a4c5079876c7e69540bbfe5da43609550a33991f1aee52f72ccd"
+    },
+    {
+      "id": "ui-terminal",
+      "version": "v001",
+      "path": "assets/icons/ui-terminal.svg",
+      "sha256": "4c1b687779d9eb9b8fa8207bf8b24eaad23156bab5af6ac8f34942e663a55c06"
+    },
+    {
+      "id": "ui-theater-masks",
+      "version": "v001",
+      "path": "assets/icons/ui-theater-masks.svg",
+      "sha256": "a23d186bd1f5a2787cfad0b7a425004fdda51d53d9d94d66f069716ee5c66205"
+    },
+    {
+      "id": "ui-times",
+      "version": "v001",
+      "path": "assets/icons/ui-times.svg",
+      "sha256": "b78c3e559cad69c657ca6534bffab32f1659e2dc0356f9f19d7b05f6c223a19c"
+    },
+    {
+      "id": "ui-trash",
+      "version": "v001",
+      "path": "assets/icons/ui-trash.svg",
+      "sha256": "da7a4a90069d04175fc5bf3f14b048584918fafe5be93f56615d557d63de4a90"
+    },
+    {
+      "id": "ui-tv",
+      "version": "v001",
+      "path": "assets/icons/ui-tv.svg",
+      "sha256": "053061d6280c8cac7cc3c1193de0846e79df4129f2fc082d6dc1a23a20b32c06"
+    },
+    {
+      "id": "ui-undo",
+      "version": "v001",
+      "path": "assets/icons/ui-undo.svg",
+      "sha256": "fd3e5496df8d744a07dc3c7a2064cfbc6bb0f6b8f3e73e3b2510b9514cfdc382"
+    },
+    {
+      "id": "ui-upload",
+      "version": "v001",
+      "path": "assets/icons/ui-upload.svg",
+      "sha256": "fade753108b7ed83d76a138d6ee4e18f43fe95fff675a9dcbea4a19f87c963d1"
+    },
+    {
+      "id": "ui-user-plus",
+      "version": "v001",
+      "path": "assets/icons/ui-user-plus.svg",
+      "sha256": "d3fed5d5b98f3a11549c4fb75b330f91f71c1276b0383db86343e03a14970b2f"
+    },
+    {
+      "id": "ui-users",
+      "version": "v001",
+      "path": "assets/icons/ui-users.svg",
+      "sha256": "44422725e206b813c097e6e23dd8c99ca2ee3826f6374a17dc9811d32fa25cdb"
+    },
+    {
+      "id": "ui-users-slash",
+      "version": "v001",
+      "path": "assets/icons/ui-users-slash.svg",
+      "sha256": "5a161d731140bb1efe02328d9c117983a6ecdf7825b759b288264c0c31412ab9"
+    },
+    {
+      "id": "ui-utensils",
+      "version": "v001",
+      "path": "assets/icons/ui-utensils.svg",
+      "sha256": "cdba8ed9a4d5d21a34cce504541ede25ff13a4c9f83e3430aaef8a8370458594"
+    },
+    {
+      "id": "ui-wifi",
+      "version": "v001",
+      "path": "assets/icons/ui-wifi.svg",
+      "sha256": "570c8121533524fa0ac2319f83498b2f24ace199a843de99a1ce7911c4502dc7"
+    },
+    {
+      "id": "ui-window-restore",
+      "version": "v002",
+      "path": "assets/icons/ui-window-restore.svg",
+      "sha256": "fbc546aa700965dfbccf3872d6e7040009e82093797a064c859253026dc46320"
+    },
+    {
+      "id": "fallback-aura",
+      "version": "v001",
+      "path": "assets/icons/fallback-aura.svg",
+      "sha256": "a2e0c9fb9a9014aa55295532bce6a859e68d0a7d7dafc8e5b3bb0ab67b38ec0d"
+    },
+    {
+      "id": "ui-user-secret",
+      "version": "v002",
+      "path": "assets/icons/ui-user-secret.svg",
+      "sha256": "ab30c53cfa4728969fb6f904adbac0ab389f46d78918eb252a25eb2b2ace4dda"
+    },
+    {
+      "id": "fallback-portrait",
+      "version": "v004",
+      "path": "assets/icons/fallback-portrait.svg",
+      "sha256": "6803d5cd7620b9fb4081e809a548107ccdc6e7412eef9072e824e336b31e3be3"
+    }
+  ]
+}

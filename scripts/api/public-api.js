@@ -165,7 +165,7 @@ export function createPublicAPI(store, engine, consequenceEngine, eventBus, conf
           store.trackEntity(entityId, {
             source: EntitySource.ACTOR,
             name: actor.name,
-            img: actor.img || actor.prototypeToken?.texture?.src || 'icons/svg/mystery-man.svg',
+            img: actor.img || actor.prototypeToken?.texture?.src || 'modules/mortal-needs/assets/icons/fallback-portrait.svg',
           });
           await store.loadActorNeeds(actor);
           // Save to tracked list
@@ -181,7 +181,7 @@ export function createPublicAPI(store, engine, consequenceEngine, eventBus, conf
           store.trackEntity(entityId, {
             source: EntitySource.EXALTED_SCENES,
             name: char.name,
-            img: char.thumbnail || char.image || 'icons/svg/mystery-man.svg',
+            img: char.thumbnail || char.image || 'modules/mortal-needs/assets/icons/fallback-portrait.svg',
             linkedActorId: char.actorId || null,
           });
           await store.loadESCharacterNeeds(entityId);

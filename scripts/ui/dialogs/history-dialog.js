@@ -25,7 +25,7 @@ export class HistoryDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     tag: 'div',
     window: {
       title: 'MORTAL_NEEDS.History.Title',
-      icon: 'fas fa-history',
+      icon: 'mn-icon fa-history',
       resizable: true,
     },
     position: {
@@ -158,10 +158,10 @@ export class HistoryDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       relativeTime: this.#formatRelativeTime(timestamp),
       entityId: entry.entityId,
       entityName,
-      actorImg: entityInfo?.img || 'icons/svg/mystery-man.svg',
+      actorImg: entityInfo?.img || 'modules/mortal-needs/assets/icons/fallback-portrait.svg',
       needId: entry.needId,
       needLabel,
-      needIcon: needConfig?.icon || 'fa-question',
+      needConfig: needConfig || { id: entry.needId },
       previousValue: entry.previousValue,
       newValue: entry.newValue,
       previousPercentage,

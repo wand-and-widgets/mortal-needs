@@ -1,3 +1,5 @@
+import { needIcon } from '../ui/need-icons.js';
+import { controlIcon, controlIconClass } from '../ui/control-icons.js';
 import { MODULE_ID, Events } from '../constants.js';
 import { NeedsEngine } from '../core/needs-engine.js';
 import { filterDisplayNeedsForEntity } from '../core/need-visibility.js';
@@ -23,7 +25,7 @@ export function createMortalNeedsWidgetClass() {
   class MortalNeedsWidget extends Widget {
     static TYPE = 'mortal-needs';
     static LABEL = 'MORTAL_NEEDS.SessionFlow.WidgetLabel';
-    static ICON = 'fas fa-skull';
+    static ICON = 'mn-icon fa-skull';
     static MIN_WIDTH = 340;
     static MIN_HEIGHT = 420;
     static DEFAULT_WIDTH = 430;
@@ -121,7 +123,7 @@ export function createMortalNeedsWidgetClass() {
               actorImg: entity.img,
               needId: need.id,
               needLabel: need.localizedLabel,
-              needIcon: need.icon,
+              needConfig: need,
               stressPercentage: need.stressPercentage,
               stressPercentageLabel: need.stressPercentageLabel,
               severity: need.severity,
@@ -194,6 +196,8 @@ export function createMortalNeedsWidgetClass() {
         label: config.label,
         localizedLabel,
         icon: config.icon,
+        iconType: config.iconType,
+        custom: config.custom,
         color: config.color || null,
         hasCustomColor: !!config.color,
         inverted: NeedsEngine.isInvertedNeed(config),
@@ -293,7 +297,7 @@ export function createMortalNeedsWidgetClass() {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = `mn-sf-widget__toolbar-btn ${tone ? `mn-sf-widget__toolbar-btn--${tone}` : ''}`.trim();
-      btn.innerHTML = `<i class="fas ${icon}"></i>`;
+      btn.innerHTML = `${controlIcon(icon)}`;
       btn.title = game.i18n.localize(locKey);
       btn.setAttribute('aria-label', btn.title);
       btn.addEventListener('click', async (e) => {
@@ -343,7 +347,7 @@ export function createMortalNeedsWidgetClass() {
       const metric = document.createElement('div');
       metric.className = `mn-sf-widget__metric mn-sf-widget__metric--${tone}`;
       metric.innerHTML = `
-        <i class="fas ${icon}"></i>
+        ${controlIcon(icon)}
         <span>${label}</span>
         <strong>${value}</strong>
       `;
@@ -399,7 +403,7 @@ export function createMortalNeedsWidgetClass() {
       text.appendChild(name);
 
       const detail = document.createElement('span');
-      detail.innerHTML = `<i class="fas ${item.needIcon}"></i> ${item.needLabel} - ${item.stressPercentageLabel}`;
+      detail.innerHTML = `${needIcon(item.needConfig)} ${item.needLabel} - ${item.stressPercentageLabel}`;
       text.appendChild(detail);
       row.appendChild(text);
 
@@ -537,7 +541,7 @@ export function createMortalNeedsWidgetClass() {
       button.title = game.i18n.localize('MORTAL_NEEDS.Actions.ToggleDetails');
       button.setAttribute('aria-label', button.title);
       button.setAttribute('aria-expanded', actor.expanded ? 'true' : 'false');
-      button.innerHTML = '<i class="fas fa-chevron-down"></i>';
+      button.innerHTML = '<i class="mn-icon fa-chevron-down" aria-hidden="true"></i>';
       button.addEventListener('click', (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -584,7 +588,7 @@ export function createMortalNeedsWidgetClass() {
       const icon = document.createElement('span');
       icon.className = 'mn-sf-widget__need-icon';
       icon.dataset.severity = need.severity;
-      icon.innerHTML = `<i class="fas ${need.icon}"></i>`;
+      icon.innerHTML = `${needIcon(need)}`;
       needEl.appendChild(icon);
 
       const body = document.createElement('div');
@@ -615,7 +619,7 @@ export function createMortalNeedsWidgetClass() {
       const icon = document.createElement('span');
       icon.className = 'mn-sf-widget__need-icon';
       icon.dataset.severity = need.severity;
-      icon.innerHTML = `<i class="fas ${need.icon}"></i>`;
+      icon.innerHTML = `${needIcon(need)}`;
       needEl.appendChild(icon);
 
       needEl.appendChild(this.#buildTrack(need, 'y'));
@@ -665,7 +669,7 @@ export function createMortalNeedsWidgetClass() {
       const icon = document.createElement('span');
       icon.className = 'mn-sf-widget__radial-icon';
       icon.dataset.severity = need.severity;
-      icon.innerHTML = `<i class="fas ${need.icon}"></i>`;
+      icon.innerHTML = `${needIcon(need)}`;
       ringWrap.appendChild(icon);
       needEl.appendChild(ringWrap);
 
@@ -759,7 +763,7 @@ export function createMortalNeedsWidgetClass() {
       button.className = `mn-sf-widget__action-btn mn-sf-widget__action-btn--${action}`;
       button.title = title;
       button.setAttribute('aria-label', title);
-      button.innerHTML = `<i class="fas ${icon}"></i>`;
+      button.innerHTML = `${controlIcon(icon)}`;
       button.addEventListener('click', async (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -825,7 +829,7 @@ export function createMortalNeedsWidgetClass() {
       button.type = 'button';
       button.className = 'mn-sf-widget__footer-command';
       button.innerHTML = `
-        <i class="fas ${icon}"></i>
+        ${controlIcon(icon)}
         <span>
           <strong>${label}</strong>
           <small>${detail}</small>
@@ -844,7 +848,8 @@ export function createMortalNeedsWidgetClass() {
       empty.className = 'mn-sf-widget__empty';
 
       const iconEl = document.createElement('i');
-      iconEl.className = `fas ${icon}`;
+      iconEl.className = controlIconClass(icon);
+      iconEl.setAttribute('aria-hidden', 'true');
       empty.appendChild(iconEl);
 
       const titleEl = document.createElement('strong');
@@ -897,7 +902,7 @@ export function createMortalNeedsWidgetClass() {
         const checked = n.enabled ? 'checked' : '';
         return `<label class="mn-sf-toggle-need">
           <input type="checkbox" name="need-${n.id}" value="${n.id}" ${checked}>
-          <i class="fas ${n.icon}"></i>
+          ${needIcon(n)}
           <span>${label}</span>
         </label>`;
       }).join('');
@@ -908,13 +913,13 @@ export function createMortalNeedsWidgetClass() {
       const result = await foundry.applications.api.DialogV2.wait({
         window: {
           title: game.i18n.localize('MORTAL_NEEDS.SessionFlow.ToggleNeeds'),
-          icon: 'fas fa-sliders-h',
+          icon: 'mn-icon fa-sliders-h',
         },
         content: wrapper,
         buttons: [{
           action: 'apply',
           label: game.i18n.localize('MORTAL_NEEDS.SessionFlow.Apply'),
-          icon: 'fas fa-check',
+          icon: 'mn-icon fa-check',
           callback: (event, button, dialog) => {
             const checked = new Set();
             dialog.element.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => checked.add(cb.value));

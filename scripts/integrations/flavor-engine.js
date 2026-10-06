@@ -297,6 +297,7 @@ export class FlavorEngine {
       actorImg: entityInfo.img,
       needName: game.i18n.localize(needConfig.label),
       needIcon: needConfig.icon,
+      needConfig,
       needImage: needIconPath(needConfig.id),
       directionIcon,
       directionLabel,
@@ -345,7 +346,7 @@ export class FlavorEngine {
       const entityInfo = this.#store.getTrackedEntityInfo(entry.entityId);
       return {
         actorName: entityInfo?.name || 'Unknown',
-        actorImg: entityInfo?.img || 'icons/svg/mystery-man.svg',
+        actorImg: entityInfo?.img || 'modules/mortal-needs/assets/icons/fallback-portrait.svg',
         value: entry.value,
         max: entry.max,
         percentage: entry.percentage,
@@ -355,6 +356,7 @@ export class FlavorEngine {
     const templateData = {
       needName: game.i18n.localize(needConfig.label),
       needIcon: needConfig.icon,
+      needConfig,
       needImage: needIconPath(needConfig.id),
       directionIcon,
       directionLabel,

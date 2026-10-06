@@ -12,8 +12,10 @@ export function needIconPath(needId) {
 }
 
 export function needIcon(config, className = 'mn-need-icon') {
+  className = escapeHTML(className);
   const builtin = DEFAULT_NEEDS.find(need => need.id === config?.id);
-  if (config?.icon && (config.custom || !builtin || config.icon !== builtin.icon || config.iconType === 'img' || config.iconType === 'image')) {
+  // A built-in need can have custom rules without having custom artwork.
+  if (config?.icon && (!builtin || config.icon !== builtin.icon || config.iconType === 'img' || config.iconType === 'image')) {
     if (['image', 'img'].includes(config.iconType) && isSafeImagePath(config.icon)) {
       return `<img class="${className}" src="${escapeHTML(config.icon)}" alt="" aria-hidden="true">`;
     }

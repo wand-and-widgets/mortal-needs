@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+<title>Restore window</title>
+<g id="rear-window-visible-frame"><polygon points="46,17 51,13 111,13 117,18 117,75 113,78 87,78 86,74 110,74 110,25 54,25 54,39 46,39" fill="#11120f"/></g>
+<g id="rear-window-bone"><polygon points="49,20 53,16 109,16 113,19 113,72 110,75 87,75 86,72 109,72 109,21 55,21 52,22 52,37 49,37" fill="#e1d2b2"/><polygon points="57,23 107,23 107,28 57,28" fill="#e1d2b2"/><polygon points="53,17 55,19 52,22 52,37 49,37 49,20" fill="#b79553"/><polygon points="87,72 91,75 87,75 86,73" fill="#b79553"/></g>
+<g id="front-window-iron"><path fill="#11120f" d="M24 38 85 38 90 43 88 49 89 95 90 104 85 109 21 109 18 104 19 91 19 52 17 44Z M28 58 82 58 82 99 28 99Z" fill-rule="evenodd"/></g>
+<g id="front-window-bone-frame"><path fill="#e1d2b2" d="M25 41 35 42 83 41 86 44 86 64 85 65 86 76 86 101 83 105 25 105 22 102 22 70 23 67 22 48 22 45Z M27 47 83 47 83 99 81 102 28 102 25 99 25 48Z" fill-rule="evenodd"/><polygon points="28,48 82,48 82,53 28,53" fill="#e1d2b2"/></g>
+<g id="frame-brass-cuts"><polygon points="25,41 29,44 25,45 24,48 23,54 22,57 22,45" fill="#b79553"/><polygon points="28,48 34,53 28,53" fill="#b79553"/></g>
+</svg>

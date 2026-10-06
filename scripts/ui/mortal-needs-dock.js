@@ -1,3 +1,4 @@
+import { controlIcon } from './control-icons.js';
 import { MODULE_ID, Events } from '../constants.js';
 import { NeedsEngine } from '../core/needs-engine.js';
 import { canViewEntity, canEditNeed, ownsEntity, resolveEntityActor } from '../core/access.js';
@@ -8,7 +9,7 @@ import { conditionView, recoveryDescription } from './condition-view.js';
 import { ScrubSession } from './scrub-session.js';
 
 const t = key => game.i18n.localize(`MORTAL_NEEDS.Dock.${key}`);
-const action = (name, icon, label, extra = '') => `<button type="button" data-action="${name}" aria-label="${h(label)}" title="${h(label)}" ${extra}><i class="fas ${icon}" aria-hidden="true"></i></button>`;
+const action = (name, icon, label, extra = '') => `<button type="button" data-action="${name}" aria-label="${h(label)}" title="${h(label)}" ${extra}>${controlIcon(icon)}</button>`;
 
 /** A small persistent play surface. Configuration remains in Foundry windows. */
 export class MortalNeedsDock {
@@ -111,7 +112,7 @@ export class MortalNeedsDock {
     </header>
     ${this.#collapsed ? '' : `${choices.length > 1 ? `<label class="mn-personal-select">${h(t('Character'))}<select data-personal-actor>${choices.map(entity => `<option value="${h(entity.id)}" ${entity.id === this.#personalActor ? 'selected' : ''}>${h(entity.name)}</option>`).join('')}</select></label>` : ''}
       <div class="mn-dock-company">${rows.length ? rows.map(entity => this.#row(entity, configs)).join('') : `<div class="mn-dock-empty"><p>${h(game.user.isGM ? t('EmptyGM') : t('EmptyPlayer'))}</p>${game.user.isGM ? `<button type="button" data-action="actors">${h(t('ChooseCharacters'))}</button>` : ''}</div>`}</div>
-      ${game.user.isGM ? `<footer class="mn-dock-footer"><button type="button" data-action="actors"><i class="fas fa-users" aria-hidden="true"></i> ${h(t('Company'))}</button><button type="button" data-action="stress">${h(t('Stress'))}</button><button type="button" data-action="relieve">${h(t('Relief'))}</button>${action('history', 'fa-history', t('History'))}${action('broadcast', 'fa-bullhorn', t('Broadcast'))}</footer>` : ''}`}`;
+      ${game.user.isGM ? `<footer class="mn-dock-footer"><button type="button" data-action="actors"><i class="mn-icon fa-users" aria-hidden="true"></i> ${h(t('Company'))}</button><button type="button" data-action="stress">${h(t('Stress'))}</button><button type="button" data-action="relieve">${h(t('Relief'))}</button>${action('history', 'fa-history', t('History'))}${action('broadcast', 'fa-bullhorn', t('Broadcast'))}</footer>` : ''}`}`;
     this.#element.querySelector('.mn-dock-company')?.scrollTo({ top: scroll });
     if (focus) [...this.#element.querySelectorAll('[data-focus]')].find(el => el.dataset.focus === focus)?.focus({ preventScroll: true });
     this.#clamp();
@@ -124,7 +125,7 @@ export class MortalNeedsDock {
     const visible = configs.filter(config => game.user.isGM || shouldDisplayNeed(config, entity.needs[config.id]));
     const worst = visible.map(config => ({ config, ...conditionView(config, entity.needs[config.id]) })).sort((a, b) => b.stress - a.stress)[0];
     const narratable = this.#app.flavorEngine?.getWorstVisibleNeed(entity.id);
-    const portrait = isSafeImagePath(entity.img) ? entity.img : 'icons/svg/mystery-man.svg';
+    const portrait = isSafeImagePath(entity.img) ? entity.img : 'modules/mortal-needs/assets/icons/fallback-portrait.svg';
     return `<article class="mn-dock-actor" data-entity="${h(entity.id)}">
       <div class="mn-dock-portrait"><button type="button" data-action="sheet" data-entity="${h(entity.id)}" title="${h(t('OpenSheet'))}" aria-label="${h(t('OpenSheet') + ': ' + entity.name)}"><img src="${h(portrait)}" alt="${h(entity.name)}"></button>
       ${game.user.isGM && narratable ? action('narrate', 'fa-feather-alt', `${t('Narrate')}: ${game.i18n.localize(narratable.config.label)} · ${narratable.label}`, `data-entity="${h(entity.id)}"`) : ''}</div>
@@ -135,7 +136,7 @@ export class MortalNeedsDock {
         const selected = this.#selected?.entityId === entity.id && this.#selected.needId === config.id;
         const label = game.i18n.localize(config.label);
         return `<div class="mn-dock-need mn-state-${view.severity}${selected ? ' is-selected' : ''}" style="--need-color:${needColor(config)}" data-need="${h(config.id)}" data-entity="${h(entity.id)}">
-          <button type="button" class="mn-dock-need-button" data-action="inspect" data-focus="${h(entity.id + ':' + config.id)}" aria-label="${h(`${label}: ${view.value}/${view.max}. ${view.label}`)}" aria-pressed="${selected}">${needIcon(config)}${isGMOnlyNeed(config) ? '<i class="fas fa-lock mn-private-mark" aria-hidden="true"></i>' : ''}<span class="mn-need-critical-mark" aria-hidden="true">${view.severity === 'critical' ? '!' : ''}</span></button>
+          <button type="button" class="mn-dock-need-button" data-action="inspect" data-focus="${h(entity.id + ':' + config.id)}" aria-label="${h(`${label}: ${view.value}/${view.max}. ${view.label}`)}" aria-pressed="${selected}">${needIcon(config)}${isGMOnlyNeed(config) ? '<i class="mn-icon fa-lock mn-private-mark" aria-hidden="true"></i>' : ''}<span class="mn-need-critical-mark" aria-hidden="true">${view.severity === 'critical' ? '!' : ''}</span></button>
           <div class="mn-dock-meter" ${editable ? `role="slider" tabindex="0" aria-valuemin="${view.min}" aria-valuemax="${view.max}" aria-valuenow="${view.value}" aria-label="${h(label + '. ' + t('DragHint'))}" data-scrub data-focus="${h(entity.id + ':' + config.id + ':meter')}"` : `role="meter" aria-label="${h(label)}" aria-valuemin="${view.min}" aria-valuemax="${view.max}" aria-valuenow="${view.value}"`} style="--fill:${100 * (view.value - view.min) / Math.max(1, view.max - view.min)}%"><span></span><b></b></div>
         </div>`;
       }).join('')}</div></div></article>`;
@@ -222,7 +223,7 @@ export class MortalNeedsDock {
       ${editable ? `<form class="mn-condition-controls">${action('minus', 'fa-minus', t('Decrease'))}<input name="value" type="number" min="${state.min}" max="${state.max}" step="1" value="${state.value}" aria-label="${h(t('ExactValue'))}"><button type="submit">${h(t('Set'))}</button>${action('plus', 'fa-plus', t('Increase'))}</form><p class="mn-condition-hint">${h(t('DragHint'))}</p>` : ''}
       <section class="mn-condition-effects"><h4>${h(t('Effects'))}</h4>${effects.length ? effects.map(effect => `<div class="mn-condition-effect ${effect.active ? 'is-active' : ''}"><span class="mn-effect-dot" aria-hidden="true"></span><div><strong>${h(effect.description)}</strong><small>${h(effect.error ? t('EffectFailed') : effect.active ? t('Active') : t('Inactive'))} · ${effect.threshold}% ${h(t('StressWord'))}</small>${effect.error ? `<small>${h(effect.error)}</small>` : ''}</div>${game.user.isGM && effect.removable ? action('remove', 'fa-times', t('RemoveEffect'), `data-effect="${h(effect.id)}"`) : ''}</div>`).join('') : `<p>${h(t('NarrativeOnly'))}</p>`}</section>
       <section class="mn-condition-recovery"><h4>${h(t('Recovery'))}</h4><p>${h(config.recovery || recoveryDescription(config))}</p></section>
-      ${game.user.isGM ? `<footer><button type="button" data-action="edit-rule"><i class="fas fa-cog" aria-hidden="true"></i> ${h(t('EditRule'))}</button>${isGMOnlyNeed(config) ? `<small><i class="fas fa-lock" aria-hidden="true"></i> ${h(t('Private'))}</small>` : ''}</footer>` : ''}`;
+      ${game.user.isGM ? `<footer><button type="button" data-action="edit-rule"><i class="mn-icon fa-cog" aria-hidden="true"></i> ${h(t('EditRule'))}</button>${isGMOnlyNeed(config) ? `<small><i class="mn-icon fa-lock" aria-hidden="true"></i> ${h(t('Private'))}</small>` : ''}</footer>` : ''}`;
     this.#positionInspector();
     if (pinned && !refresh) this.#inspector.querySelector('[name="value"], button')?.focus({ preventScroll: true });
     for (const cell of this.#element.querySelectorAll('[data-need]')) {

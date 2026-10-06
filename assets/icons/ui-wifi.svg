@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+<title>Wireless</title>
+<g id="three-radio-arcs-ink"><path fill="#11120f" d="M17 38 C36 22 56 18 71 19 L81 22 88 23 102 30 114 42 110 50 105 52 C82 27 47 29 20 52 L15 49 12 44Z" /><path fill="#11120f" d="M29 57 C49 39 77 39 96 57 L100 61 96 68 91 70 C76 56 53 54 38 70 L32 68 29 64 30 60Z" /><path fill="#11120f" d="M47 71 C56 62 71 63 79 70 L84 76 80 84 75 86 C67 78 62 78 54 85 L49 82 46 77Z" /><polygon points="65,86 77,99 65,110 54,99" fill="#11120f"/></g>
+<g id="pale-radio-fronts"><path fill="#e1d2b2" d="M17 40 C34 26 58 20 72 22 L80 25 86 25 C95 28 103 34 109 41 L106 47 96 38 85 32 76 29 C57 28 39 32 19 48 L16 46Z" /><path fill="#e1d2b2" d="M32 59 C49 45 73 44 94 57 L95 60 93 65 C77 52 56 50 35 67 L32 64Z" /><path fill="#e1d2b2" d="M49 73 C58 65 72 67 80 74 L77 80 C69 74 63 73 52 82 L49 79Z" /><polygon points="65,89 72,97 65,105 57,97" fill="#e1d2b2"/></g>
+<g id="brass-left-arc-cuts"><polygon points="17,41 36,31 28,39 18,49 16,46" fill="#b79553"/><polygon points="32,60 45,55 38,64 34,67 32,64" fill="#b79553"/><polygon points="49,75 60,71 52,82 49,79" fill="#b79553"/><polygon points="57,97 62,95 62,101 65,105 64,106" fill="#b79553"/></g>
+</svg>

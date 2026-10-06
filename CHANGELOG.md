@@ -5,6 +5,10 @@ All notable changes to Mortal Needs will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.2] - 2026-10-06
+
+Updated the need illustrations, module seal, and interface control icons. Enlarged the toolbar launcher and fixed built-in needs retaining their old font icon after rule customization. Custom images and font icons are preserved. See [the update notes](CHANGELOG-3.0.2.md).
+
 ## [3.0.1] - 2026-09-10
 
 Fixes consequence repetition at maximum stress, temporary effect paths and D&D skill bonuses, and writable attribute choices for D&D and Pathfinder. Includes checks for player-originated capped stress and recovery. See [the full maintenance notes](CHANGELOG-3.0.1.md).

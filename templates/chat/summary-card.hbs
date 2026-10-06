@@ -13,7 +13,7 @@
     <div class="mn-chat-card__summary-list">
       {{#each needs}}
         <div class="mn-chat-card__summary-item">
-          <img class="mn-chat-card__need-image" src="{{needImage}}" alt="">
+          {{mnIcon needConfig class="mn-chat-card__need-image"}}
           <span class="mn-text-sm" style="flex: 1;">{{localize label}}</span>
           <span class="mn-text-xs mn-mono">{{value}}/{{max}}</span>
           <div class="mn-chat-card__bar" style="width: 60px;">

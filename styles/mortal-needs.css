@@ -32,3 +32,6 @@
 
 /* Embers play dock and shared typography. */
 @import url('./embers.css');
+
+/* Approved illustration and control artwork. */
+@import url('./icons.css');

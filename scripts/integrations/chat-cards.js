@@ -43,6 +43,7 @@ export class ChatCards {
       actorImg: entityInfo.img,
       needName: game.i18n.localize(needConfig.label),
       needIcon: needConfig.icon,
+      needConfig,
       needImage: needIconPath(needId),
       value, max, percentage, severity,
       severityLabel: `MORTAL_NEEDS.Severity.${severity.charAt(0).toUpperCase() + severity.slice(1)}`,
@@ -90,6 +91,7 @@ export class ChatCards {
       actorImg: entityInfo.img,
       needName: game.i18n.localize(needConfig.label),
       needIcon: needConfig.icon,
+      needConfig,
       needImage: needIconPath(needId),
       value: safeValue,
       max: safeMax,
@@ -145,6 +147,7 @@ export class ChatCards {
         id: config.id,
         label: config.label,
         icon: config.icon,
+        needConfig: config,
         needImage: needIconPath(config.id),
         value, max, percentage, severity,
       };

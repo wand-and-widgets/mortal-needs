@@ -45,6 +45,7 @@ def dependencies(manifest):
             for value in re.findall(r"url\(\s*['\"]?([^)'\"]+)", source):
                 if not re.match(r"(?:data:|https?:|#)", value):
                     pending.append((path.parent / unquote(value)).relative_to(ROOT).as_posix())
+        pending.extend(re.findall(r"assets/icons/[A-Za-z0-9_-]+\.svg", source))
         pending.extend(re.findall(r"templates/[A-Za-z0-9_./-]+\.hbs", source))
     return sorted(selected)
 

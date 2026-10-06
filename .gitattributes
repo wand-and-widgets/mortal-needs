@@ -1,0 +1,2 @@
+# Keep reviewed artwork byte-identical across Windows and CI checkouts.
+assets/icons/*.svg -text whitespace=cr-at-eol

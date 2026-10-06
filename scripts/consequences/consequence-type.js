@@ -45,7 +45,7 @@ export function getConsequenceDescription(type, config) {
 export class ConsequenceType {
   static TYPE = '';
   static LABEL = 'Consequence';
-  static ICON = 'fas fa-bolt';
+  static ICON = 'mn-icon fa-bolt';
   static CONFIG_SCHEMA = [];
 
   constructor(adapter) {

@@ -1,0 +1,131 @@
+/* Exact approved SVGs, opt-in only. Never replaces user or system Font Awesome icons. */
+.mn-icon {
+  display: inline-block;
+  flex-shrink: 0;
+  font-style: normal;
+  line-height: 1;
+  text-align: center;
+}
+.mn-icon[class*="fa-"]::before {
+  content: "";
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  vertical-align: -.125em;
+  background: var(--mn-icon-art) center / contain no-repeat;
+}
+button:hover > .mn-icon { filter: brightness(1.16); }
+/* The scene toolbar needs a full-size identity mark, independent of text sizing. */
+.mn-icon.mn-launcher-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+.mn-icon.mn-launcher-icon::before {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  vertical-align: middle;
+  background-image: url('../assets/icons/seal.svg');
+}
+.mn-need-icon {
+  width: 1.25em;
+  height: 1.25em;
+  object-fit: contain;
+  flex-shrink: 0;
+  vertical-align: middle;
+  border: 0;
+  border-radius: 0;
+}
+/* Small inline need portraits in History, presets, and the SessionFlow widget. */
+.mortal-needs-panel.mn-dialog :is(.mn-history-entry__need-icon, .mn-preset-preview__needs, .mn-preset-card__chips) .mn-need-icon,
+.mn-sf-widget .mn-need-icon,
+.mn-sf-toggle-need .mn-need-icon { width: 1.35em; height: 1.35em; }
+.mn-icon.fa-align-left { --mn-icon-art: url("../assets/icons/ui-align-left.svg"); }
+.mn-icon.fa-arrow-down { --mn-icon-art: url("../assets/icons/ui-arrow-down.svg"); }
+.mn-icon.fa-arrow-up { --mn-icon-art: url("../assets/icons/ui-arrow-up.svg"); }
+.mn-icon.fa-arrows-alt-v { --mn-icon-art: url("../assets/icons/ui-arrows-alt-v.svg"); }
+.mn-icon.fa-balance-scale { --mn-icon-art: url("../assets/icons/ui-balance-scale.svg"); }
+.mn-icon.fa-band-aid { --mn-icon-art: url("../assets/icons/pain.svg"); }
+.mn-icon.fa-bed { --mn-icon-art: url("../assets/icons/exhaustion.svg"); }
+.mn-icon.fa-bolt { --mn-icon-art: url("../assets/icons/ui-bolt.svg"); }
+.mn-icon.fa-brain { --mn-icon-art: url("../assets/icons/sanity.svg"); }
+.mn-icon.fa-bullhorn { --mn-icon-art: url("../assets/icons/ui-bullhorn.svg"); }
+.mn-icon.fa-campground { --mn-icon-art: url("../assets/icons/ui-campground.svg"); }
+.mn-icon.fa-chart-bar { --mn-icon-art: url("../assets/icons/ui-chart-bar.svg"); }
+.mn-icon.fa-chart-line { --mn-icon-art: url("../assets/icons/ui-chart-line.svg"); }
+.mn-icon.fa-check { --mn-icon-art: url("../assets/icons/ui-check.svg"); }
+.mn-icon.fa-check-circle { --mn-icon-art: url("../assets/icons/ui-check-circle.svg"); }
+.mn-icon.fa-check-square { --mn-icon-art: url("../assets/icons/ui-check-square.svg"); }
+.mn-icon.fa-chevron-down { --mn-icon-art: url("../assets/icons/ui-chevron-down.svg"); }
+.mn-icon.fa-chevron-right { --mn-icon-art: url("../assets/icons/ui-chevron-right.svg"); }
+.mn-icon.fa-chevron-up { --mn-icon-art: url("../assets/icons/ui-chevron-up.svg"); }
+.mn-icon.fa-circle-info { --mn-icon-art: url("../assets/icons/ui-circle-info.svg"); }
+.mn-icon.fa-clock { --mn-icon-art: url("../assets/icons/ui-clock.svg"); }
+.mn-icon.fa-cloud { --mn-icon-art: url("../assets/icons/environmental.svg"); }
+.mn-icon.fa-code { --mn-icon-art: url("../assets/icons/ui-code.svg"); }
+.mn-icon.fa-cog { --mn-icon-art: url("../assets/icons/ui-cog.svg"); }
+.mn-icon.fa-comment-alt { --mn-icon-art: url("../assets/icons/ui-comment-alt.svg"); }
+.mn-icon.fa-compress-arrows-alt { --mn-icon-art: url("../assets/icons/ui-compress-arrows-alt.svg"); }
+.mn-icon.fa-couch { --mn-icon-art: url("../assets/icons/comfort.svg"); }
+.mn-icon.fa-crosshairs { --mn-icon-art: url("../assets/icons/ui-crosshairs.svg"); }
+.mn-icon.fa-download { --mn-icon-art: url("../assets/icons/ui-download.svg"); }
+.mn-icon.fa-eraser { --mn-icon-art: url("../assets/icons/ui-eraser.svg"); }
+.mn-icon.fa-exclamation-triangle { --mn-icon-art: url("../assets/icons/ui-exclamation-triangle.svg"); }
+.mn-icon.fa-eye { --mn-icon-art: url("../assets/icons/fear.svg"); }
+.mn-icon.fa-eye-slash { --mn-icon-art: url("../assets/icons/ui-eye-slash.svg"); }
+.mn-icon.fa-feather-alt { --mn-icon-art: url("../assets/icons/ui-feather-alt.svg"); }
+.mn-icon.fa-file-code { --mn-icon-art: url("../assets/icons/ui-file-code.svg"); }
+.mn-icon.fa-file-export { --mn-icon-art: url("../assets/icons/ui-file-export.svg"); }
+.mn-icon.fa-file-import { --mn-icon-art: url("../assets/icons/ui-file-import.svg"); }
+.mn-icon.fa-filter { --mn-icon-art: url("../assets/icons/ui-filter.svg"); }
+.mn-icon.fa-fire { --mn-icon-art: url("../assets/icons/ui-fire.svg"); }
+.mn-icon.fa-heartbeat { --mn-icon-art: url("../assets/icons/ui-heartbeat.svg"); }
+.mn-icon.fa-history { --mn-icon-art: url("../assets/icons/ui-history.svg"); }
+.mn-icon.fa-hourglass-half { --mn-icon-art: url("../assets/icons/ui-hourglass-half.svg"); }
+.mn-icon.fa-hourglass-start { --mn-icon-art: url("../assets/icons/ui-hourglass-start.svg"); }
+.mn-icon.fa-leaf { --mn-icon-art: url("../assets/icons/environmental.svg"); }
+.mn-icon.fa-link { --mn-icon-art: url("../assets/icons/ui-link.svg"); }
+.mn-icon.fa-list { --mn-icon-art: url("../assets/icons/ui-list.svg"); }
+.mn-icon.fa-lock { --mn-icon-art: url("../assets/icons/ui-lock.svg"); }
+.mn-icon.fa-magic { --mn-icon-art: url("../assets/icons/ui-magic.svg"); }
+.mn-icon.fa-minus { --mn-icon-art: url("../assets/icons/ui-minus.svg"); }
+.mn-icon.fa-moon { --mn-icon-art: url("../assets/icons/fatigue.svg"); }
+.mn-icon.fa-mountain { --mn-icon-art: url("../assets/icons/ui-mountain.svg"); }
+.mn-icon.fa-pen { --mn-icon-art: url("../assets/icons/ui-pen.svg"); }
+.mn-icon.fa-pencil { --mn-icon-art: url("../assets/icons/ui-pen.svg"); }
+.mn-icon.fa-plus { --mn-icon-art: url("../assets/icons/ui-plus.svg"); }
+.mn-icon.fa-question { --mn-icon-art: url("../assets/icons/ui-question.svg"); }
+.mn-icon.fa-radiation { --mn-icon-art: url("../assets/icons/radiation.svg"); }
+.mn-icon.fa-rocket { --mn-icon-art: url("../assets/icons/ui-rocket.svg"); }
+.mn-icon.fa-rotate { --mn-icon-art: url("../assets/icons/ui-rotate.svg"); }
+.mn-icon.fa-route { --mn-icon-art: url("../assets/icons/ui-route.svg"); }
+.mn-icon.fa-save { --mn-icon-art: url("../assets/icons/ui-save.svg"); }
+.mn-icon.fa-search { --mn-icon-art: url("../assets/icons/ui-search.svg"); }
+.mn-icon.fa-shield-alt { --mn-icon-art: url("../assets/icons/ui-shield-alt.svg"); }
+.mn-icon.fa-shoe-prints { --mn-icon-art: url("../assets/icons/ui-shoe-prints.svg"); }
+.mn-icon.fa-sign-in-alt { --mn-icon-art: url("../assets/icons/ui-sign-in-alt.svg"); }
+.mn-icon.fa-skull { --mn-icon-art: url("../assets/icons/ui-skull.svg"); }
+.mn-icon.fa-sliders-h { --mn-icon-art: url("../assets/icons/ui-sliders-h.svg"); }
+.mn-icon.fa-smile { --mn-icon-art: url("../assets/icons/morale.svg"); }
+.mn-icon.fa-snowflake { --mn-icon-art: url("../assets/icons/cold.svg"); }
+.mn-icon.fa-star { --mn-icon-art: url("../assets/icons/ui-star.svg"); }
+.mn-icon.fa-sun { --mn-icon-art: url("../assets/icons/heat.svg"); }
+.mn-icon.fa-terminal { --mn-icon-art: url("../assets/icons/ui-terminal.svg"); }
+.mn-icon.fa-theater-masks { --mn-icon-art: url("../assets/icons/ui-theater-masks.svg"); }
+.mn-icon.fa-times { --mn-icon-art: url("../assets/icons/ui-times.svg"); }
+.mn-icon.fa-tint { --mn-icon-art: url("../assets/icons/thirst.svg"); }
+.mn-icon.fa-trash { --mn-icon-art: url("../assets/icons/ui-trash.svg"); }
+.mn-icon.fa-triangle-exclamation { --mn-icon-art: url("../assets/icons/ui-exclamation-triangle.svg"); }
+.mn-icon.fa-tv { --mn-icon-art: url("../assets/icons/ui-tv.svg"); }
+.mn-icon.fa-undo { --mn-icon-art: url("../assets/icons/ui-undo.svg"); }
+.mn-icon.fa-undo-alt { --mn-icon-art: url("../assets/icons/ui-undo.svg"); }
+.mn-icon.fa-upload { --mn-icon-art: url("../assets/icons/ui-upload.svg"); }
+.mn-icon.fa-user-plus { --mn-icon-art: url("../assets/icons/ui-user-plus.svg"); }
+.mn-icon.fa-user-secret { --mn-icon-art: url("../assets/icons/ui-user-secret.svg"); }
+.mn-icon.fa-users { --mn-icon-art: url("../assets/icons/ui-users.svg"); }
+.mn-icon.fa-users-slash { --mn-icon-art: url("../assets/icons/ui-users-slash.svg"); }
+.mn-icon.fa-utensils { --mn-icon-art: url("../assets/icons/ui-utensils.svg"); }
+.mn-icon.fa-wifi { --mn-icon-art: url("../assets/icons/ui-wifi.svg"); }
+.mn-icon.fa-window-restore { --mn-icon-art: url("../assets/icons/ui-window-restore.svg"); }

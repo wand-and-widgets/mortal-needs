@@ -4,7 +4,7 @@ import { ConsequenceType, registerConsequenceType } from './consequence-type.js'
 export class ChatNotifyConsequence extends ConsequenceType {
   static TYPE = 'chat-notify';
   static LABEL = 'MORTAL_NEEDS.Consequences.ChatNotify';
-  static ICON = 'fas fa-comment-alt';
+  static ICON = 'mn-icon fa-comment-alt';
   static CONFIG_SCHEMA = [
     { key: 'message', type: 'text', label: 'MORTAL_NEEDS.Consequences.Message' },
     { key: 'whisperGM', type: 'boolean', label: 'MORTAL_NEEDS.Consequences.WhisperGM', default: false },

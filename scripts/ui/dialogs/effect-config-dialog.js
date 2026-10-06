@@ -22,7 +22,7 @@ export class EffectConfigDialog extends HandlebarsApplicationMixin(ApplicationV2
     tag: 'div',
     window: {
       title: 'MORTAL_NEEDS.EffectConfig.Title',
-      icon: 'fas fa-bolt',
+      icon: 'mn-icon fa-bolt',
       resizable: false,
     },
     position: {
@@ -97,7 +97,7 @@ export class EffectConfigDialog extends HandlebarsApplicationMixin(ApplicationV2
       types,
       selectedType: this.#selectedType,
       selectedTypeLabel: selectedTypeInfo ? game.i18n.localize(selectedTypeInfo.label) : this.#selectedType,
-      selectedTypeIcon: selectedTypeInfo?.icon || 'fas fa-bolt',
+      selectedTypeIcon: selectedTypeInfo?.icon || 'mn-icon fa-bolt',
       typeChips: types.map(type => ({
         ...type,
         label: game.i18n.localize(type.label),

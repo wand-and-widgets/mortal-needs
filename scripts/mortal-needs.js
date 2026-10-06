@@ -10,6 +10,7 @@ import { SocketManager } from './core/socket-manager.js';
 import { TimeEngine } from './core/time-engine.js';
 import { MovementEngine } from './core/movement-engine.js';
 import { isResponsibleGM } from './core/access.js';
+import { controlIcon, controlIconClass } from './ui/control-icons.js';
 import { needIcon } from './ui/need-icons.js';
 
 // Consequence types (self-registering)
@@ -138,7 +139,7 @@ class MortalNeeds {
         this.store.trackEntity(id, {
           source: EntitySource.ACTOR,
           name: actor.name,
-          img: actor.img || actor.prototypeToken?.texture?.src || 'icons/svg/mystery-man.svg',
+          img: actor.img || actor.prototypeToken?.texture?.src || 'modules/mortal-needs/assets/icons/fallback-portrait.svg',
         });
         await this.store.loadActorNeeds(actor);
         if (isResponsibleGM()) {
@@ -166,7 +167,7 @@ class MortalNeeds {
           this.store.trackEntity(charId, {
             source: EntitySource.EXALTED_SCENES,
             name: char.name,
-            img: char.thumbnail || char.image || 'icons/svg/mystery-man.svg',
+            img: char.thumbnail || char.image || 'modules/mortal-needs/assets/icons/fallback-portrait.svg',
             linkedActorId: char.actorId || null,
           });
           await this.store.loadESCharacterNeeds(charId);
@@ -185,7 +186,7 @@ class MortalNeeds {
             this.store.trackEntity(characterId, {
               source: EntitySource.EXALTED_SCENES,
               name: char.name,
-              img: char.thumbnail || char.image || 'icons/svg/mystery-man.svg',
+              img: char.thumbnail || char.image || 'modules/mortal-needs/assets/icons/fallback-portrait.svg',
               linkedActorId: char.actorId || null,
             });
           }
@@ -210,7 +211,7 @@ class MortalNeeds {
         this.store.trackEntity(actor.id, {
           source: EntitySource.ACTOR,
           name: actor.name,
-          img: actor.img || actor.prototypeToken?.texture?.src || 'icons/svg/mystery-man.svg',
+          img: actor.img || actor.prototypeToken?.texture?.src || 'modules/mortal-needs/assets/icons/fallback-portrait.svg',
         });
         const flat = foundry.utils.flattenObject(changes);
         if (Object.keys(flat).some(key => key === `flags.${MODULE_ID}.needs` || key.startsWith(`flags.${MODULE_ID}.needs.`))) {
@@ -266,7 +267,7 @@ class MortalNeeds {
         const character = es.characters.get(id);
         if (!character) continue;
         this.store.trackEntity(id, { source: EntitySource.EXALTED_SCENES, name: character.name,
-          img: character.thumbnail || character.image || 'icons/svg/mystery-man.svg', linkedActorId: character.actorId || null });
+          img: character.thumbnail || character.image || 'modules/mortal-needs/assets/icons/fallback-portrait.svg', linkedActorId: character.actorId || null });
         await this.store.loadESCharacterNeeds(id);
       }
     }
@@ -321,7 +322,9 @@ Hooks.once('init', () => {
   ]);
 
   // Register Handlebars helpers
-  Handlebars.registerHelper('mnIcon', config => new Handlebars.SafeString(needIcon(config)));
+  Handlebars.registerHelper('mnControlIcon', icon => new Handlebars.SafeString(controlIcon(icon)));
+  Handlebars.registerHelper('mnControlClass', icon => controlIconClass(icon));
+  Handlebars.registerHelper('mnIcon', (config, options) => new Handlebars.SafeString(needIcon(config, options.hash.class || 'mn-need-icon')));
   Handlebars.registerHelper('mnPercentage', (value, max) => {
     return NeedsEngine.getPercentage(value, max);
   });
@@ -355,7 +358,7 @@ Hooks.once('init', () => {
     const tool = {
       name: 'mortal-needs',
       title: 'MORTAL_NEEDS.Controls.Toggle',
-      icon: 'fas fa-heartbeat',
+      icon: 'mn-icon mn-launcher-icon fa-heartbeat',
       button: true,
       onChange: () => mortalNeeds.toggle(),
     };

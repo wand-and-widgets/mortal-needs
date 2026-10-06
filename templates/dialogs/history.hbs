@@ -1,7 +1,7 @@
 <div class="mn-dialog__body mn-history-shell">
   <header class="mn-history-hero">
     <div class="mn-history-hero__title">
-      <span class="mn-history-hero__mark"><i class="fas fa-history"></i></span>
+      <span class="mn-history-hero__mark"><i class="mn-icon fa-history" aria-hidden="true"></i></span>
       <div>
         <h2>{{localize "MORTAL_NEEDS.History.Title"}}</h2>
         <p>{{localize "MORTAL_NEEDS.History.Subtitle"}}</p>
@@ -40,21 +40,21 @@
     </select>
 
     <label class="mn-history-search">
-      <i class="fas fa-search"></i>
+      <i class="mn-icon fa-search" aria-hidden="true"></i>
       <input type="search" data-history-filter="query" placeholder="{{localize 'MORTAL_NEEDS.History.SearchPlaceholder'}}" autocomplete="off">
     </label>
 
     <div class="mn-history-actions">
       <button type="button" class="mn-history-action" data-action="refresh-history" data-tooltip="{{localize 'MORTAL_NEEDS.History.Refresh'}}">
-        <i class="fas fa-rotate"></i>
+        <i class="mn-icon fa-rotate" aria-hidden="true"></i>
         <span>{{localize "MORTAL_NEEDS.History.Refresh"}}</span>
       </button>
       <button type="button" class="mn-history-action" data-action="export-history" data-tooltip="{{localize 'MORTAL_NEEDS.History.Export'}}" {{#unless hasEntries}}disabled{{/unless}}>
-        <i class="fas fa-file-export"></i>
+        <i class="mn-icon fa-file-export" aria-hidden="true"></i>
         <span>{{localize "MORTAL_NEEDS.History.Export"}}</span>
       </button>
       <button type="button" class="mn-history-action mn-history-action--danger" data-action="clear-history" data-tooltip="{{localize 'MORTAL_NEEDS.History.Clear'}}" {{#unless canClear}}disabled{{/unless}}>
-        <i class="fas fa-trash"></i>
+        <i class="mn-icon fa-trash" aria-hidden="true"></i>
         <span>{{localize "MORTAL_NEEDS.History.Clear"}}</span>
       </button>
     </div>
@@ -93,7 +93,7 @@
               <img class="mn-history-entry__portrait" src="{{actorImg}}" alt="{{entityName}}">
 
               <span class="mn-history-entry__need-icon mn-history-entry__need-icon--{{newSeverity}}">
-                <i class="fas {{needIcon}}"></i>
+                {{mnIcon needConfig}}
               </span>
 
               <div class="mn-history-entry__main">
@@ -102,7 +102,7 @@
               </div>
 
               <span class="mn-history-source mn-history-source--{{sourceClass}}">
-                <i class="fas {{sourceIcon}}"></i>
+                {{mnControlIcon sourceIcon}}
                 {{sourceLabel}}
               </span>
 
@@ -114,13 +114,13 @@
         </div>
 
         <div class="mn-history-empty-state mn-history-empty-state--filter" data-history-filter-empty hidden>
-          <i class="fas fa-filter"></i>
+          <i class="mn-icon fa-filter" aria-hidden="true"></i>
           <strong>{{localize "MORTAL_NEEDS.History.NoMatches"}}</strong>
           <span>{{localize "MORTAL_NEEDS.History.NoMatchesHint"}}</span>
         </div>
       {{else}}
         <div class="mn-history-empty-state">
-          <i class="fas fa-hourglass-start"></i>
+          <i class="mn-icon fa-hourglass-start" aria-hidden="true"></i>
           <strong>{{localize "MORTAL_NEEDS.History.EmptyTitle"}}</strong>
           <span>{{localize "MORTAL_NEEDS.History.EmptyHint"}}</span>
         </div>

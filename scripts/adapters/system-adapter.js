@@ -79,7 +79,7 @@ export class SystemAdapter {
         const statusEffect = this.getAvailableConditions().find(se => se.id === statusId);
         await actor.createEmbeddedDocuments('ActiveEffect', [{
           name: statusEffect?.name ?? statusEffect?.label ?? statusId,
-          icon: statusEffect?.icon ?? statusEffect?.img ?? 'icons/svg/aura.svg',
+          icon: statusEffect?.icon ?? statusEffect?.img ?? 'modules/mortal-needs/assets/icons/fallback-aura.svg',
           statuses: [statusId],
           flags: { [MODULE_ID]: flags },
         }]);

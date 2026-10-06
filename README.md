@@ -1,14 +1,20 @@
 # Mortal Needs
 
 ![Foundry VTT](https://img.shields.io/badge/Foundry%20VTT-v12--v14-informational)
-![Version](https://img.shields.io/badge/Version-3.0.1-blue)
+![Version](https://img.shields.io/badge/Version-3.0.2-blue)
 [![Patreon](https://img.shields.io/badge/Patreon-Wand%20%26%20Widgets-orange)](https://www.patreon.com/WandAndWidgets)
 
 Bring everyday needs into the story. Mortal Needs helps you track hunger, thirst, cold, fear, comfort, and other pressures in Foundry VTT, with a small interface that leaves room for the game itself.
 
 **Free to install and use. No purchase or Patreon subscription is required.**
 
-## What's new in 3.0
+## What's new in 3.0.2
+
+The needs and interface controls now use a matching set of gothic SVG icons. The toolbar button uses a larger gold seal, and built-in needs keep their new illustrations when you customize their rules. Your custom images and font icons still work.
+
+Read the [3.0.2 update notes](CHANGELOG-3.0.2.md).
+
+## The 3.0 dock
 
 - A compact, movable GM dock with original SVG icons and readable states.
 - Need meters you can drag as the scene unfolds, with exact values and keyboard controls when you need them.
@@ -37,7 +43,7 @@ https://github.com/wand-and-widgets/mortal-needs/releases/latest/download/module
 
 ## Using the dock
 
-Open Mortal Needs from the heartbeat control in Foundry's token tools. Use the dock's character selection and configuration controls to choose who and what to track.
+Open Mortal Needs from the gold seal in Foundry's token tools. Use the dock's character selection and configuration controls to choose who and what to track.
 
 Drag the header to move the dock. Collapse it between scenes. Each user's position and collapse choice are remembered for that world.
 
@@ -61,7 +67,7 @@ English and Brazilian Portuguese translations are included. Fonts load locally w
 
 ## Compatibility
 
-The manifest allows Foundry VTT 12 through 14. Live checks cover **Foundry 14.360 with D&D 5e 5.3.3**, **Foundry 13.351 with D&D 5e 5.1.5**, and **Foundry 14.360 with Pathfinder 2e 8.1.2**. D&D follows the world's 2014 or 2024 rules setting. The D&D checks include separate GM and player sessions.
+The manifest allows Foundry VTT 12 through 14. The 3.0.2 icon update was checked in **Foundry 14.368 with D&D 5e 6.0.5**, including separate GM and player views. Earlier 3.0.1 compatibility checks covered **Foundry 14.360 with D&D 5e 5.3.3**, **Foundry 13.351 with D&D 5e 5.1.5**, and **Foundry 14.360 with Pathfinder 2e 8.1.2**. D&D follows the world's 2014 or 2024 rules setting.
 
 Adapters are included for D&D 5e, Pathfinder 2e, Savage Worlds, and WFRP 4e, with a generic adapter for other systems. Available consequences depend on the system. Foundry 12, newer Pathfinder releases, other adapters, and the optional SessionFlow and Exalted Scenes integrations have not received the same live validation for this update.
 

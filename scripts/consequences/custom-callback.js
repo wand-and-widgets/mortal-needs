@@ -3,7 +3,7 @@ import { ConsequenceType, registerConsequenceType } from './consequence-type.js'
 export class CustomCallbackConsequence extends ConsequenceType {
   static TYPE = 'custom-callback';
   static LABEL = 'MORTAL_NEEDS.Consequences.CustomCallback';
-  static ICON = 'fas fa-code';
+  static ICON = 'mn-icon fa-code';
   static CONFIG_SCHEMA = [
     { key: 'callbackId', type: 'text', label: 'MORTAL_NEEDS.Consequences.CallbackId' },
   ];

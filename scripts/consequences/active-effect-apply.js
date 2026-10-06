@@ -8,7 +8,7 @@ import { effectChanges, effectChangeMode, effectChangeData } from '../core/effec
 export class ActiveEffectApplyConsequence extends ConsequenceType {
   static TYPE = 'active-effect';
   static LABEL = 'MORTAL_NEEDS.Consequences.ActiveEffectApply';
-  static ICON = 'fas fa-magic';
+  static ICON = 'mn-icon fa-magic';
   static CONFIG_SCHEMA = [
     { key: 'effectName', type: 'text', label: 'MORTAL_NEEDS.Consequences.EffectName' },
     { key: 'changeKey', type: 'text', label: 'MORTAL_NEEDS.Consequences.ChangeKey', placeholder: 'system.attributes.hp.max' },

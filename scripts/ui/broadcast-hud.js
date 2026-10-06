@@ -1,3 +1,4 @@
+import { controlIcon } from './control-icons.js';
 import { MODULE_ID, Events } from '../constants.js';
 import { NeedsEngine } from '../core/needs-engine.js';
 import { needIcon, needColor } from './need-icons.js';
@@ -125,7 +126,7 @@ export class BroadcastHUD {
 
     const title = document.createElement('span');
     title.className = 'mn-broadcast__title';
-    title.innerHTML = `<i class="fas fa-heartbeat"></i> <span class="mn-broadcast__title-text">${game.i18n.localize('MORTAL_NEEDS.SessionFlow.BroadcastTitle')}</span>`;
+    title.innerHTML = `<i class="mn-icon fa-heartbeat" aria-hidden="true"></i> <span class="mn-broadcast__title-text">${game.i18n.localize('MORTAL_NEEDS.SessionFlow.BroadcastTitle')}</span>`;
     header.appendChild(title);
 
     const actions = document.createElement('div');
@@ -180,7 +181,7 @@ export class BroadcastHUD {
     button.dataset.mnBroadcastAction = action;
     button.title = title;
     button.setAttribute('aria-label', title);
-    button.innerHTML = `<i class="fas ${icon}"></i>`;
+    button.innerHTML = `${controlIcon(icon)}`;
     return button;
   }
 
@@ -465,7 +466,7 @@ export class BroadcastHUD {
     button.dataset.needId = needId;
     button.title = title;
     button.setAttribute('aria-label', title);
-    button.innerHTML = `<i class="fas ${icon}"></i>`;
+    button.innerHTML = `${controlIcon(icon)}`;
     return button;
   }
 

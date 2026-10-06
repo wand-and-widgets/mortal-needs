@@ -2,7 +2,7 @@
   <aside class="mn-config-rail">
     <div class="mn-config-rail__search">
       <label class="mn-config-search-field">
-        <i class="fas fa-search" aria-hidden="true"></i>
+        <i class="mn-icon fa-search" aria-hidden="true"></i>
         <input class="mn-toolbar__search mn-config-search" type="text" placeholder="{{localize 'MORTAL_NEEDS.Config.SearchPlaceholder'}}">
       </label>
     </div>
@@ -10,19 +10,19 @@
     <section class="mn-config-rail__group mn-config-rail__group--overview">
       <h3 class="mn-config-rail__section-label">{{localize "MORTAL_NEEDS.Config.SidebarOverview"}}</h3>
       <div class="mn-config-rail__stats">
-        <div><i class="fas fa-check-square"></i><span>{{localize "MORTAL_NEEDS.Config.EnabledCount"}}</span><strong class="mn-config-enabled-count">{{enabledCount}}/{{totalCount}}</strong></div>
-        <div><i class="fas fa-star"></i><span>{{localize "MORTAL_NEEDS.Config.CustomCount"}}</span><strong>{{customCount}}</strong></div>
-        <div><i class="fas fa-hourglass-half"></i><span>{{localize "MORTAL_NEEDS.Config.DecayCount"}}</span><strong>{{decayCount}}</strong></div>
-        <div><i class="fas fa-shoe-prints"></i><span>{{localize "MORTAL_NEEDS.Config.MovementCount"}}</span><strong>{{movementCount}}</strong></div>
+        <div><i class="mn-icon fa-check-square" aria-hidden="true"></i><span>{{localize "MORTAL_NEEDS.Config.EnabledCount"}}</span><strong class="mn-config-enabled-count">{{enabledCount}}/{{totalCount}}</strong></div>
+        <div><i class="mn-icon fa-star" aria-hidden="true"></i><span>{{localize "MORTAL_NEEDS.Config.CustomCount"}}</span><strong>{{customCount}}</strong></div>
+        <div><i class="mn-icon fa-hourglass-half" aria-hidden="true"></i><span>{{localize "MORTAL_NEEDS.Config.DecayCount"}}</span><strong>{{decayCount}}</strong></div>
+        <div><i class="mn-icon fa-shoe-prints" aria-hidden="true"></i><span>{{localize "MORTAL_NEEDS.Config.MovementCount"}}</span><strong>{{movementCount}}</strong></div>
       </div>
     </section>
 
     <section class="mn-config-rail__group mn-config-rail__group--sections">
       <h3 class="mn-config-rail__section-label">{{localize "MORTAL_NEEDS.Config.SidebarSections"}}</h3>
       <div class="mn-dialog__tabs mn-dialog__tabs--rail">
-        <button type="button" class="mn-dialog__tab is-active" data-tab="needs"><i class="fas fa-utensils mn-config-tab__icon"></i><span>{{localize "MORTAL_NEEDS.Config.NeedsTab"}}</span><i class="fas fa-chevron-right mn-config-tab__chevron" aria-hidden="true"></i></button>
-        <button type="button" class="mn-dialog__tab" data-tab="presets"><i class="fas fa-star mn-config-tab__icon"></i><span>{{localize "MORTAL_NEEDS.Config.PresetsTab"}}</span><i class="fas fa-chevron-right mn-config-tab__chevron" aria-hidden="true"></i></button>
-        <button type="button" class="mn-dialog__tab" data-tab="import-export"><i class="fas fa-sign-in-alt mn-config-tab__icon"></i><span>{{localize "MORTAL_NEEDS.Config.ImportExportTab"}}</span><i class="fas fa-chevron-right mn-config-tab__chevron" aria-hidden="true"></i></button>
+        <button type="button" class="mn-dialog__tab is-active" data-tab="needs"><i class="mn-icon fa-utensils mn-config-tab__icon" aria-hidden="true"></i><span>{{localize "MORTAL_NEEDS.Config.NeedsTab"}}</span><i class="mn-icon fa-chevron-right mn-config-tab__chevron" aria-hidden="true"></i></button>
+        <button type="button" class="mn-dialog__tab" data-tab="presets"><i class="mn-icon fa-star mn-config-tab__icon" aria-hidden="true"></i><span>{{localize "MORTAL_NEEDS.Config.PresetsTab"}}</span><i class="mn-icon fa-chevron-right mn-config-tab__chevron" aria-hidden="true"></i></button>
+        <button type="button" class="mn-dialog__tab" data-tab="import-export"><i class="mn-icon fa-sign-in-alt mn-config-tab__icon" aria-hidden="true"></i><span>{{localize "MORTAL_NEEDS.Config.ImportExportTab"}}</span><i class="mn-icon fa-chevron-right mn-config-tab__chevron" aria-hidden="true"></i></button>
       </div>
     </section>
   </aside>
@@ -31,7 +31,7 @@
     <div class="mn-dialog__tab-content mn-config-tab mn-config-tab--needs" data-tab-content="needs">
       <section class="mn-config-list-panel">
         <header class="mn-config-list-panel__header">
-          <h2><i class="fas fa-utensils"></i> {{localize "MORTAL_NEEDS.Config.NeedsTab"}}</h2>
+          <h2><i class="mn-icon fa-utensils" aria-hidden="true"></i> {{localize "MORTAL_NEEDS.Config.NeedsTab"}}</h2>
         </header>
 
         <div class="mn-config-table">
@@ -48,7 +48,7 @@
               <div class="mn-need-config-row {{#if isPreview}}is-selected{{/if}} {{#unless enabled}}is-disabled{{/unless}}" data-need-id="{{id}}">
                 <label class="mn-config-toggle" data-tooltip="{{localize 'MORTAL_NEEDS.NeedEdit.Enabled'}}">
                   <input type="checkbox" name="needs.{{id}}.enabled" {{#if enabled}}checked{{/if}}>
-                  <span><i class="fas fa-check"></i></span>
+                  <span><i class="mn-icon fa-check" aria-hidden="true"></i></span>
                 </label>
 
                 <div class="mn-config-need-cell">
@@ -73,19 +73,19 @@
                     <span class="mn-config-pill mn-config-pill--default">{{localize "MORTAL_NEEDS.Config.DefaultTrait"}}</span>
                   {{/if}}
                   {{#if decayEnabled}}
-                    <span class="mn-config-icon-pill" data-tooltip="{{localize 'MORTAL_NEEDS.NeedEdit.Decay'}}"><i class="fas fa-hourglass-half"></i></span>
+                    <span class="mn-config-icon-pill" data-tooltip="{{localize 'MORTAL_NEEDS.NeedEdit.Decay'}}"><i class="mn-icon fa-hourglass-half" aria-hidden="true"></i></span>
                   {{/if}}
                   {{#if movementEnabled}}
-                    <span class="mn-config-icon-pill" data-tooltip="{{localize 'MORTAL_NEEDS.NeedEdit.Movement'}}"><i class="fas fa-shoe-prints"></i></span>
+                    <span class="mn-config-icon-pill" data-tooltip="{{localize 'MORTAL_NEEDS.NeedEdit.Movement'}}"><i class="mn-icon fa-shoe-prints" aria-hidden="true"></i></span>
                   {{/if}}
                   {{#if isInverted}}
-                    <span class="mn-config-icon-pill" data-tooltip="{{localize 'MORTAL_NEEDS.NeedEdit.Inverted'}}"><i class="fas fa-arrow-down"></i></span>
+                    <span class="mn-config-icon-pill" data-tooltip="{{localize 'MORTAL_NEEDS.NeedEdit.Inverted'}}"><i class="mn-icon fa-arrow-down" aria-hidden="true"></i></span>
                   {{/if}}
                   {{#if isGMOnly}}
-                    <span class="mn-config-icon-pill" data-tooltip="{{localize 'MORTAL_NEEDS.NeedEdit.GMOnly'}}"><i class="fas fa-user-secret"></i></span>
+                    <span class="mn-config-icon-pill" data-tooltip="{{localize 'MORTAL_NEEDS.NeedEdit.GMOnly'}}"><i class="mn-icon fa-user-secret" aria-hidden="true"></i></span>
                   {{/if}}
                   {{#if showAboveZeroOnly}}
-                    <span class="mn-config-icon-pill" data-tooltip="{{localize 'MORTAL_NEEDS.NeedEdit.ShowAboveZeroOnly'}}"><i class="fas fa-eye-slash"></i></span>
+                    <span class="mn-config-icon-pill" data-tooltip="{{localize 'MORTAL_NEEDS.NeedEdit.ShowAboveZeroOnly'}}"><i class="mn-icon fa-eye-slash" aria-hidden="true"></i></span>
                   {{/if}}
                   {{#if hasCustomColor}}
                     <span class="mn-config-icon-pill" data-tooltip="{{localize 'MORTAL_NEEDS.Config.CustomColorTrait'}}"><span class="mn-config-color-dot" style="--mn-need-color: {{color}};"></span></span>
@@ -96,14 +96,14 @@
                 </div>
 
                 <div class="mn-config-actions-cell">
-                  <button class="mn-icon-btn" data-action="move-need-up" data-need-id="{{id}}" data-tooltip="{{localize 'MORTAL_NEEDS.Config.MoveNeedUp'}}" {{#unless canMoveUp}}disabled{{/unless}}>
-                    <i class="fas fa-chevron-up"></i>
+                  <button class="mn-icon-btn" data-action="move-need-up" data-need-id="{{id}}" data-tooltip="{{localize 'MORTAL_NEEDS.Config.MoveNeedUp'}}" {{#unless canMoveUp}}disabled{{/unless}} aria-label="{{localize 'MORTAL_NEEDS.Config.MoveNeedUp'}}">
+                    <i class="mn-icon fa-chevron-up" aria-hidden="true"></i>
                   </button>
-                  <button class="mn-icon-btn" data-action="move-need-down" data-need-id="{{id}}" data-tooltip="{{localize 'MORTAL_NEEDS.Config.MoveNeedDown'}}" {{#unless canMoveDown}}disabled{{/unless}}>
-                    <i class="fas fa-chevron-down"></i>
+                  <button class="mn-icon-btn" data-action="move-need-down" data-need-id="{{id}}" data-tooltip="{{localize 'MORTAL_NEEDS.Config.MoveNeedDown'}}" {{#unless canMoveDown}}disabled{{/unless}} aria-label="{{localize 'MORTAL_NEEDS.Config.MoveNeedDown'}}">
+                    <i class="mn-icon fa-chevron-down" aria-hidden="true"></i>
                   </button>
-                  <button class="mn-icon-btn" data-action="edit-need" data-need-id="{{id}}" data-tooltip="{{localize 'MORTAL_NEEDS.Config.EditNeed'}}">
-                    <i class="fas fa-pen"></i>
+                  <button class="mn-icon-btn" data-action="edit-need" data-need-id="{{id}}" data-tooltip="{{localize 'MORTAL_NEEDS.Config.EditNeed'}}" aria-label="{{localize 'MORTAL_NEEDS.Config.EditNeed'}}">
+                    <i class="mn-icon fa-pen" aria-hidden="true"></i>
                   </button>
                 </div>
               </div>
@@ -154,10 +154,10 @@
             <div data-recommendations>{{{recommendations}}}</div>
 
             <div class="mn-config-preview__facts">
-              <div><i class="fas fa-bolt"></i><span class="mn-config-preview__stress">{{previewNeed.stressAmount}} {{localize "MORTAL_NEEDS.Config.StressPerClick"}}</span></div>
-              <div><i class="fas fa-balance-scale"></i><span class="mn-config-preview__consequences">{{previewNeed.consequenceCount}} {{localize "MORTAL_NEEDS.Config.ConsequenceCount"}}</span></div>
-              <div><i class="fas fa-hourglass-half"></i><span class="mn-config-preview__decay">{{#if previewNeed.decayEnabled}}{{#if previewNeed.isInverted}}-{{else}}+{{/if}}{{previewNeed.decayRate}} / {{previewNeed.decayInterval}}s{{else}}{{localize "MORTAL_NEEDS.Config.DecayOff"}}{{/if}}</span></div>
-              <div><i class="fas fa-shoe-prints"></i><span class="mn-config-preview__movement">{{#if previewNeed.movementEnabled}}{{#if previewNeed.isInverted}}-{{else}}+{{/if}}{{previewNeed.movementAmount}} / {{previewNeed.movementInterval}} {{previewNeed.movementMetricLabel}}{{else}}{{localize "MORTAL_NEEDS.Config.MovementOff"}}{{/if}}</span></div>
+              <div><i class="mn-icon fa-bolt" aria-hidden="true"></i><span class="mn-config-preview__stress">{{previewNeed.stressAmount}} {{localize "MORTAL_NEEDS.Config.StressPerClick"}}</span></div>
+              <div><i class="mn-icon fa-balance-scale" aria-hidden="true"></i><span class="mn-config-preview__consequences">{{previewNeed.consequenceCount}} {{localize "MORTAL_NEEDS.Config.ConsequenceCount"}}</span></div>
+              <div><i class="mn-icon fa-hourglass-half" aria-hidden="true"></i><span class="mn-config-preview__decay">{{#if previewNeed.decayEnabled}}{{#if previewNeed.isInverted}}-{{else}}+{{/if}}{{previewNeed.decayRate}} / {{previewNeed.decayInterval}}s{{else}}{{localize "MORTAL_NEEDS.Config.DecayOff"}}{{/if}}</span></div>
+              <div><i class="mn-icon fa-shoe-prints" aria-hidden="true"></i><span class="mn-config-preview__movement">{{#if previewNeed.movementEnabled}}{{#if previewNeed.isInverted}}-{{else}}+{{/if}}{{previewNeed.movementAmount}} / {{previewNeed.movementInterval}} {{previewNeed.movementMetricLabel}}{{else}}{{localize "MORTAL_NEEDS.Config.MovementOff"}}{{/if}}</span></div>
             </div>
 
             <div class="mn-config-threshold">
@@ -191,12 +191,12 @@
 
       <div class="mn-dialog__footer mn-dialog__footer--inline">
         <button class="mn-btn mn-btn--secondary" data-action="add-custom-need">
-          <i class="fas fa-plus"></i>
+          <i class="mn-icon fa-plus" aria-hidden="true"></i>
           <span>{{localize "MORTAL_NEEDS.Config.AddCustomNeed"}}</span>
         </button>
         <span class="mn-flex-spacer"></span>
         <button class="mn-btn mn-btn--primary" data-action="save">
-          <i class="fas fa-save"></i>
+          <i class="mn-icon fa-save" aria-hidden="true"></i>
           <span>{{localize "Save"}}</span>
         </button>
       </div>
@@ -206,7 +206,7 @@
       <section class="mn-presets-panel">
         <header class="mn-presets-panel__header">
           <div>
-            <h2><i class="fas fa-star"></i> {{localize "MORTAL_NEEDS.Config.PresetsTab"}}</h2>
+            <h2><i class="mn-icon fa-star" aria-hidden="true"></i> {{localize "MORTAL_NEEDS.Config.PresetsTab"}}</h2>
             <span>{{localize "MORTAL_NEEDS.Config.PresetLibraryHint"}}</span>
           </div>
         </header>
@@ -215,7 +215,7 @@
           {{#each presets}}
             <article class="mn-dialog__grid-card mn-preset-card {{#if isSelected}}is-selected{{/if}}" data-preset-id="{{id}}">
               <header class="mn-preset-card__header">
-                <span class="mn-preset-card__icon"><i class="fas {{icon}}"></i></span>
+                <span class="mn-preset-card__icon">{{mnControlIcon icon}}</span>
                 <span class="mn-preset-card__count">{{needCount}}/{{totalCount}}</span>
               </header>
 
@@ -226,18 +226,18 @@
 
               <div class="mn-preset-card__chips">
                 {{#each needs}}
-                  <span class="mn-config-pill mn-config-pill--{{category}}"><i class="fas {{icon}}"></i>{{localizedLabel}}</span>
+                  <span class="mn-config-pill mn-config-pill--{{category}}">{{mnIcon this}}{{localizedLabel}}</span>
                 {{/each}}
               </div>
 
               <footer class="mn-preset-card__footer">
                 <button class="mn-btn mn-btn--primary mn-btn--sm" data-action="apply-preset" data-preset-id="{{id}}">
-                  <i class="fas fa-check"></i>
+                  <i class="mn-icon fa-check" aria-hidden="true"></i>
                   <span>{{localize "MORTAL_NEEDS.Config.ApplyPresetShort"}}</span>
                 </button>
                 {{#unless builtIn}}
-                  <button class="mn-icon-btn mn-preset-card__delete" data-action="delete-preset" data-preset-id="{{id}}" data-tooltip="{{localize 'MORTAL_NEEDS.Config.DeletePreset'}}">
-                    <i class="fas fa-trash"></i>
+                  <button class="mn-icon-btn mn-preset-card__delete" data-action="delete-preset" data-preset-id="{{id}}" data-tooltip="{{localize 'MORTAL_NEEDS.Config.DeletePreset'}}" aria-label="{{localize 'MORTAL_NEEDS.Config.DeletePreset'}}">
+                    <i class="mn-icon fa-trash" aria-hidden="true"></i>
                   </button>
                 {{/unless}}
               </footer>
@@ -249,7 +249,7 @@
       <aside class="mn-preset-preview">
         {{#if presetPreview}}
           <header class="mn-preset-preview__header">
-            <span class="mn-preset-preview__icon"><i class="fas {{presetPreview.icon}}"></i></span>
+            <span class="mn-preset-preview__icon">{{mnControlIcon presetPreview.icon}}</span>
             <div>
               <strong>{{presetPreview.localizedLabel}}</strong>
               <span>{{presetPreview.localizedDescription}}</span>
@@ -267,7 +267,7 @@
             <h3>{{localize "MORTAL_NEEDS.Config.PresetCategoryMix"}}</h3>
             {{#each presetPreview.categories}}
               <div class="mn-preset-meter">
-                <span><i class="fas {{icon}}"></i>{{label}}</span>
+                <span>{{mnControlIcon icon}}{{label}}</span>
                 <div><b style="width: {{percent}}%;"></b></div>
                 <strong>{{count}}</strong>
               </div>
@@ -279,7 +279,7 @@
             <div class="mn-preset-preview__needs">
               {{#each presetPreview.needs}}
                 <div>
-                  <span><i class="fas {{icon}}"></i>{{localizedLabel}}</span>
+                  <span>{{mnIcon this}}{{localizedLabel}}</span>
                   <span class="mn-config-pill mn-config-pill--{{category}}">{{category}}</span>
                 </div>
               {{/each}}
@@ -290,12 +290,12 @@
 
       <div class="mn-dialog__footer mn-dialog__footer--inline">
         <button class="mn-btn mn-btn--secondary" data-action="save-preset">
-          <i class="fas fa-save"></i>
+          <i class="mn-icon fa-save" aria-hidden="true"></i>
           <span>{{localize "MORTAL_NEEDS.Config.SaveCurrentPreset"}}</span>
         </button>
         <span class="mn-flex-spacer"></span>
         <button class="mn-btn mn-btn--primary" data-action="apply-selected-preset">
-          <i class="fas fa-check"></i>
+          <i class="mn-icon fa-check" aria-hidden="true"></i>
           <span>{{localize "MORTAL_NEEDS.Config.ApplySelectedPreset"}}</span>
         </button>
       </div>
@@ -305,7 +305,7 @@
       <section class="mn-import-export-panel">
         <header class="mn-import-export-panel__header">
           <div>
-            <h2><i class="fas fa-file-import"></i> {{localize "MORTAL_NEEDS.Config.ImportExportTab"}}</h2>
+            <h2><i class="mn-icon fa-file-import" aria-hidden="true"></i> {{localize "MORTAL_NEEDS.Config.ImportExportTab"}}</h2>
             <span>{{localize "MORTAL_NEEDS.Config.ImportExportHint"}}</span>
           </div>
         </header>
@@ -313,7 +313,7 @@
         <div class="mn-import-export-grid">
           <article class="mn-transfer-card mn-transfer-card--export">
             <header class="mn-transfer-card__header">
-              <span class="mn-transfer-card__icon"><i class="fas fa-download"></i></span>
+              <span class="mn-transfer-card__icon"><i class="mn-icon fa-download" aria-hidden="true"></i></span>
               <div>
                 <strong>{{localize "MORTAL_NEEDS.Config.ExportJSON"}}</strong>
                 <span>{{localize "MORTAL_NEEDS.Config.ExportHint"}}</span>
@@ -327,19 +327,19 @@
             </div>
 
             <div class="mn-transfer-card__note">
-              <i class="fas fa-file-code"></i>
+              <i class="mn-icon fa-file-code" aria-hidden="true"></i>
               <span>{{localize "MORTAL_NEEDS.Config.ExportPayload"}}</span>
             </div>
 
             <button class="mn-btn mn-btn--secondary mn-transfer-card__button" type="button" data-action="export-config">
-              <i class="fas fa-download"></i>
+              <i class="mn-icon fa-download" aria-hidden="true"></i>
               <span>{{localize "MORTAL_NEEDS.Config.ExportJSON"}}</span>
             </button>
           </article>
 
           <article class="mn-transfer-card mn-transfer-card--import">
             <header class="mn-transfer-card__header">
-              <span class="mn-transfer-card__icon"><i class="fas fa-upload"></i></span>
+              <span class="mn-transfer-card__icon"><i class="mn-icon fa-upload" aria-hidden="true"></i></span>
               <div>
                 <strong>{{localize "MORTAL_NEEDS.Config.ImportJSON"}}</strong>
                 <span>{{localize "MORTAL_NEEDS.Config.ImportHint"}}</span>
@@ -347,7 +347,7 @@
             </header>
 
             <div class="mn-import-status" data-state="empty">
-              <i class="fas fa-circle-info"></i>
+              <i class="mn-icon fa-circle-info" aria-hidden="true"></i>
               <div>
                 <strong>{{localize "MORTAL_NEEDS.Config.ImportStatusEmpty"}}</strong>
                 <span>{{localize "MORTAL_NEEDS.Config.ImportStatusEmptyHint"}}</span>
@@ -356,13 +356,13 @@
 
             <div class="mn-import-editor">
               <div class="mn-import-editor__toolbar">
-                <span><i class="fas fa-code"></i>{{localize "MORTAL_NEEDS.Config.JsonOnly"}}</span>
+                <span><i class="mn-icon fa-code" aria-hidden="true"></i>{{localize "MORTAL_NEEDS.Config.JsonOnly"}}</span>
                 <div>
-                  <button class="mn-icon-btn" type="button" data-action="format-import-json" data-tooltip="{{localize 'MORTAL_NEEDS.Config.FormatImportJSON'}}">
-                    <i class="fas fa-align-left"></i>
+                  <button class="mn-icon-btn" type="button" data-action="format-import-json" data-tooltip="{{localize 'MORTAL_NEEDS.Config.FormatImportJSON'}}" aria-label="{{localize 'MORTAL_NEEDS.Config.FormatImportJSON'}}">
+                    <i class="mn-icon fa-align-left" aria-hidden="true"></i>
                   </button>
-                  <button class="mn-icon-btn" type="button" data-action="clear-import-json" data-tooltip="{{localize 'MORTAL_NEEDS.Config.ClearImportJSON'}}">
-                    <i class="fas fa-eraser"></i>
+                  <button class="mn-icon-btn" type="button" data-action="clear-import-json" data-tooltip="{{localize 'MORTAL_NEEDS.Config.ClearImportJSON'}}" aria-label="{{localize 'MORTAL_NEEDS.Config.ClearImportJSON'}}">
+                    <i class="mn-icon fa-eraser" aria-hidden="true"></i>
                   </button>
                 </div>
               </div>
@@ -371,7 +371,7 @@
             </div>
 
             <div class="mn-transfer-card__note">
-              <i class="fas fa-triangle-exclamation"></i>
+              <i class="mn-icon fa-triangle-exclamation" aria-hidden="true"></i>
               <span>{{localize "MORTAL_NEEDS.Config.ReplacesCurrentConfig"}}</span>
             </div>
           </article>
@@ -381,7 +381,7 @@
       <div class="mn-dialog__footer mn-dialog__footer--inline">
         <span class="mn-flex-spacer"></span>
         <button class="mn-btn mn-btn--primary" type="button" data-action="import-config">
-          <i class="fas fa-upload"></i>
+          <i class="mn-icon fa-upload" aria-hidden="true"></i>
           <span>{{localize "MORTAL_NEEDS.Config.ImportJSON"}}</span>
         </button>
       </div>

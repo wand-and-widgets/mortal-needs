@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+<title>Delete</title>
+<g id="bin-silhouette"><polygon fill="#11120f" points="50,8 76,8 80,13 80,22 87,23 102,31 107,32 110,36 110,41 102,44 93,113 88,120 43,120 37,115 28,46 20,44 19,40 21,35 25,33 42,24 48,22 48,12"/></g>
+<g id="top-handle"><polygon fill="#e1d2b2" points="51,13 54,10 75,10 72,11 55,13 53,16 52,22 50,22"/></g>
+<g id="lid-light-plane"><polygon fill="#e1d2b2" points="24,34 41,26 70,24 77,24 51,30 46,33"/><polygon fill="#e1d2b2" points="23,35 94,33 80,25 86,25 102,34 106,35 107,40 95,43 55,43 45,42 96,42 103,40 104,36 37,38 30,40 21,39 21,37"/><polygon fill="#b79553" points="80,25 86,25 102,34 106,35 107,40 95,43 58,43 96,42 104,40 104,36 94,34"/></g>
+<g id="bin-side-planes"><polygon fill="#e1d2b2" points="30,47 35,49 39,108 37,100"/><polygon fill="#b79553" points="95,47 98,45 90,112 87,115"/></g>
+<g id="two-bone-panels"><polygon fill="#e1d2b2" points="45,48 56,49 49,51 57,54 58,110 50,111 46,107 41,52"/><polygon fill="#e1d2b2" points="72,49 82,48 75,51 82,54 81,108 77,111 69,110 69,52"/></g>
+</svg>

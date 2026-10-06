@@ -13,7 +13,7 @@ export class ActorSelectionDialog extends HandlebarsApplicationMixin(Application
     tag: 'div',
     window: {
       title: 'MORTAL_NEEDS.ActorSelection.Title',
-      icon: 'fas fa-user-plus',
+      icon: 'mn-icon fa-user-plus',
       resizable: true,
     },
     position: {
@@ -52,7 +52,7 @@ export class ActorSelectionDialog extends HandlebarsApplicationMixin(Application
       .map(a => ({
         id: a.id,
         name: a.name,
-        img: a.img || a.prototypeToken?.texture?.src || 'icons/svg/mystery-man.svg',
+        img: a.img || a.prototypeToken?.texture?.src || 'modules/mortal-needs/assets/icons/fallback-portrait.svg',
         tracked: trackedIds.has(a.id),
       }))
       .sort((a, b) => a.name.localeCompare(b.name));
@@ -67,7 +67,7 @@ export class ActorSelectionDialog extends HandlebarsApplicationMixin(Application
       esCharacters = allChars.map(char => ({
         id: char.id,
         name: char.name,
-        img: char.thumbnail || char.image || 'icons/svg/mystery-man.svg',
+        img: char.thumbnail || char.image || 'modules/mortal-needs/assets/icons/fallback-portrait.svg',
         linkedActorId: char.actorId || null,
         linkedActorName: char.actorId ? game.actors.get(char.actorId)?.name : null,
         tracked: trackedIds.has(char.id),

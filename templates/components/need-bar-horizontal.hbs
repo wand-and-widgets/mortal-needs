@@ -1,6 +1,6 @@
 <div class="mn-need-bar mn-need-bar--horizontal {{#if hasCustomColor}}mn-need-bar--custom-color{{/if}}" data-need-id="{{id}}" data-entity-id="{{entityId}}" data-severity="{{severity}}" {{#if color}}style="--mn-need-color: {{color}};"{{/if}}>
   <span class="mn-need-bar__icon" data-severity="{{severity}}" data-tooltip="{{localizedLabel}}">
-    <i class="fas {{icon}}"></i>
+    {{mnIcon this}}
   </span>
 
   <span class="mn-need-bar__label">{{localizedLabel}}</span>
@@ -20,16 +20,16 @@
             data-action="relieve"
             data-entity-id="{{entityId}}"
             data-need-id="{{id}}"
-            data-tooltip="{{localize 'MORTAL_NEEDS.Actions.Relieve'}}">
-      <i class="fas fa-minus"></i>
+            data-tooltip="{{localize 'MORTAL_NEEDS.Actions.Relieve'}}" aria-label="{{localize 'MORTAL_NEEDS.Actions.Relieve'}}">
+      <i class="mn-icon fa-minus" aria-hidden="true"></i>
     </button>
     <button type="button"
             class="mn-need-bar__btn mn-need-bar__btn--stress"
             data-action="stress"
             data-entity-id="{{entityId}}"
             data-need-id="{{id}}"
-            data-tooltip="{{localize 'MORTAL_NEEDS.Actions.Stress'}}">
-      <i class="fas fa-plus"></i>
+            data-tooltip="{{localize 'MORTAL_NEEDS.Actions.Stress'}}" aria-label="{{localize 'MORTAL_NEEDS.Actions.Stress'}}">
+      <i class="mn-icon fa-plus" aria-hidden="true"></i>
     </button>
   </div>
 </div>

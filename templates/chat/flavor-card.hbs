@@ -1,6 +1,6 @@
 <div class="mn-chat-card mn-chat-card--flavor mn-chat-card--{{#if isWorsening}}worsening{{else}}improving{{/if}}">
   <div class="mn-chat-card__header">
-    <img class="mn-chat-card__need-image" src="{{needImage}}" alt="">
+    {{mnIcon needConfig class="mn-chat-card__need-image"}}
     <span class="mn-chat-card__title">
       {{needName}}<small>{{localize directionLabel}}</small>
     </span>

@@ -32,7 +32,7 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     tag: 'div',
     window: {
       title: 'MORTAL_NEEDS.NeedEdit.Title',
-      icon: 'fas fa-pen',
+      icon: 'mn-icon fa-pen',
       resizable: false,
     },
     position: {
@@ -83,7 +83,7 @@ export class NeedEditDialog extends HandlebarsApplicationMixin(ApplicationV2) {
       return {
         ...c,
         index,
-        iconClass: TypeClass?.ICON || 'fas fa-bolt',
+        iconClass: TypeClass?.ICON || 'mn-icon fa-bolt',
         localizedLabel: TypeClass?.LABEL ? game.i18n.localize(TypeClass.LABEL) : c.type,
         description: getConsequenceDescription(c.type, c.config || {}),
       };

@@ -48,6 +48,7 @@ docs/drafts/
 CHANGELOG-*.md
 !CHANGELOG-3.0.0.md
 !CHANGELOG-3.0.1.md
+!CHANGELOG-3.0.2.md
 mockups/
 
 # Local development
@@ -72,6 +73,7 @@ packs/*.db.lock
 !*.test.js
 
 # Local release artifacts and production work
+design/
 releases/
 launch/
 promo/
