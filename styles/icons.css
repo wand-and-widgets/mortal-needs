@@ -1,6 +1,8 @@
 /* Exact approved SVGs, opt-in only. Never replaces user or system Font Awesome icons. */
 .mn-icon {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
   font-style: normal;
   line-height: 1;
@@ -9,8 +11,9 @@
 .mn-icon[class*="fa-"]::before {
   content: "";
   display: inline-block;
-  width: 1em;
-  height: 1em;
+  width: var(--mn-control-size, max(1em, 18px));
+  height: var(--mn-control-size, max(1em, 18px));
+  flex-shrink: 0;
   vertical-align: -.125em;
   background: var(--mn-icon-art) center / contain no-repeat;
 }
@@ -38,10 +41,117 @@ button:hover > .mn-icon { filter: brightness(1.16); }
   border: 0;
   border-radius: 0;
 }
-/* Small inline need portraits in History, presets, and the SessionFlow widget. */
+/* Illustrations need a stable size, independent of compact caption typography. */
 .mortal-needs-panel.mn-dialog :is(.mn-history-entry__need-icon, .mn-preset-preview__needs, .mn-preset-card__chips) .mn-need-icon,
 .mn-sf-widget .mn-need-icon,
-.mn-sf-toggle-need .mn-need-icon { width: 1.35em; height: 1.35em; }
+.mn-sf-toggle-need .mn-need-icon { width: 24px; height: 24px; }
+
+/* Preset identity leads; the individual needs remain readable beside their names. */
+.mortal-needs-panel.mn-dialog .mn-preset-card__icon {
+  --mn-control-size: 36px;
+  width: 48px;
+  height: 48px;
+}
+.mortal-needs-panel.mn-dialog .mn-preset-preview__header {
+  grid-template-columns: 52px minmax(0, 1fr);
+}
+.mortal-needs-panel.mn-dialog .mn-preset-preview__icon {
+  --mn-control-size: 40px;
+  width: 52px;
+  height: 52px;
+}
+.mortal-needs-panel.mn-dialog .mn-preset-card__chips .mn-config-pill {
+  min-height: 32px;
+  padding: 3px 7px;
+  gap: 6px;
+  font-size: 12px;
+}
+.mortal-needs-panel.mn-dialog .mn-preset-preview__needs > div {
+  min-height: 36px;
+  padding-block: 4px;
+}
+@media (max-width: 1080px) {
+  .mortal-needs-panel.mn-dialog .mn-config-tab--presets {
+    grid-template-columns: minmax(0, 1fr) 240px;
+  }
+  .mortal-needs-panel.mn-dialog .mn-presets-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .mortal-needs-panel.mn-dialog .mn-preset-preview {
+    margin: 11px 12px 11px 0;
+  }
+}
+.mortal-needs-panel.mn-dialog .mn-history-entry__need-icon .mn-need-icon {
+  width: 26px;
+  height: 26px;
+}
+
+/* Keep compact controls inside their buttons, including the portrait feather. */
+.mn-dock-header button {
+  min-width: 28px;
+  min-height: 28px;
+  padding: 4px;
+}
+.mn-dock-portrait > button[data-action=narrate] {
+  --mn-control-size: 16px;
+  width: 26px;
+  height: 26px;
+  padding: 4px;
+}
+.mn-private-mark { --mn-control-size: 14px; }
+.mn-dock-footer button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+/* Shared displays reserve room for the artwork as well as the meter. */
+.mn-broadcast .mn-broadcast__need-icon {
+  width: 24px;
+  height: 24px;
+  background: transparent;
+}
+.mn-broadcast .mn-need-icon { width: 24px; height: 24px; }
+.mn-broadcast--density-micro .mn-broadcast__need-icon {
+  width: 20px;
+  height: 20px;
+}
+.mn-broadcast--density-micro .mn-need-icon { width: 20px; height: 20px; }
+.mn-broadcast--density-micro .mn-broadcast__need { min-height: 22px; }
+.mn-broadcast--density-micro .mn-broadcast__need--vertical {
+  width: 22px;
+  min-height: 48px;
+}
+.mn-broadcast--density-micro :is(.mn-broadcast__ring, .mn-broadcast__ring-wrap, .mn-broadcast__need--radial) {
+  width: 30px;
+  height: 30px;
+}
+.mn-broadcast__header-btn, .mn-broadcast__close {
+  width: 26px;
+  height: 26px;
+  padding: 3px;
+}
+.mn-flash .mn-flash__need-icon { width: 26px; }
+
+/* SessionFlow's narrow layouts keep a dedicated icon column. */
+.mn-sf-widget .mn-sf-widget__need--horizontal {
+  grid-template-columns: 24px minmax(0, 1fr) 32px auto;
+  min-height: 26px;
+}
+.mn-sf-widget--micro .mn-sf-widget__need--horizontal {
+  grid-template-columns: 20px minmax(0, 1fr) 26px;
+  min-height: 22px;
+}
+.mn-sf-widget--micro .mn-need-icon { width: 20px; height: 20px; }
+.mn-sf-widget--micro :is(.mn-sf-widget__ring, .mn-sf-widget__ring-wrap) {
+  width: 30px;
+  height: 30px;
+}
+.mn-sf-widget .mn-sf-widget__action-btn { --mn-control-size: 14px; }
+.mn-sf-widget .mn-sf-widget__metric {
+  grid-template-columns: 20px minmax(0, 1fr);
+}
 .mn-icon.fa-align-left { --mn-icon-art: url("../assets/icons/ui-align-left.svg"); }
 .mn-icon.fa-arrow-down { --mn-icon-art: url("../assets/icons/ui-arrow-down.svg"); }
 .mn-icon.fa-arrow-up { --mn-icon-art: url("../assets/icons/ui-arrow-up.svg"); }

@@ -1,18 +1,18 @@
 # Mortal Needs
 
 ![Foundry VTT](https://img.shields.io/badge/Foundry%20VTT-v12--v14-informational)
-![Version](https://img.shields.io/badge/Version-3.0.2-blue)
+![Version](https://img.shields.io/badge/Version-3.0.3-blue)
 [![Patreon](https://img.shields.io/badge/Patreon-Wand%20%26%20Widgets-orange)](https://www.patreon.com/WandAndWidgets)
 
 Bring everyday needs into the story. Mortal Needs helps you track hunger, thirst, cold, fear, comfort, and other pressures in Foundry VTT, with a small interface that leaves room for the game itself.
 
 **Free to install and use. No purchase or Patreon subscription is required.**
 
-## What's new in 3.0.2
+## What's new in 3.0.3
 
-The needs and interface controls now use a matching set of gothic SVG icons. The toolbar button uses a larger gold seal, and built-in needs keep their new illustrations when you customize their rules. Your custom images and font icons still work.
+The new artwork has more room to breathe. Preset emblems and need icons are larger, and small controls, history entries, broadcasts, and the SessionFlow widget are easier to read. The preset preview also stays usable in smaller Foundry windows.
 
-Read the [3.0.2 update notes](CHANGELOG-3.0.2.md).
+Read the [3.0.3 update notes](CHANGELOG-3.0.3.md). The [3.0.2 artwork update](CHANGELOG-3.0.2.md) introduced the matching gothic SVG set and fixed customized built-in needs retaining their old icons.
 
 ## The 3.0 dock
 
