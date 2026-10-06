@@ -75,10 +75,12 @@ Existing tracked characters, values, custom needs, and rules are retained. Older
 
 ## Support
 
-- [Report an issue](https://github.com/wand-and-widgets/mortal-needs/issues)
+- [Report a bug](https://github.com/wand-and-widgets/mortal-needs/issues/new?template=bug_report.yml)
 - [Join the Discord](https://discord.com/invite/HABajQuZ6J)
 - [Support Wand & Widgets on Patreon](https://www.patreon.com/WandAndWidgets)
 - [Official Foundry package page](https://foundryvtt.com/packages/mortal-needs)
+
+For bug reports, include your Foundry version, game system and version, Mortal Needs version, whether the affected user is a GM or player, and steps to reproduce the problem. Remove private campaign information from screenshots.
 
 ## License
 

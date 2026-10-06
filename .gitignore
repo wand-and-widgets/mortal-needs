@@ -60,6 +60,8 @@ mockups/
 
 # Claude Code working files
 .claude/
+.codex/
+*.local.md
 
 # Release drafts
 RELEASE-POST-v2.md
